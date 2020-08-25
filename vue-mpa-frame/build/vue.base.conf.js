@@ -1,0 +1,272 @@
+'use strict';
+const processConfig = require('../config/index.js');
+const frameConfig = require('../frame.config.js');
+const path = require('path');
+const Glob = require('glob');
+const webpack = require('webpack');
+const utils = require('./utils.js');
+const merge = require('webpack-merge');
+const _includes = require('lodash/includes');
+const _find = require('lodash/find');
+const _get = require('lodash/get');
+const _set = require('lodash/set');
+const _forEach = require('lodash/forEach');
+const _concat = require('lodash/concat');
+const _isEmpty = require('lodash/isEmpty');
+const createCssLoaderConfig = require('./css-loader.conf.js');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const isDev = process.env.NODE_ENV === 'development'; // 开发环境
+function resolve(dir) {
+  return path.join(__dirname, '..', dir);
+}
+const webpackEntry = {};
+// 设置 alias 别名
+const alias = {};
+const setAlias = function () {
+  for (const name in frameConfig.useAlias) {
+    alias[name] = resolve(frameConfig.useAlias[name]);
+  }
+};
+setAlias();
+// mpa 自动载入
+const setMPA = function () {
+  const pages = {};
+  const entryFiles = Glob.sync('./src/projects/*/pages/*/*.html');
+  Object.keys(entryFiles).map(index => {
+    const entryFile = entryFiles[index];
+    const entryFilePathArray = entryFile.split('/');
+    const pageName = entryFilePathArray[3]; // tdbd
+    const filename = entryFilePathArray[5]; // bank
+    if (_includes(frameConfig.removePages, filename)) {
+      // 不进行构建
+      return false;
+    }
+    // 外部链接
+    const pageCdnMap = _find(_get(frameConfig, 'cdnMap.pages', []), page => {
+      return _get(page, 'page', '') === filename;
+    });
+    // 页面相对单位配置
+    let isRem = false; // 是否使用rem
+    let isUsedPr2Rem = false; // 是否使用pr2rem
+    const mobilePages = _get(frameConfig, 'mobile.pages', []);
+    for (var i = 0, len = mobilePages.length; i < len; i++) {
+      const page = _get(mobilePages[i], 'page', '');
+      const plan = _get(mobilePages[i], 'plan', '');
+      page === filename && plan === 'rem' && (isRem = true);
+      page === filename && plan === 'pr2rem' && (isUsedPr2Rem = true);
+    }
+    // 外部链接，需要使用 babel 编译和 webpack 构建
+    const babelCdnPages = _get(frameConfig, 'babelCdnMap.pages', []);
+    const babelCdnChunks = [];
+    for (var n = 0, babelLen = babelCdnPages.length; n < babelLen; n++) {
+      const page = _get(babelCdnPages[n], 'page', '');
+      const modules = _get(babelCdnPages[n], 'modules', []);
+      if (page === filename && modules.length > 0) {
+        _forEach(modules, function (value, key) {
+          _set(webpackEntry, value.name, value.js);
+          babelCdnChunks.push(value.name);
+        });
+      }
+    }
+    if (!_isEmpty(utils.getIEDynamicImportModule())) {
+      for (const [key, value] of Object.entries(
+        utils.getIEDynamicImportModule()
+      )) {
+        babelCdnChunks.push(key);
+        _set(webpackEntry, key, value);
+      }
+    }
+    pages[filename] = {
+      entry: `./src/projects/${pageName}/pages/${filename}/main.js`,
+      template: `./src/projects/${pageName}/pages/${filename}/index.html`,
+      filename: `${filename}.html`,
+      title: frameConfig.sys_app_title,
+      favicon: path.join(__dirname, '../public/favicon.ico'),
+      isRem: isRem,
+      isUsedPr2Rem: isUsedPr2Rem,
+      pageCdnMap: {
+        js: _get(pageCdnMap, 'js', []),
+        css: _get(pageCdnMap, 'css', [])
+      },
+      // 打包出的 chunks 中必须配置 filename 这个 chunk，和对象的 key 值匹配 ，否则启动页面会是空白
+      chunks: isDev
+        ? _concat(
+          ['chunk-vendors', 'chunk-common', `${filename}`],
+          babelCdnChunks
+        )
+        : _concat(
+          [
+            'vueBase',
+            'elementUi',
+            'chunk-default',
+            'otherDependencies',
+            'styles',
+            'chunk-components',
+            `${filename}`
+          ],
+          babelCdnChunks
+        )
+    };
+  });
+  return pages;
+};
+const pages = setMPA();
+
+const baseConfig = {
+  outputDir: processConfig.build.assetsRoot, // 构建文件的输出目录名称
+  publicPath: isDev
+    ? processConfig.dev.assetsPublicPath
+    : processConfig.build.assetsPublicPath, // 加载 chunk 配置的服务器地址（远程）
+  lintOnSave: true, // eslint 输出为编译警告，不会使得编译失败
+  runtimeCompiler: false, // 不使用 Vue 运行时版本，template 模板和 render 函数 不属于运行时编译
+  assetsDir: isDev
+    ? processConfig.dev.assetsSubDirectory
+    : processConfig.build.assetsSubDirectory, // 放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录
+  pages,
+  configureWebpack: {
+    /* entry: {
+      b: './static/plugins/bbb/a.js'
+    }, */
+    entry: webpackEntry,
+    resolve: {
+      extensions: frameConfig.extensions,
+      alias: {
+        '@': resolve('./src'),
+        ...alias,
+        vue$: isDev
+          ? resolve('./node_modules/vue/dist/vue.runtime.js')
+          : resolve('./node_modules/vue/dist/vue.runtime.min.js') // runtimeCompiler 设置为 false 脚手架会使用 runtime 版本，注意：如果通过 webpack.ProvidePlugin 提供了全局的 Vue 对象则必须显示设置这个否则会报 Vue.use is not a function
+      },
+      modules: [resolve('src'), 'node_modules'],
+      mainFields: ['main', 'module']
+    },
+    plugins: [
+      // 忽略解析三方包里插件（非中文语言包排除掉）
+      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),
+      // 提供全局的变量，自动加载模块，而不必到处 import 或 require（如果有 eslint 需要在 .eslintrc.js 中配置 globals 否则代码中 eslint 校验会报错）
+      new webpack.ProvidePlugin(frameConfig.providePlugin)
+    ]
+  },
+  chainWebpack: config => {
+    config.plugin('copy').init(
+      CopyWebpackPlugin =>
+        new CopyWebpackPlugin([
+          {
+            from: path.resolve(__dirname, '../static'),
+            to: isDev
+              ? processConfig.dev.assetsSubDirectory
+              : processConfig.build.assetsSubDirectory,
+            ignore: isDev ? [] : ['**/prod-ignored-directory/**'] // 忽略哪些文件或目录不拷贝到最终的构建包中，如：[ '**/file.*' ， '**/prod-ignored-directory/**' ]
+          }
+        ])
+    );
+    // svg 图 loader 加载修改
+    const svgRule = config.module.rule('svg');
+    svgRule.uses.clear();
+    svgRule
+      .oneOf('inline')
+      .resourceQuery(/inline/)
+      .use('vue-svg-icon-loader')
+      .loader('vue-svg-icon-loader')
+      .end()
+      .end()
+      .oneOf('external')
+      .use('file-loader')
+      .loader('file-loader')
+      .options({
+        name: 'assets/[name].[hash:8].[ext]'
+      });
+    config.module
+      .rule('images')
+      .use('url-loader')
+      .tap(options => {
+        // merge 方法是保证我们不会覆盖掉原有的其他配置
+        return merge(options, {
+          fallback: {
+            options: {
+              name: utils.assetsPath('img/[folder]/[name]-[hash:8].[ext]'),
+              publicPath:
+                process.env.NODE_ENV === 'production'
+                  ? processConfig.build.urlLoaderPublicPath
+                  : processConfig.dev.urlLoaderPublicPath
+            }
+          }
+        });
+      });
+    config.module
+      .rule('fonts')
+      .use('url-loader')
+      .tap(options => {
+        // merge方法是保证我们不会覆盖掉原有的其他配置
+        return merge(options, {
+          fallback: {
+            options: {
+              name: utils.assetsPath('img/[folder]/[name]-[hash:8].[ext]'),
+              publicPath:
+                process.env.NODE_ENV === 'production'
+                  ? processConfig.build.urlLoaderPublicPath
+                  : processConfig.dev.urlLoaderPublicPath
+            }
+          }
+        });
+      });
+    // 自定义处理 css-loader
+    config.module
+      .rule('css')
+      .oneOf('vue-modules')
+      // .use('extract-css-loader')
+      // .loader(MiniCssExtractPlugin.loader)
+      // .end()
+      .use('css-loader')
+      .tap(options => {
+        return merge(options, createCssLoaderConfig(isDev));
+      });
+    config.module
+      .rule('scss')
+      .oneOf('vue-modules')
+      .use('css-loader')
+      .tap(options => {
+        return merge(options, createCssLoaderConfig(isDev));
+      });
+    config.module
+      .rule('less')
+      .oneOf('vue-modules')
+      .use('css-loader')
+      .tap(options => {
+        return merge(options, createCssLoaderConfig(isDev));
+      });
+    // babel-loader （src、test、static/plugins/babel-modules 会使用 babel-loader 处理，其它目录不使用）
+    /* config.module
+      .rule('js')
+      .include.add([
+        resolve('src'),
+        resolve('test'),
+        resolve('static/plugins/babel-modules')
+      ]); */
+    config.module
+      .rule('js')
+      .exclude.add(file =>
+        /[\\/]static[\\/]plugins[\\/]lib-flexible[\\/]/.test(file)
+      );
+  },
+  css: {
+    sourceMap: isDev,
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: { blue: '#4989F4' } // 可以在这里定义全局变量，文件中可以直接使用
+          // javascriptEnabled: true // 6.0.0 之前的 less-loader 版本中需要开启 javascriptEnabled
+        },
+        prependData: '@import "@assets/less/index.less";'
+      },
+      sass: {
+        // 配置 sass 全局变量
+        prependData: `
+          @import "@assets/scss/index.scss";
+        `
+      }
+    }
+  }
+};
+
+module.exports = baseConfig;

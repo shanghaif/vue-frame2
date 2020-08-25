@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    ${ require('raw-loader!@public/meta.html')}
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    ${ require('raw-loader!@public/link.html')}
+    <% if
+    (htmlWebpackPlugin.options.isRem) { %>
+    <script>
+      ${require('raw-loader!@static/plugins/lib-flexible/0.3.2/flexible.js')}
+    </script>
+    <% } %> <% if (htmlWebpackPlugin.options.isUsedPr2Rem) { %>
+    <script>
+      ${require('raw-loader!@static/plugins/lib-flexible/0.3.2/vw-rem.js')}
+    </script>
+    <% } %>
+    <% for(var i=0,len=htmlWebpackPlugin.options.pageCdnMap.css.length;i<len;i++ ){ %>
+      <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.pageCdnMap.css[i] %>">
+    <% } %>
+    <style>
+      .browser-upgrade {
+        margin: 0;
+        padding: 5px;
+        background: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong></strong>
+    </noscript>
+    <!--[if lte IE 8]>
+      <p class="browser-upgrade">
+        您的浏览器版本太旧了，请到
+        <a
+          href="https://support.dmeng.net/upgrade-your-browser.html"
+          target="_blank"
+          >这里</a
+        >
+        更新，以获取最佳的体验！
+      </p>
+    <![endif]-->
+    <div id="app"></div>
+    <% for(var i=0,len=htmlWebpackPlugin.options.pageCdnMap.js.length;i<len;i++ ){ %>
+      <script src="<%= htmlWebpackPlugin.options.pageCdnMap.js[i] %>"></script>
+    <% } %>
+  </body>
+</html>

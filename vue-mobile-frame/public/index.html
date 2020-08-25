@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    ${ require('raw-loader!./meta.html')}
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    ${ require('raw-loader!./link.html')}
+    <script>
+      ${require('raw-loader!@static/plugins/lib-flexible/0.3.2/flexible.js')}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

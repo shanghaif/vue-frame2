@@ -1,0 +1,7 @@
+src/assets
+src/icons
+src/store
+public
+dist
+node_modules
+vue.config.js
