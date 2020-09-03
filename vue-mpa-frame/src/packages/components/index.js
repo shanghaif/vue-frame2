@@ -14,6 +14,8 @@ import BaseGrid from './grid/index.js';
 import BaseDialog from './dialog/index.js';
 import BaseTree from './tree/index.js';
 import BaseBlockGroup from './block-group/index.js';
+import BaseDropColumnDown from './drop-column-down/index.js';
+import BaseRollGrid from './roll-grid/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
@@ -30,5 +32,7 @@ export default {
   BaseBreadCrumb,
   BaseGrid,
   BaseTree,
-  BaseBlockGroup
+  BaseBlockGroup,
+  BaseDropColumnDown,
+  BaseRollGrid
 };

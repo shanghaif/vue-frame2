@@ -24,7 +24,6 @@ const routerBeforeEachFunc = function (to, from, next) {
   if ('title' in to.meta && WINDOW_TITLE_UPDATE) {
     document.title = to.meta.title;
   }
-  // console.info(to);
   // 白名单直接跳转
   if (ROUTER_WHITE_LIST.includes(to.name)) {
     NProgress.done();

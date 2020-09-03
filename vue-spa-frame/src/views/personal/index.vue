@@ -9,6 +9,8 @@
       <router-view></router-view>
     </div>
     <div>
+      <el-button v-action:add type="primary">添加-指令</el-button>
+      <el-button v-action:delete type="primary">删除-指令</el-button>
       <base-permission-box
         code="add"
         element="el-button"

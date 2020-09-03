@@ -45,6 +45,7 @@ module.exports = {
     '@utils': 'src/utils',
     '@projects': 'src/projects',
     '@packages': 'src/packages',
+    '@directives': 'src/directives',
     '@bank_views': 'src/projects/tdbd/pages/bank/views',
     '@app_views': 'src/projects/home/pages/app/views'
   },

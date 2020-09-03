@@ -103,9 +103,25 @@ const getMenu = (options) => {
         menuName: 'Grid 列表',
         menuUrl: '/grid',
         iconUrl: 'el-icon-s-grid',
-        buttons: [
-          { id: 10, name: '添加', code: 'add', status: 0 },
-          { id: 11, name: '删除', code: 'delete', status: 1 }
+        children: [
+          {
+            id: 20,
+            menuCode: 'base-grid',
+            menuName: '基础-grid',
+            menuUrl: '/base-grid',
+            iconUrl: 'el-icon-s-grid',
+            buttons: [
+              { id: 10, name: '添加', code: 'add', status: 0 },
+              { id: 11, name: '删除', code: 'delete', status: 1 }
+            ]
+          },
+          {
+            id: 21,
+            menuCode: 'roll-grid',
+            menuName: '滚动-grid',
+            menuUrl: '/roll-grid',
+            iconUrl: 'el-icon-c-scale-to-original'
+          }
         ]
       },
       {

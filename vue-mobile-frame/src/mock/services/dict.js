@@ -91,4 +91,4 @@ const getProductClassify = options => {
   return builder(aDictList);
 };
 Mock.mock(/\/mock\/index\/getDictDataByTypeList/, 'get', getDictDataByTypeList); // 字典列表
-Mock.mock(/\/mock\/index\/getDictDataByTypeList/, 'get', getProductClassify); // 产品分类
+Mock.mock(/\/mock\/index\/getProductClassify/, 'get', getProductClassify); // 产品分类

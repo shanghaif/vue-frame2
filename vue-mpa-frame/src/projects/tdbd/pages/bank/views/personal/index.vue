@@ -5,6 +5,31 @@
     <div>
       {{NAME_OF_CONSTANT[0].name}}&nbsp;{{OTHER}}
     </div>
+    <div>
+      <el-button v-action:add type="primary">添加-指令</el-button>
+      <el-button v-action:delete type="primary">删除-指令</el-button>
+      <base-permission-box
+        code="add"
+        element="el-button"
+        :class="$style.ysButtonCls"
+        type="primary"
+        size="small"
+        @click="onAdd"
+      >
+        添加<i class="el-icon-upload el-icon--right"></i>
+      </base-permission-box>
+      <base-permission-box
+        code="delete"
+        element="el-button"
+        :class="$style.ysButtonCls"
+        type="danger"
+        size="small"
+        @click="onDelete"
+      >
+        删除<i class="el-icon-upload el-icon--right"></i>
+      </base-permission-box>
+      <el-button type="success" @click="onChangeDisabled">成功按钮</el-button>
+    </div>
   </div>
 </template>
 
@@ -32,7 +57,14 @@ export default {
         }
       ]);
       this.$router.push('ioio');
-    }
+    },
+    onAdd() {
+      this.$message('添加');
+    },
+    onDelete() {
+      this.$message('删除');
+    },
+    onChangeDisabled(event) {}
   }
 };
 </script>
@@ -41,5 +73,13 @@ export default {
 .aaa{
   color: red;
   font-size: 14px;
+}
+</style>
+<style module>
+.container {
+  margin-left: 20px;
+}
+.ys-button-cls {
+  margin: 10px 0px;
 }
 </style>

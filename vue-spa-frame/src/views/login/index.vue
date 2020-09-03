@@ -6,10 +6,16 @@
           <el-input v-model="form.name" placeholder="admin"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="pswd">
-          <el-input v-model="form.pswd" type="password" placeholder="admin or super"></el-input>
+          <el-input
+            v-model="form.pswd"
+            type="password"
+            placeholder="admin or super"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="onSubmit">登录</el-button>
+          <el-button type="primary" :loading="loading" @click="onSubmit"
+            >登录</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -29,35 +35,38 @@ export default {
         pswd: 'admin'
       },
       rules: {
-        name: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        pswd: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
+        name: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        pswd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       }
     };
   },
   methods: {
-    ...mapActions([
-      'platform/handleLogin'
-    ]),
+    ...mapActions(['platform/handleLogin']),
     onSubmit(event) {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true;
-          this['platform/handleLogin']({ userName: this.form.name, password: md5(this.form.pswd) }).then(resData => {
-            this.$router.push({ path: '/' });
-          }).catch(error => {
-            console.info(error);
-          }).finally(() => {
-            this.loading = false;
-          });
+          this['platform/handleLogin']({
+            userName: this.form.name,
+            password: md5(this.form.pswd)
+          })
+            .then(resData => {
+              this.$router.push({ path: '/' });
+            })
+            .catch(error => {
+              console.info(error);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
         } else {
           console.log('error submit!!');
           return false;
         }
       });
+    },
+    onClick(event, option = {}) {
+      console.info(event, option);
     }
   }
 };

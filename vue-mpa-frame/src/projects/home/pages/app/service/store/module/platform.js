@@ -112,7 +112,7 @@ const actions = {
   getDict({ commit, state }) {
     // 载入远程字典
     const p1 = Vue.prototype.$dict.import(
-      this.$api['dict/getDictDataByTypeList']()
+      Vue.prototype.$api['dict/getDictDataByTypeList']()
     );
     return Promise.all([p1]);
   }

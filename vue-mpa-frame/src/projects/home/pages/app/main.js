@@ -20,6 +20,9 @@ import frameComponents from '@plugins/components.js';
 import '@filters/index.js';
 // mock
 import './mock/index.js';
+// 自定义指令
+import VFocus from '@directives/v-focus.js';
+import VAuthority from '@directives/v-authority.js';
 
 // 全局通知 巴士事件
 window.GvBus = {};
@@ -35,6 +38,10 @@ Vue.use(vueLink);
 Vue.use(unicom);
 Vue.use(VueTemplateConst);
 Vue.use(frameComponents);
+Vue.use(VFocus);
+Vue.use(VAuthority);
+Vue.config.ignoredElements = []; // 忽略在 Vue 之外的自定义元素
+Vue.config.keyCodes = {}; // 给 v-on 自定义键位别名
 Vue.config.productionTip = false;
 
 new Vue({

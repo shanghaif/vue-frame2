@@ -2,6 +2,7 @@
  * @desc 全局视图组件
  */
 import ComponentA from './a.vue';
+import RouteView from './route-view.vue';
 import BlankLayout from './layouts/blank-layout.vue';
 import BasicLayout from './layouts/basic-layout.vue';
 import Basic2Layout from './layouts/basic2-layout.vue';
@@ -14,5 +15,6 @@ export {
   Basic3Layout
 };
 export default {
-  ComponentA
+  ComponentA,
+  RouteView
 };
