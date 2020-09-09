@@ -15,6 +15,14 @@ const requireModule = require.context('./module', true, /\.js$/);
 const modules = {};
 requireModule.keys().forEach(filePath => {
   if (filePath === './index.js') return;
+  let moduleName = filePath.replace(/(\.\/|\.js)/g, '');
+  if (filePath.split('/').length === 2) {
+    moduleName = _camelCase(filePath.replace(/(\.\/|\.js)/g, ''));
+    modules[moduleName] = { ...requireModule(filePath) }.default;
+  }
+});
+requireModule.keys().forEach(filePath => {
+  if (filePath === './index.js') return;
   let moduleName = '';
   if (filePath.split('/').length > 2) {
     moduleName = filePath.replace(/(\.\/|\.js)/g, '');
@@ -38,10 +46,6 @@ requireModule.keys().forEach(filePath => {
         commonRoutes = moduleRouter.children;
       }
     }
-  } else {
-    moduleName = _camelCase(filePath.replace(/(\.\/|\.js)/g, ''));
-    modules[moduleName] = { ...requireModule(filePath) }.default;
   }
 });
-// console.info('modules ', modules);
 export default modules.common;

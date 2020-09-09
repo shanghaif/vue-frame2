@@ -1,17 +1,20 @@
 <template>
-  <basic2-layout v-bind="basicLayout"></basic2-layout>
+  <basic-layout v-bind="basicLayout" :titleClick="basicLayout.titleClick.bind(this)"></basic-layout>
 </template>
 
 <script>
 import { DEFAULT_SETTINGS } from '../../config/index.js';
-import { Basic2Layout } from '@packages/views/index.js';
+import { BasicLayout } from '@packages/views/index.js';
 
 export default {
-  components: { Basic2Layout },
+  components: { BasicLayout },
   data() {
     return {
       basicLayout: DEFAULT_SETTINGS
     };
+  },
+  methods: {
+
   }
 };
 </script>

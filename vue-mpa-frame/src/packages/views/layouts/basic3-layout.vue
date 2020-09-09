@@ -4,7 +4,15 @@
       <template v-slot:north>
         <base-double-wing>
           <template v-slot:left>
-            <div :class="[$style.fullY, $style.logoBox, $style.flexCenter]">
+            <div
+              :class="[
+                $style.fullY,
+                $style.logoBox,
+                $style.flexCenter,
+                $style.pointer
+              ]"
+              @click="titleClick"
+            >
               <img :src="iconfontUrl()" alt="" />
               {{ title }}
             </div>
@@ -83,7 +91,10 @@ import _last from 'lodash/last';
 import _split from 'lodash/split';
 import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
+import _find from 'lodash/find';
 import _join from 'lodash/join';
+import _get from 'lodash/get';
+import _has from 'lodash/has';
 
 export default {
   name: 'Basic3Layout',
@@ -102,9 +113,14 @@ export default {
     collapsed: {
       type: Boolean,
       default: false
+    },
+    titleClick: {
+      type: Function,
+      default: () => {}
     }
   },
   data() {
+    this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
       logoutLoading: false,
       isFullscreen: false,
@@ -145,7 +161,11 @@ export default {
           {
             title: '企业关联图谱',
             list: [
-              { id: '1', icon: 'el-icon-platform-eleme', label: '血缘关系图谱' },
+              {
+                id: '1',
+                icon: 'el-icon-platform-eleme',
+                label: '血缘关系图谱'
+              },
               { id: '2', icon: 'el-icon-delete-solid', label: '事件关系图谱' },
               { id: '3', icon: 'el-icon-s-tools', label: '供应-销售链树' },
               { id: '4', icon: 'el-icon-phone', label: '产业链树' }
@@ -194,7 +214,11 @@ export default {
               { id: '20', icon: 'el-icon-s-shop', label: '指数信息' },
               { id: '21', icon: 'el-icon-s-marketing', label: '指数指标信息' },
               { id: '22', icon: 'el-icon-s-comment', label: '行业评估值信息' },
-              { id: '23', icon: 'el-icon-s-opportunity', label: '行业评估值信息' }
+              {
+                id: '23',
+                icon: 'el-icon-s-opportunity',
+                label: '行业评估值信息'
+              }
             ]
           },
           {
@@ -213,7 +237,11 @@ export default {
             title: '企业全景画像',
             list: [
               { id: '29', icon: 'el-icon-tickets', label: '企业画像' },
-              { id: '30', icon: 'el-icon-document-delete', label: '企业经营信息' },
+              {
+                id: '30',
+                icon: 'el-icon-document-delete',
+                label: '企业经营信息'
+              },
               { id: '31', icon: 'el-icon-printer', label: '信用风险信息' },
               { id: '32', icon: 'el-icon-search', label: '排行榜信息' }
             ]
@@ -229,7 +257,13 @@ export default {
     // 监听路由改变-路由动态改变
     $route: {
       handler(to, from) {
-        this.setCheckedMenu(to, from);
+        if (!_isEmpty(to.matched)) {
+          const rootPageName = to.matched[0].name; // 匹配到的路由路径列表，第一个是匹配到的根路由
+          if (rootPageName !== this.ROOT_PAGE_NAME) {
+            this.ROOT_PAGE_NAME = rootPageName;
+          }
+          this.setCheckedMenu(to, from);
+        }
       },
       immediate: true
     }
@@ -249,7 +283,16 @@ export default {
       let navMenus = this.getMenus;
       const aPathKeyList = [];
       for (const value of Object.values(to.matched)) {
-        if (value.name !== ROOT_PAGE_NAME) {
+        if (value.name !== this.ROOT_PAGE_NAME) {
+          if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
+            navMenus = _find(
+              navMenus,
+              menu => menu.menuCode === this.ROOT_PAGE_NAME
+            );
+            if (_has(navMenus, 'children')) {
+              navMenus = _get(navMenus, 'children', []);
+            }
+          }
           const index = _findIndex(
             navMenus,
             menu => menu.menuCode === value.name
@@ -260,17 +303,23 @@ export default {
           }
         }
       }
-      if (to.name === ROOT_PAGE_NAME) {
+      if (to.name === this.ROOT_PAGE_NAME) {
         setTimeout(() => {
           this.menuProps.defaultActive = this.$refs.menu.getFirstElMenuItem();
-          this.$router.push({
+          const index2LastMenu = this.$refs.menu.getLastMenu(
+            this.menuProps.defaultActive
+          );
+          if (!_isEmpty(index2LastMenu.menuCode)) {
+            this.$router.push({ name: index2LastMenu.menuCode });
+          }
+          /* this.$router.push({
             path: `/${this.$refs.menu.getRouterPath(
               this.menuProps.defaultActive
             )}`
-          });
+          }); */
         }, 0);
       }
-      if (to.name !== ROOT_PAGE_NAME && !_isEmpty(aPathKeyList)) {
+      if (to.name !== this.ROOT_PAGE_NAME && !_isEmpty(aPathKeyList)) {
         const sPathKey = _join(aPathKeyList, '-'); // 0-0-1
         setTimeout(() => {
           this.menuProps.defaultActive = sPathKey;
