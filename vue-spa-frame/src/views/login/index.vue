@@ -25,6 +25,7 @@
 <script>
 import { mapActions } from 'vuex';
 import md5 from 'js-md5';
+import { ROOT_PAGE_NAME } from '@config/index.js';
 
 export default {
   data() {
@@ -51,7 +52,7 @@ export default {
             password: md5(this.form.pswd)
           })
             .then(resData => {
-              this.$router.push({ path: '/' });
+              this.$router.push({ name: ROOT_PAGE_NAME });
             })
             .catch(error => {
               console.info(error);

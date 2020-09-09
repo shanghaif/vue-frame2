@@ -29,7 +29,7 @@ const getters = {
     return roleMenus;
   },
   // 获取一级菜单
-  getFirstMenus: state => {
+  getLevel1Menus: state => {
     const roleMenus = _get(state, 'menus.models', []);
     const firstMenus = [];
     for (let i = 0, len = roleMenus.length; i < len; i++) {

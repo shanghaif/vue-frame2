@@ -2,13 +2,13 @@
  * @desc 公共路由
  */
 import { LOGIN_PAGE_NAME, ROOT_PAGE_NAME } from '@config/index.js';
-import { Basic2Layout } from '@packages/views/index.js';
+import { Basic3Layout } from '@packages/views/index.js';
 
 const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: Basic2Layout
+    component: Basic3Layout
     // redirect: 'needs/loan'
     /* beforeEnter: (to, from, next) => {
       console.info('444444444444 ');

@@ -8,6 +8,7 @@ import _isEmpty from 'lodash/isEmpty';
 import _map from 'lodash/map';
 import _split from 'lodash/split';
 import _join from 'lodash/join';
+import _last from 'lodash/last';
 
 const BaseNavMenu = {
   name: 'BaseNavMenu',
@@ -143,6 +144,22 @@ const BaseNavMenu = {
         }
       }
       return _join(sRouterPath, '/');
+    },
+    /**
+     * @desc 根据菜单的 index 获取菜单列表中最内部的一个节点
+     * @param {String} index - 菜单对应的 index 属性
+     */
+    getLastMenu(index) {
+      const sRouterPath = [];
+      let menus = this.menus;
+      for (const value of Object.values(_split(index, '-'))) {
+        const menu = menus[value];
+        if (menu) {
+          menus = menu.children;
+          sRouterPath.push(menu);
+        }
+      }
+      return _last(sRouterPath);
     },
     /**
      * @desc 展开指定的 sub-menu

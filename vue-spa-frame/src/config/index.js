@@ -17,7 +17,11 @@ export const CONST_DEFAULT_CONFIG = {
 export const DEFAULT_SETTINGS = {
   title: 'Vue 单页面框架', // 顶部栏目标题文字
   iconfontUrl: () => { return require('@assets/images/logo.png'); }, // 顶部栏目图标
-  collapsed: false // 侧边菜单栏是否收缩
+  collapsed: false, // 侧边菜单栏是否收缩
+  titleClick(event) {
+    // 顶部栏目标题文字-点击事件
+    this.$router.push({ name: ROOT_PAGE_NAME });
+  }
 };
 // 路由白名单
 export const ROUTER_WHITE_LIST = ['404', 'helper'];

@@ -4,7 +4,7 @@
       <template v-slot:north>
         <base-double-wing>
           <template v-slot:left>
-            <div :class="[$style.fullY, $style.logoBox, $style.flexCenter]">
+            <div :class="[$style.fullY, $style.logoBox, $style.flexCenter, $style.pointer]" @click="titleClick">
               <img :src="iconfontUrl()" alt="" />
               {{ title }}
             </div>
@@ -85,14 +85,25 @@ import _split from 'lodash/split';
 import _isEmpty from 'lodash/isEmpty';
 import _findIndex from 'lodash/findIndex';
 import _join from 'lodash/join';
+import _find from 'lodash/find';
+import _isNil from 'lodash/isNil';
+import _get from 'lodash/get';
+import _has from 'lodash/has';
 
 export default {
   name: 'BasicLayout',
-  props: {},
+  props: {
+    // 顶部栏目标题文字
+    title: {
+      type: String,
+      default: DEFAULT_SETTINGS.title
+    }
+  },
   data() {
+    this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
-      title: DEFAULT_SETTINGS.title,
       iconfontUrl: DEFAULT_SETTINGS.iconfontUrl,
+      titleClick: DEFAULT_SETTINGS.titleClick.bind(this),
       logoutLoading: false,
       isFullscreen: false,
       layout: {
@@ -210,13 +221,29 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getUserData', 'getMenus'])
+    ...mapGetters(['getUserData']),
+    getMenus() {
+      if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
+        const menus = _find(this.$store.getters.getMenus, menu => menu.menuCode === this.ROOT_PAGE_NAME);
+        if (_isNil(menus)) {
+          return [];
+        }
+        return _get(menus, 'children', []);
+      }
+      return this.$store.getters.getMenus;
+    }
   },
   watch: {
     // 监听路由改变-路由动态改变
     $route: {
       handler(to, from) {
-        this.setCheckedMenu(to, from);
+        if (!_isEmpty(to.matched)) {
+          const rootPageName = to.matched[0].name; // 匹配到的路由路径列表，第一个是匹配到的根路由
+          if (rootPageName !== this.ROOT_PAGE_NAME) {
+            this.ROOT_PAGE_NAME = rootPageName;
+          }
+          this.setCheckedMenu(to, from);
+        }
       },
       immediate: true
     }
@@ -236,7 +263,16 @@ export default {
       let navMenus = this.getMenus;
       const aPathKeyList = [];
       for (const value of Object.values(to.matched)) {
-        if (value.name !== ROOT_PAGE_NAME) {
+        if (value.name !== this.ROOT_PAGE_NAME) {
+          if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
+            navMenus = _find(
+              navMenus,
+              menu => menu.menuCode === this.ROOT_PAGE_NAME
+            );
+            if (_has(navMenus, 'children')) {
+              navMenus = _get(navMenus, 'children', []);
+            }
+          }
           const index = _findIndex(
             navMenus,
             menu => menu.menuCode === value.name
@@ -247,17 +283,21 @@ export default {
           }
         }
       }
-      if (to.name === ROOT_PAGE_NAME) {
+      if (to.name === this.ROOT_PAGE_NAME) {
         setTimeout(() => {
           this.menuProps.defaultActive = this.$refs.menu.getFirstElMenuItem();
-          this.$router.push({
+          const index2LastMenu = this.$refs.menu.getLastMenu(this.menuProps.defaultActive);
+          if (!_isEmpty(index2LastMenu.menuCode)) {
+            this.$router.push({ name: index2LastMenu.menuCode });
+          }
+          /* this.$router.push({
             path: `/${this.$refs.menu.getRouterPath(
               this.menuProps.defaultActive
             )}`
-          });
+          }); */
         }, 0);
       }
-      if (to.name !== ROOT_PAGE_NAME && !_isEmpty(aPathKeyList)) {
+      if (to.name !== this.ROOT_PAGE_NAME && !_isEmpty(aPathKeyList)) {
         const sPathKey = _join(aPathKeyList, '-'); // 0-0-1
         setTimeout(() => {
           this.menuProps.defaultActive = sPathKey;
