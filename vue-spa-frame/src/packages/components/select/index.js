@@ -81,8 +81,8 @@ const BaseSelect = {
     }
   },
   data() {
-    this.vQueryParams = (_isEmpty(this.api)) ? {} : _assign({}, this.queryParams);
-    this.vValue = this.multiple ? _assign([], this.value) : this.value;
+    this.vQueryParams = _isEmpty(this.api) ? {} : _assign({}, this.queryParams);
+    this.vValue = this.$attrs.multiple ? _assign([], this.value) : this.value;
     return {
       vOptions: []
     };
@@ -93,16 +93,21 @@ const BaseSelect = {
       if (this.options) {
         this.vOptions = this.options;
       }
+      if (_isNil(this.vOptions)) {
+        return;
+      }
       for (let i = 0; i < this.vOptions.length; i++) {
         const option = this.vOptions[i];
-        elOptions.push(this.$createElement('el-option', {
-          props: {
-            key: option[this.valueField],
-            label: option[this.displayField],
-            value: option[this.valueField],
-            disabled: option.disabled
-          }
-        }));
+        elOptions.push(
+          this.$createElement('el-option', {
+            props: {
+              key: option[this.valueField],
+              label: option[this.displayField],
+              value: option[this.valueField],
+              disabled: option.disabled
+            }
+          })
+        );
       }
       /* const elOptions = this.vOptions.map(option => {
         return this.$createElement('el-option', {
@@ -118,19 +123,21 @@ const BaseSelect = {
     },
     slotElement() {
       const nodes = [];
-      if (!_isEmpty(this.slotNode)) {
-        for (const key in this.slotNode) {
-          const elem = this.slotNode[key];
-          nodes.push(this.$createElement('template', { slot: key }, [
-            this.$createElement('span', { domProps: { innerHTML: elem.template } })
-          ]));
-        }
-        /* for (const [key, elem] of Object.entries(this.slotNode)) {
-          nodes.push(this.$createElement('template', { slot: key }, [
-            this.$createElement('span', { domProps: { innerHTML: elem.template } })
-          ]))
-        } */
+      if (_has(this.$slots, 'prefix')) {
+        nodes.push(
+          this.$createElement('template', { slot: 'prefix' }, [
+            this.$slots.prefix
+          ])
+        );
       }
+      if (_has(this.$slots, 'empty')) {
+        nodes.push(
+          this.$createElement('template', { slot: 'empty' }, [
+            this.$slots.empty
+          ])
+        );
+      }
+      // }
       return nodes;
     }
   },
@@ -147,23 +154,26 @@ const BaseSelect = {
       immediate: true
     }
   },
+  created() {},
   methods: {
     /**
-   * @desc 获取远程服务器数据的操作
-   * @method
-   */
+     * @desc 获取远程服务器数据的操作
+     * @method
+     */
     _fetchList() {
       if (_isEmpty(this.api) || _isNil(this.$api)) {
         return;
       }
-      this.$api[this.api](this.vQueryParams).then(resData => {
-        if (!_isNil(this.loadFilter)) {
-          resData = this.loadFilter(resData.data);
-        }
-        this.vOptions = resData.data;
-      }).catch((error) => {
-        console.error(error);
-      });
+      this.$api[this.api](this.vQueryParams)
+        .then(resData => {
+          if (!_isNil(this.loadFilter)) {
+            resData = this.loadFilter(resData.data);
+          }
+          this.vOptions = resData.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
     /**
      * @desc 选中值发生变化时触发
@@ -171,7 +181,7 @@ const BaseSelect = {
      * @param {Array} value - 选中项
      */
     _changeEvent(value) {
-      const v = (this.multiple) ? _assign([], value) : value;
+      const v = this.multiple ? _assign([], value) : value;
       if (
         _isEqual(_isNil(this.listeners), false) &&
         _has(this.listeners, 'change')
@@ -261,7 +271,7 @@ const BaseSelect = {
      * @param {Array} value - 选中项
      */
     _selectChangeEvent(value) {
-      const v = (this.multiple) ? _assign([], value) : value;
+      const v = this.multiple ? _assign([], value) : value;
       if (
         _isEqual(_isNil(this.listeners), false) &&
         _has(this.listeners, 'selectChange')

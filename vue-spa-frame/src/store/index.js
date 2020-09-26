@@ -33,7 +33,7 @@ const getters = {
     const roleMenus = _get(state, 'menus.models', []);
     const firstMenus = [];
     for (let i = 0, len = roleMenus.length; i < len; i++) {
-      firstMenus.push(_omit(roleMenus[i], ['children']));
+      firstMenus.push(_omit(roleMenus[i], ['children','buttons']));
     }
     return firstMenus;
   },
@@ -55,9 +55,9 @@ const actions = {
     commit('GENERATE_ROLE_MENUS', menus);
   },
   // 获取子级菜单
-  getChildrenMenus({ commit, state }, { id, menuCode, menuName }) {
+  getChildrenMenus({ commit, state }, { id, menuCode, menuName, menus }) {
     return new Promise((resolve, reject) => {
-      const menu = _find(_get(state, 'menus.models', []), function(value, index) {
+      const menu = _find(menus, function(value, index) {
         return value.id === id;
       });
       if(_has(menu, 'children') && menu.children.length >0){

@@ -5,7 +5,7 @@
  * 例如在 methods 中请使用Vue根实例过滤转换器 plugins/root-filters.js
  */
 import Vue from 'vue';
-import dictionary from './data-dict.js';
+import dictionary from '@service/data-dict/index.js';
 import _omit from 'lodash/omit';
 import _forEach from 'lodash/forEach';
 import _get from 'lodash/get';

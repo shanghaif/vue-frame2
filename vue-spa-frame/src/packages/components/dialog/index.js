@@ -34,6 +34,7 @@ const BaseDialog = function (options = {}) {
       return h(
         'el-dialog',
         {
+          class: { 'base-dialog': true, [options.ctCls]: options.ctCls },
           props: _assign(
             { destroyOnClose: true, title: '详情', visible: this.visible },
             _omit(this.$props, ['listeners']),
@@ -102,9 +103,10 @@ const BaseDialog = function (options = {}) {
       }
     }
   });
-  if (_has(options, 'container')) {
+  /* if (_has(options, 'container')) {
     options.container.appendChild(instance.$mount().$el);
-  }
+  } */
+  document.body.appendChild(instance.$mount().$el);
   return instance;
 };
 export default BaseDialog;

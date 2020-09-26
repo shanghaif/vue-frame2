@@ -33,7 +33,10 @@ requireModule.keys().forEach(filePath => {
       if (!_has(moduleRouter, 'children')) {
         moduleRouter.children = [];
       }
-      moduleRouter.children.push({ ...requireModule(filePath).default[0] });
+      const requireModuleList = requireModule(filePath).default;
+      for (let i = 0, len = requireModuleList.length; i < len; i++) {
+        moduleRouter.children.push(requireModule(filePath).default[i]);
+      }
     };
     for (let i = 0, len = aDropRightArray.length; i < len; i++) {
       const value = aDropRightArray[i];

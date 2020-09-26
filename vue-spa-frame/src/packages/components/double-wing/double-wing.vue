@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.baseDoubleWingContainer">
+  <div :class="[$style.baseDoubleWingContainer,ctCls]">
     <div :class="$style.view">
       <div class="le">
         <slot name="left">
@@ -27,6 +27,10 @@ export default {
     border: {
       type: String,
       default: null
+    },
+    // 自定义样式
+    ctCls: {
+      type: String
     }
   },
   data() {

@@ -9,6 +9,7 @@ import _omit from 'lodash/omit';
 import _has from 'lodash/has';
 import _includes from 'lodash/includes';
 import _isEmpty from 'lodash/isEmpty';
+import _isNil from 'lodash/isNil';
 
 const BaseTree = {
   name: 'BaseTree',
@@ -66,6 +67,11 @@ const BaseTree = {
         return { id: 0, label: this.rootLabel, children: [] };
       }
     },
+    // 是否渲染根节点
+    isRenderRoot: {
+      type: Boolean,
+      default: true
+    },
     // 推荐 id 作为唯一键
     nodeKey: {
       type: String,
@@ -75,26 +81,31 @@ const BaseTree = {
     loadFilter: {
       type: Function
     },
+    // 自定义内联 style
     ctStyle: {
       type: Object,
       default() {
         return {};
       }
     },
+    // 自定义样式 class
     ctCls: {
       type: Object,
       default() {
         return {};
       }
     },
+    // v-if
     isRender: {
       type: Boolean,
       default: true
     },
+    // v-show
     isDisplay: {
       type: Boolean,
       default: true
     },
+    // 事件
     listeners: {
       type: Object,
       default: () => {}
@@ -110,6 +121,10 @@ const BaseTree = {
     isExpandFirstPath: {
       type: Boolean,
       default: true
+    },
+    // 控件右侧操作菜单栏
+    handleMenu: {
+      type: Array
     }
   },
   data() {
@@ -117,9 +132,27 @@ const BaseTree = {
       afterLoadStore: 'afterLoadStore' // 数据加载完成之后
     };
     this.curQueryParams = {};
-    return {};
+    return {
+      curData: [] // 数据集
+    };
   },
-  mounted() {},
+  mounted() {
+    if (!this.lazy) {
+      // 非懒加载
+      this.loadStore().then(data => {
+        if (!_isEmpty(data)) {
+          if (this.isRenderRoot) {
+            this.root.children = data;
+            this.curData = [this.root];
+          } else {
+            this.curData = data;
+          }
+        }
+        // 数据读取完成触发事件
+        this.$emit(this.events.afterLoadStore, data);
+      });
+    }
+  },
   methods: {
     /**
      * @typedef {Object} options - 选项配置对象
@@ -136,7 +169,7 @@ const BaseTree = {
      * @method
      */
     loadNode(node, resolve) {
-      if (node.level === 0) {
+      if (node.level === 0 && this.isRenderRoot) {
         return resolve([this.root]);
       }
       this.loadStore(node)
@@ -160,9 +193,12 @@ const BaseTree = {
         const params = _assign(
           {},
           this.queryParams,
-          { [this.nodeKey]: node.data[this.nodeKey] },
+          // { [this.nodeKey]: _isEmpty(node) ? '' : _get(node.data, this.nodeKey) },
           this.curQueryParams
         );
+        if (!_isEmpty(_get(node.data, this.nodeKey))) {
+          params[this.nodeKey] = _get(node.data, this.nodeKey);
+        }
         this.$api[this.api]({ params: params })
           .then(resList => {
             if (this.loadFilter) {
@@ -211,14 +247,29 @@ const BaseTree = {
       return this.$refs[`${this._uid}-el-tree-ref`];
     },
     /**
+     * @desc 刷新整棵树，不管节点
+     */
+    refreshAll() {
+      this.loadStore().then(data => {
+        if (!_isEmpty(data)) {
+          if (this.isRenderRoot) {
+            this.root.children = data;
+            this.curData = [this.root];
+          } else {
+            this.curData = data;
+          }
+        }
+        // 数据读取完成触发事件
+        this.$emit(this.events.afterLoadStore, data);
+      });
+    },
+    /**
      * @desc 刷新某个节点
      * @param {*} nodeData
      * @method
      * @private
      */
-    refreshNode(nodeData) {
-
-    },
+    refreshNode(nodeData) {},
     /**
      * @desc 刷新整棵树
      * @method
@@ -230,9 +281,11 @@ const BaseTree = {
       this.loadStore(node)
         .then(resData => {
           this.getTree().updateKeyChildren(node.data.id, resData);
-        }).catch(error => {
+        })
+        .catch(error => {
           throw new Error(error);
-        }).finally(() => {
+        })
+        .finally(() => {
           node.loading = false;
         });
     },
@@ -243,12 +296,12 @@ const BaseTree = {
      * this.$refs['base-tree'].setCheckedKeys([2, 5])
      */
     setCheckedKeys(keys = []) {
-      const defaultCheckNodes = this.getCheckedNodes();
+      /* const defaultCheckNodes = this.getCheckedNodes();
       if (!_isEmpty(defaultCheckNodes)) {
         for (let i = 0; i < defaultCheckNodes.length; i++) {
           keys.push(_get(defaultCheckNodes[i], this.nodeKey));
         }
-      }
+      } */
       this.getTree().setCheckedKeys(keys);
     },
     /**
@@ -278,7 +331,10 @@ const BaseTree = {
         this.listeners.nodeClick(record, node, tree);
         return;
       }
-      this.$emit('nodeClick', record, node, tree);
+      const eventName = _has(this.$listeners, 'nodeClick')
+        ? 'nodeClick'
+        : 'node-click';
+      this.$emit(eventName, record, node, tree);
     },
     /**
      * @desc 节点选中状态发生变化时的回调
@@ -292,7 +348,10 @@ const BaseTree = {
         this.listeners.checkChange(record, checked, childCheckNodes);
         return;
       }
-      this.$emit('checkChange', record, checked, childCheckNodes);
+      const eventName = _has(this.$listeners, 'checkChange')
+        ? 'checkChange'
+        : 'check-change';
+      this.$emit(eventName, record, checked, childCheckNodes);
     },
     /**
      * @desc 当复选框被点击的时候触发
@@ -301,7 +360,7 @@ const BaseTree = {
      * @event
      */
     nodeBoxCheck(node, treeCheckedNode) {
-      if (_has(this.listeners, 'checkChange')) {
+      if (_has(this.listeners, 'check')) {
         this.listeners.check(node, treeCheckedNode);
         return;
       }
@@ -318,9 +377,15 @@ const BaseTree = {
         this.listeners.currentChange(node, record, node);
         return;
       }
-      this.$emit('currentChange', record, node);
+      const eventName = _has(this.$listeners, 'currentChange')
+        ? 'currentChange'
+        : 'current-change';
+      this.$emit(eventName, record, node);
       // 触发v-model input事件
-      this.$emit('treeChange', record);
+      const treeEventName = _has(this.$listeners, 'treeChange')
+        ? 'treeChange'
+        : 'tree-change';
+      this.$emit(treeEventName, record);
     },
     /**
      * @desc 当某一节点被鼠标右键点击时会触发该事件
@@ -329,8 +394,133 @@ const BaseTree = {
      * @param {*} node
      */
     nodeContextmenu(event, record, node, nodeElement) {
-      this.$emit('nodeContextmenu', event, record, node, nodeElement);
+      const eventName = _has(this.$listeners, 'nodeContextmenu')
+        ? 'nodeContextmenu'
+        : 'node-contextmenu';
+      this.$emit(eventName, event, record, node, nodeElement);
       event.preventDefault();
+    },
+    /**
+     * @desc 创建 el-dropdown-item
+     * @method
+     * @private
+     * @param {Object} data - 当前节点的数据
+     * @param {Object} node - 当前节点的 Node 对象
+     */
+    createElDropdownItem({ node, data }) {
+      const vNodes = [];
+      if (!_isNil(this.handleMenu)) {
+        for (let i = 0, len = this.handleMenu.length; i < len; i++) {
+          const option = this.handleMenu[i];
+          let renderNode = option.text;
+          if (!_has(option, 'divided')) {
+            option.divided = true;
+          }
+          if (!_has(option, 'isClose')) {
+            option.isClose = true; // 点击关闭下拉面板
+          }
+          if (_has(option, 'render')) {
+            renderNode = option.render(this.$createElement); // 自定义节点
+          }
+          if (_has(option, 'isPopconfirm') && option.isPopconfirm) {
+            renderNode = this.$createElement(
+              'el-popconfirm',
+              {
+                props: { title: _get(option, 'title', ''), placement: 'left' },
+                on: {
+                  onConfirm: () => {
+                    _has(option, 'listeners.onConfirm') &&
+                      option.listeners.onConfirm({ node, data });
+                  },
+                  onCancel: _get(option, 'listeners.onCancel', () => {})
+                }
+              },
+              [
+                this.$createElement(
+                  'span',
+                  { slot: 'reference', style: 'display: block' },
+                  [_get(option, 'text', '')]
+                )
+              ]
+            ); // 二次确认框
+          }
+          vNodes.push(
+            this.$createElement(
+              'el-dropdown-item',
+              {
+                props: _omit(option, ['text', 'listeners', 'render']),
+                nativeOn: {
+                  click: event => {
+                    if (option.isClose) {
+                      this.$refs[
+                        `${node[this.nodeKey]}-tree-el-dropdown`
+                      ].hide();
+                      document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+                    }
+                    _has(option, 'listeners.click') &&
+                      option.listeners.click({ node, data });
+                  }
+                }
+              },
+              [renderNode]
+            )
+          );
+        }
+      }
+      return vNodes;
+    },
+    /**
+     * @desc 创建点击树形控件右侧更多按钮展示的下拉菜单
+     * @method
+     * @private
+     * @param {Object} data - 当前节点的数据
+     * @param {Object} node - 当前节点的 Node 对象
+     */
+    createHandleMenu({ node, data }) {
+      const h = this.$createElement;
+      const vNode = h(
+        'span',
+        {
+          class: 'handle-menu-tree-node',
+          on: {
+            click: event => {
+              if (event.target.tagName === 'I') {
+                document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+                event.stopPropagation();
+                event.preventDefault();
+                return false; // i 图标标签
+              }
+            }
+          }
+        },
+        [
+          h('span', { class: 'el-tree-node__label' }, [node.label]),
+          h('span', {}, [
+            h(
+              'el-dropdown',
+              {
+                ref: `${node[this.nodeKey]}-tree-el-dropdown`,
+                props: {
+                  'hide-on-click': false,
+                  trigger: 'click',
+                  size: 'mini'
+                }
+              },
+              [
+                h('span', { class: 'el-dropdown-link' }, [
+                  h('i', { class: 'el-icon-more' }, [])
+                ]),
+                h(
+                  'el-dropdown-menu',
+                  { slot: 'dropdown' },
+                  this.createElDropdownItem({ node, data })
+                )
+              ]
+            )
+          ])
+        ]
+      );
+      return vNode;
     }
   },
   render(h) {
@@ -355,28 +545,48 @@ const BaseTree = {
         defaultExpandedKeys = [0];
       }
     }
+    let scopedSlotVNode = _isEmpty(this.$scopedSlots)
+      ? undefined
+      : this.$scopedSlots;
+    if (_isEmpty(scopedSlotVNode) && !_isEmpty(this.handleMenu)) {
+      scopedSlotVNode = {
+        default: ({ node, data }) => this.createHandleMenu({ node, data })
+      };
+    }
+    const oLoadAction = this.lazy
+      ? { load: this.loadNode }
+      : { data: this.curData }; // 数据加载的方式
     return h(
       'el-tree',
       {
         ref: `${this._uid}-el-tree-ref`,
         class: _assign({ 'base-tree': true }, _get(this.$props, 'ctCls', {})),
         style,
+        scopedSlots: scopedSlotVNode, // 自定义树节点的内容，参数为 { node, data }
         props: _assign(
           {},
           {
-            load: this.loadNode,
+            // load: this.loadNode,
+            // data: this.curData,
             props: _omit(this.props, ['value']),
             lazy: this.lazy,
             'expand-on-click-node': false,
             'node-key': this.nodeKey
           },
+          oLoadAction,
           this.$attrs,
           { defaultExpandedKeys }
         ),
         on: _assign({}, this.$listeners, {
-          'node-click': this.nodeClick, // 节点被点击时的回调
+          'node-click': (record, node, tree) => {
+            document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+            this.nodeClick(record, node, tree);
+          }, // 节点被点击时的回调
           'check-change': this.checkChange, // 节点选中状态发生变化时的回调
-          check: this.nodeBoxCheck, // 当复选框被点击的时候触发
+          check: (node, treeCheckedNode) => {
+            document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+            this.nodeBoxCheck(node, treeCheckedNode);
+          }, // 当复选框被点击的时候触发
           'current-change': this.currentChange, // 当前选中节点变化时触发的事件 点击节点，并不是复选框
           'node-contextmenu': this.nodeContextmenu // 当某一节点被鼠标右键点击时会触发该事件
         })

@@ -17,6 +17,8 @@ import './mock/index.js';
 // 自定义指令
 import VFocus from './directives/v-focus.js';
 import VAuthority from './directives/v-authority.js';
+// iconfont
+import '@/assets/font/iconfont/iconfont.css';
 
 // 全局通知 巴士事件
 window.GvBus = {};

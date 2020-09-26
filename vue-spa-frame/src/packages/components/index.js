@@ -16,10 +16,19 @@ import BaseTree from './tree/index.js';
 import BaseBlockGroup from './block-group/index.js';
 import BaseDropColumnDown from './drop-column-down/index.js';
 import BaseRollGrid from './roll-grid/index.js';
+import BaseDrawer from './drawer/index.js';
+import BaseIconPicker from './icon-picker/index.js';
+import BaseSelectTree from './select-tree/index.js';
+import BaseTempVar from './temp-var/index.js';
+import BaseSelectInput from './select-input/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
   Object.defineProperty(Vue.prototype, '$baseDialog', { value: BaseDialog });
+}
+// 弹出抽屉
+if (!_has(window, '$baseDrawer')) {
+  Object.defineProperty(Vue.prototype, '$baseDrawer', { value: BaseDrawer });
 }
 
 export default {
@@ -34,5 +43,9 @@ export default {
   BaseTree,
   BaseBlockGroup,
   BaseDropColumnDown,
-  BaseRollGrid
+  BaseRollGrid,
+  BaseIconPicker,
+  BaseSelectTree,
+  BaseTempVar,
+  BaseSelectInput
 };

@@ -1,0 +1,121 @@
+{
+  "id": "2102245",
+  "name": "框架展示图标",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "框架展示图标",
+  "glyphs": [
+    {
+      "icon_id": "15282630",
+      "name": "抽屉",
+      "font_class": "chouti",
+      "unicode": "e6bb",
+      "unicode_decimal": 59067
+    },
+    {
+      "icon_id": "7286",
+      "name": "返回",
+      "font_class": "prepage",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "119481",
+      "name": "全选",
+      "font_class": "re-select",
+      "unicode": "e8f3",
+      "unicode_decimal": 59635
+    },
+    {
+      "icon_id": "192908",
+      "name": "图标2_涂鸦",
+      "font_class": "handwriting",
+      "unicode": "e6b3",
+      "unicode_decimal": 59059
+    },
+    {
+      "icon_id": "236611",
+      "name": "图片",
+      "font_class": "picture",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "258873",
+      "name": "loading",
+      "font_class": "loading",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
+    },
+    {
+      "icon_id": "401559",
+      "name": "xiazai",
+      "font_class": "unzip",
+      "unicode": "e67d",
+      "unicode_decimal": 59005
+    },
+    {
+      "icon_id": "767538",
+      "name": "拍照",
+      "font_class": "photo",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "873266",
+      "name": "升级取消",
+      "font_class": "upload-cancel",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "893472",
+      "name": "上传",
+      "font_class": "upload-submit",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "1356542",
+      "name": "录音",
+      "font_class": "tape",
+      "unicode": "e746",
+      "unicode_decimal": 59206
+    },
+    {
+      "icon_id": "1667222",
+      "name": "save",
+      "font_class": "edit",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "1769079",
+      "name": "xiazai",
+      "font_class": "download",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "1977377",
+      "name": "趋势",
+      "font_class": "qushi",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "1916557",
+      "name": "表单",
+      "font_class": "form",
+      "unicode": "e7e4",
+      "unicode_decimal": 59364
+    },
+    {
+      "icon_id": "10908304",
+      "name": "下拉树",
+      "font_class": "xialashu",
+      "unicode": "e8d0",
+      "unicode_decimal": 59600
+    }
+  ]
+}

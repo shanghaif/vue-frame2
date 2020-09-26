@@ -9,7 +9,7 @@ export default [
     path: '/user/login',
     mockPath: '/mock/user/login',
     data: { userName: '', password: '' },
-    mock: false, // 单独使用 mockPath
+    // mock: false, // 单独使用 mockPath
     isLogin: true, // 是否登录接口
     isWhite: true, // 白名单 （设置为 true 则会去除 token 参数）
     // headers: { token: 'test_123' } // 会和 api.js 插件中的 this.headerOptions 通用请求头参数进行对比，如果参数冲突会以接口中的参数替换 this.headerOptions 中的对应参数

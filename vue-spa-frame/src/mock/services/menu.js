@@ -95,7 +95,23 @@ const getMenu = (options) => {
         menuCode: 'dialog',
         menuName: '对话框',
         menuUrl: '/dialog',
-        iconUrl: 'el-icon-files'
+        iconUrl: 'el-icon-files',
+        children: [
+          {
+            id: 24,
+            menuCode: 'index',
+            menuName: '对话框',
+            menuUrl: '/index',
+            iconUrl: 'el-icon-s-grid'
+          },
+          {
+            id: 25,
+            menuCode: 'drawer',
+            menuName: '抽屉',
+            menuUrl: '/drawer',
+            iconUrl: 'iconfont iconchouti'
+          }
+        ]
       },
       {
         id: 2,
@@ -123,6 +139,43 @@ const getMenu = (options) => {
             iconUrl: 'el-icon-c-scale-to-original'
           }
         ]
+      },
+      {
+        id: 22,
+        menuCode: 'tree',
+        menuName: 'tree 树形控件',
+        menuUrl: '/tree',
+        iconUrl: 'el-icon-share',
+        children: [
+          {
+            id: 23,
+            menuCode: 'base-tree',
+            menuName: '基础-tree',
+            menuUrl: '/base-tree',
+            iconUrl: 'el-icon-share'
+          },
+          {
+            id: 32,
+            menuCode: 'base-select-tree',
+            menuName: 'select-tree',
+            menuUrl: 'base-select-tree',
+            iconUrl: 'iconfont iconxialashu'
+          }
+        ]
+      },
+      {
+        id: 26,
+        menuCode: 'dropdown',
+        menuName: '下拉菜单',
+        menuUrl: '/dropdown',
+        iconUrl: 'el-icon-c-scale-to-original'
+      },
+      {
+        id: 28,
+        menuCode: 'form',
+        menuName: '表单',
+        menuUrl: '/form',
+        iconUrl: 'el-icon-tickets'
       },
       {
         id: 5,

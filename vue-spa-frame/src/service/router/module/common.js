@@ -2,13 +2,13 @@
  * @desc 公共路由
  */
 import { LOGIN_PAGE_NAME, ROOT_PAGE_NAME } from '@config/index.js';
-import { Basic3Layout } from '@packages/views/index.js';
+import { BasicLayout, Basic4Layout } from '@packages/views/index.js';
 
 const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: Basic3Layout
+    component: BasicLayout
     // redirect: 'needs/loan'
     /* beforeEnter: (to, from, next) => {
       console.info('444444444444 ');
@@ -36,16 +36,16 @@ const commonRoutes = [
   {
     path: '/helper',
     name: 'helper',
-    component: () => import(/* webpackChunkName:"views/helper" */ '@views/helper/index.vue'),
-    meta: { title: '帮助中心' }
-    /* children: [
+    component: Basic4Layout,
+    meta: { title: '帮助中心' },
+    children: [
       {
-        path: '/info',
+        path: '',
         name: 'info',
-        meta: { title: '信息' },
-        component: () => import('../../../views/personal/index.vue')
+        meta: { title: '信息', approve: true },
+        component: () => import(/* webpackChunkName:"views/helper" */ '@views/helper/index.vue')
       }
-    ] */
+    ]
   },
   /* {
     path: '/user',

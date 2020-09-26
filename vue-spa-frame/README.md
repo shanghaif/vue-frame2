@@ -1,4 +1,4 @@
-## vue-spa-frame 单页面打包框架
+## 广东省制造业高质量发展综合平台
 
 安装：
 
@@ -26,12 +26,19 @@ npm run lint | eslint 代码校验
 npm run lint:no-fix | eslint 代码校验 （同 npm run lint 但在没有 eslint 错误时会输出提示 `No lint errors found!`）
 npm run lint-fix | eslint 代码修复
 npm run clear| 删除 node_modules 依赖并重新安装
-npm run changelog | 生成 changelog 日志文件
+npm run changelog | 生成 changelog 日志文件（新发布版本时生成日志文件推荐将版本号`version`进行修改）
+
+获取iconfont.css文件下的class名称方法：
+```
+步骤一、将iconfont包更新下
+步骤二、在build目录下执行命令 npm run icon
+步骤三、assets/font/iconfont 目录下会生成iconfont-classname.js
+```
 
 浏览器地址：
 
 ```
-http://localhost:8010/spa
+http://localhost:8010
 ```
 
 
@@ -61,8 +68,9 @@ src
  |-directives 全局指令
  |-filters 全局过滤器
  |-packages 全局组件
+    |-common-view 公共视图组件（比如：个人中心 ）
     |-components
-    |-views
+    |-views 布局视图（比如：网站整体的布局）
  |-plugins 全局插件
     |-axios ajax请求封装
     |-data-dict-filter 字典数据转全局过滤器
@@ -78,10 +86,28 @@ src
     |-store vuex目录
  |-store store实例构建
  |-views 视图层
-    |-login
+    |-login 登录
        |-index.vue
-    |-platform
+    |-home 主页
        |-index.vue
+    |-personal 个人中心
+       |-index.vue
+    |-cognate-charts 企业关联图谱
+    |-working-monitor 工业经济运行监测
+    |-electronics-map 产业地图
+    |-view-portray 企业全景画像
+    |-achievement 高质量评价
+    |-data-manage 数据管理
+    |-data-analyse 数据分析
+    |-service-platform 综合服务平台
+      |-helper 帮助中心
+      |-log 平台日志
+      |-notice 公告管理
+      |-setting 系统设置
+        |-frame 组织架构
+        |-permission 权限管理
+          |-function 功能权限
+        |-role 角色管理
  |-utils 工具类
 static 静态资源
  |-images

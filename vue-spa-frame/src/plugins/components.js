@@ -12,7 +12,9 @@ export default {
         page: 'page',
         size: 'size',
         total: 'data.totalRecord',
-        data: 'data.results'
+        data: 'data.results',
+        pageNum: 'pageNum',
+        pageSize: 'pageSize'
       }
     };
     Object.defineProperty(Vue.prototype, '$base-global-options', { value: defaultGlobalOptions });
@@ -21,6 +23,7 @@ export default {
       Vue.component(AllComponents[key].name, AllComponents[key]);
     }
     for (const key in AllViewComponents) {
+      console.info(AllViewComponents[key].name);
       Vue.component(AllViewComponents[key].name, AllViewComponents[key]);
     }
   }

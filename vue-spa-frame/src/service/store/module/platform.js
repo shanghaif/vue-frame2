@@ -133,7 +133,7 @@ const actions = {
     const setRouterMeta = function (router, oMenu) {
       !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
-        _set(router.meta, 'isOpen', false); // 路由权限,false 不能打开对应的页面
+        _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
       }
       if (!_isNil(oMenu) && _has(oMenu, 'buttons')) {
         _set(router.meta, 'buttons', oMenu.buttons);
@@ -141,19 +141,20 @@ const actions = {
     };
     for (const value of Object.values(routes)) {
       if (_has(value, 'children') && !_isEmpty(value.children)) {
-        checkChildren(value.children, state.roleMenus.models);
+        const menu2Children = _get(_find(state.roleMenus.models, model => model.menuCode === value.name), 'children', []);
+        checkChildren(value.children, menu2Children);
       }
     }
-    console.info('routes', routes, state.roleMenus.models);
+    // console.info('routes', routes, state.roleMenus.models);
     // console.info('rootRouterRedirect', rootRouterRedirect);
   },
   // 加载远程数据字典-保证页面展示时字典数据已经获取
   getDict({ commit, state }) {
     // 载入本包中的字典
-    const p1 = Vue.prototype.$dict.import(import('../../data-dict/index.js'));
+    // const p1 = Vue.prototype.$dict.import(import('../../data-dict/index.js'));
     // 载入远程字典
     const p2 = Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
-    return Promise.all([p1, p2]);
+    return Promise.all([p2]);
     // Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
   }
 };
@@ -183,7 +184,9 @@ const mutations = {
     state.isLogin = false;
     state.initedApp = false;
     setTimeout(() => {
+      // 移除全部缓存
       localStorage.removeItem(sStorageKey);
+      // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
   }
 };

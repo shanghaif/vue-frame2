@@ -1,20 +1,20 @@
 <template>
-  <el-container class="base-border-layout">
-    <el-header :class="[northCls,noPaddingCls]" :height="northHeight">
+  <el-container :class="{ 'base-border-layout': true, [ctCls]: ctCls }">
+    <el-header :class="[northCls, noPaddingCls]" :height="northHeight">
       <slot name="north" />
     </el-header>
-    <el-container>
-      <el-aside :class="[westCls,noPaddingCls]" :width="westWidth">
+    <el-container :class="{ 'base-border-layout': true }">
+      <el-aside :class="[westCls, noPaddingCls]" :width="westWidth">
         <slot name="west" />
       </el-aside>
-      <el-main :class="[centerCls,noPaddingCls]">
+      <el-main :class="[centerCls, noPaddingCls]">
         <slot name="center" />
       </el-main>
-      <el-aside :class="[eastCls,noPaddingCls]" :width="eastWidth">
+      <el-aside :class="[eastCls, noPaddingCls]" :width="eastWidth">
         <slot name="east" />
       </el-aside>
     </el-container>
-    <el-footer :class="[southCls,noPaddingCls]" :height="southHeight">
+    <el-footer :class="[southCls, noPaddingCls]" :height="southHeight">
       <slot name="south" />
     </el-footer>
   </el-container>
@@ -41,6 +41,9 @@ export default {
       default: '60px'
     },
     // 自定义样式
+    ctCls: {
+      type: String
+    },
     northCls: {
       type: String
     },
@@ -73,35 +76,38 @@ export default {
     }
   },
   created() {},
-  mounted() {},
+  mounted() {
+    // console.info(this.ctCls);
+  },
   methods: {}
 };
 </script>
 
-<style lang="less" scoped>
-.el-container{
+<style lang="less">
+.base-border-layout {
   height: 100%;
   overflow: hidden;
+  .el-header,
+  .el-footer {
+    // background-color: #b3c0d1;
+    color: #333;
+    // text-align: center;
+  }
+  .el-aside {
+    // background-color: #d3dce6;
+    color: #333;
+    // text-align: center;
+    // line-height: 100px;
+  }
+  .el-main {
+    // background-color: #e9eef3;
+    color: #333;
+    // text-align: center;
+    // line-height: 160px;
+  }
+  .no-padding-cls {
+    padding: 0px;
+  }
 }
-.el-header,
-.el-footer {
-  // background-color: #b3c0d1;
-  color: #333;
-  // text-align: center;
-}
-.el-aside {
-  // background-color: #d3dce6;
-  color: #333;
-  // text-align: center;
-  // line-height: 100px;
-}
-.el-main {
-  // background-color: #e9eef3;
-  color: #333;
-  // text-align: center;
-  // line-height: 160px;
-}
-.no-padding-cls{
-  padding: 0px;
-}
+
 </style>

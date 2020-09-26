@@ -50,5 +50,12 @@ export default [
     desc: '获取菜单列表',
     path: '',
     mockPath: '/mock/index/menu'
+  },
+  {
+    name: 'getTree',
+    method: 'GET',
+    desc: '获取 tree 树',
+    path: '',
+    mockPath: '/mock/tree/index'
   }
 ];

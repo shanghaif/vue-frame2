@@ -15,10 +15,19 @@ const BaseDropColumnDown = {
       type: String,
       default: ''
     },
+    // 图标
+    icon: {
+      type: String
+    },
     // 子项
     options: {
       type: Array
     }
+  },
+  data() {
+    return {
+      curHideOnClick: true // 是否在点击菜单项后隐藏菜单
+    };
   },
   methods: {
     /**
@@ -38,7 +47,17 @@ const BaseDropColumnDown = {
                 {
                   on: {
                     click: event => {
-                      _has(this.$listeners, 'click') && this.$listeners.click(event, JSON.parse(JSON.stringify(row)));
+                      if (_has(this.$listeners, 'click')) {
+                        this.$listeners.click(
+                          event,
+                          JSON.parse(JSON.stringify(row))
+                        );
+                        setTimeout(() => {
+                          if (!_isNil(this.$refs[`${this._uid}-base-drop-column-down-title`])) {
+                            this.$refs[`${this._uid}-base-drop-column-down-title`].click(); // 点击节点后隐藏面板
+                          }
+                        }, 0);
+                      }
                     }
                   }
                 },
@@ -83,9 +102,16 @@ const BaseDropColumnDown = {
         h(
           'span',
           {
+            ref: `${this._uid}-base-drop-column-down-title`,
             class: 'el-dropdown-link'
           },
-          [this.title, h('i', { class: 'el-icon-arrow-down el-icon--right' })]
+          [
+            !_isNil(this.icon)
+              ? h('i', { class: this.icon, style: { 'padding-right': '9px' } })
+              : h(),
+            this.title,
+            h('i', { class: 'el-icon-arrow-down el-icon--right' })
+          ]
         ),
         h('el-dropdown-menu', { slot: 'dropdown' }, [
           this.createElDropdownItem()

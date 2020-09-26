@@ -58,7 +58,13 @@ const apiRequestEndHandler = function (response = {}) {
   }
   // 其它异常 code
   if (_includes(Vue.prototype.$constant.apiServeCode.WRONG_CODE, code)) {
-    const msg = _get(response, 'data.msg', '-100');
+    let msg = '未定义的错误msg';
+    if (_has(response, 'data.msg')) {
+      msg = _get(response, 'data.msg');
+    }
+    if (_has(response, 'data.message')) {
+      msg = _get(response, 'data.message');
+    }
     Vue.prototype.$message({
       showClose: true,
       message: '错误：' + msg,

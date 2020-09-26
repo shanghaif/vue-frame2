@@ -1,0 +1,1 @@
+export const iconClassName =  ['iconprepage','iconre','iconhandwriting','iconpicture','iconloading','iconunzip','iconphoto','iconupload','iconupload','icontape','iconedit','icondownload','iconqushi','iconform','iconxialashu']
