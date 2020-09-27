@@ -10,6 +10,11 @@ import _isNil from 'lodash/isNil';
 const BaseDrawer = function (options = {}) {
   const optionsKey = _keys(options);
   const VueModal = Vue.extend({
+    provide: function () {
+      return {
+        getDrawer: this
+      };
+    },
     props: optionsKey,
     render(h) {
       return h(
@@ -21,6 +26,7 @@ const BaseDrawer = function (options = {}) {
             _omit(this.$props, ['listeners']),
             {}
           ),
+          ref: `${this._uid}-base-drawer`,
           on: {
             open: () => {
               if (_has(options, 'listeners.open')) {
@@ -66,9 +72,14 @@ const BaseDrawer = function (options = {}) {
       open(event) {
         this.visible = true;
       },
-      // 关闭
+      // 关闭（隐藏-未销毁实例）
       close(event) {
-        this.visible = false;
+        // this.visible = false;
+        this.closeDrawer();
+      },
+      // 关闭（销毁实例）
+      closeDrawer() {
+        this.$refs[`${this._uid}-base-drawer`].closeDrawer();
       },
       // Drawer 标题区的内容
       appendTitle() {

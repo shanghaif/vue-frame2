@@ -49,7 +49,7 @@ module.exports = {
     // 我们最终打包出的 chunk 可能会放到一台 cdn 服务器上，所以我们在 index.html（index.html和chunks文件不放在一起） 访问这些 chunk 时需要带上统一的远程地址（比如：http://cdn.com.cn/）
     // assetsPublicPath: 'http://cdn.com.cn/'
     assetsPublicPath: '/',
-    urlLoaderPublicPath: '', // （图片等资源文件）url-loader中单独配置cdn，做到js访问线上路径，静态资源使用cdn，两者互不影响
+    urlLoaderPublicPath: '/', // （图片等资源文件）url-loader中单独配置cdn，做到js访问线上路径，静态资源使用cdn，两者互不影响
     /**
      * Source Maps
      */

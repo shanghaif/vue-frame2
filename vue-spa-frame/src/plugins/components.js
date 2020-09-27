@@ -15,6 +15,9 @@ export default {
         data: 'data.results',
         pageNum: 'pageNum',
         pageSize: 'pageSize'
+      },
+      checkboxGroup: {
+        data: 'data'
       }
     };
     Object.defineProperty(Vue.prototype, '$base-global-options', { value: defaultGlobalOptions });

@@ -333,7 +333,7 @@ const BaseSelectTree = {
             }
           },
           // v-model input事件
-          treeChange: (record = {}) => {
+          currentChange: (record = {}) => {
             // 单选
             if (!this.multiple) {
               this.options = [];

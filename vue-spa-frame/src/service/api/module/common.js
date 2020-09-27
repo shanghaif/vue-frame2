@@ -57,5 +57,12 @@ export default [
     desc: '获取 tree 树',
     path: '',
     mockPath: '/mock/tree/index'
+  },
+  {
+    name: 'getCheckboxGroup',
+    method: 'GET',
+    desc: '获取 checkbox-group 按钮组',
+    path: '',
+    mockPath: '/mock/role/buttons'
   }
 ];

@@ -10,6 +10,7 @@ import _has from 'lodash/has';
 import _includes from 'lodash/includes';
 import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
+import _map from 'lodash/map';
 
 const BaseTree = {
   name: 'BaseTree',
@@ -64,7 +65,7 @@ const BaseTree = {
     root: {
       type: Object,
       default() {
-        return { id: 0, label: this.rootLabel, children: [] };
+        return { id: 0, [this.displayField]: this.rootLabel, children: [] };
       }
     },
     // 是否渲染根节点
@@ -365,6 +366,11 @@ const BaseTree = {
         return;
       }
       this.$emit('check', node, treeCheckedNode);
+      // 触发v-model input事件
+      const treeEventName = _has(this.$listeners, 'treeChange')
+        ? 'treeChange'
+        : 'tree-change';
+      this.$emit(treeEventName, _map(this.getTree().getCheckedNodes(), (o) => _get(o, this.valueField)));
     },
     /**
      * @desc 当前选中节点变化时触发的事件 点击节点，并不是复选框
@@ -385,7 +391,7 @@ const BaseTree = {
       const treeEventName = _has(this.$listeners, 'treeChange')
         ? 'treeChange'
         : 'tree-change';
-      this.$emit(treeEventName, record);
+      this.$emit(treeEventName, _get(record, this.valueField));
     },
     /**
      * @desc 当某一节点被鼠标右键点击时会触发该事件
@@ -556,6 +562,7 @@ const BaseTree = {
     const oLoadAction = this.lazy
       ? { load: this.loadNode }
       : { data: this.curData }; // 数据加载的方式
+    _assign(this.props, { label: this.displayField });
     return h(
       'el-tree',
       {

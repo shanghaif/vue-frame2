@@ -21,6 +21,7 @@ import BaseIconPicker from './icon-picker/index.js';
 import BaseSelectTree from './select-tree/index.js';
 import BaseTempVar from './temp-var/index.js';
 import BaseSelectInput from './select-input/index.js';
+import BaseCheckboxGroup from './checkbox-group/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
@@ -47,5 +48,6 @@ export default {
   BaseIconPicker,
   BaseSelectTree,
   BaseTempVar,
-  BaseSelectInput
+  BaseSelectInput,
+  BaseCheckboxGroup
 };

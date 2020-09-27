@@ -15,8 +15,16 @@ const rollGridList = options => {
   }
   return builder({ results: result });
 };
-Mock.mock(
-  /\/mock\/roll\/grid/,
-  'get',
-  rollGridList
-); // 贷款需求管理列表
+const menuButtons = options => {
+  const parameters = getQueryParameters(options);
+  console.info('mock: parameters', parameters);
+  const result = [
+    { id: 1, name: '添加' },
+    { id: 2, name: '删除' },
+    { id: 3, name: '启用' },
+    { id: 4, name: '作废' }
+  ];
+  return builder(result);
+};
+Mock.mock(/\/mock\/roll\/grid/, 'get', rollGridList); // 贷款需求管理列表
+Mock.mock(/\/mock\/role\/buttons/, 'get', menuButtons); // 功能权限按钮-checkbox-group

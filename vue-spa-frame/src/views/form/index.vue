@@ -46,11 +46,41 @@
       {{ value3 }}
       <p>icon 图标选择器</p>
       <base-icon-picker width="200px"></base-icon-picker>
+      <p>checkbox-group 按钮组-远端数据</p>
+      <el-checkbox
+        :indeterminate="isIndeterminate"
+        v-model="checkAll"
+        @change="handleCheckAllChange"
+        >全选</el-checkbox
+      ><br /><br />
+      <base-checkbox-group
+        v-model="checkedButtons"
+        api="common/getCheckboxGroup"
+        :checkboxAttributes="{ border: true }"
+        ref="base-checkbox-group"
+      ></base-checkbox-group>
+      {{checkedButtons}}
+      <p>checkbox-group 按钮组-本地静态远端</p>
+      <el-checkbox
+        :indeterminate="isIndeterminate1"
+        v-model="checkAll1"
+        @change="handleCheckAllChange1"
+        >全选</el-checkbox
+      ><br /><br />
+      <base-checkbox-group
+        v-model="checkedButtons1"
+        :options="buttons"
+        :checkboxAttributes="{ border: true }"
+        ref="base-checkbox-group1"
+      ></base-checkbox-group>
+      {{checkedButtons1}}
     </div>
   </div>
 </template>
 
 <script>
+import _map from 'lodash/map';
+
 export default {
   data() {
     this.api = 'dict/getProductClassify';
@@ -65,6 +95,18 @@ export default {
         { id: 2, name: '刺梨' },
         { id: 3, name: '火龙果' },
         { id: 4, name: '香蕉' }
+      ],
+      checkAll: false,
+      isIndeterminate: true,
+      checkedButtons: [1, 2], // 默认选中
+      checkAll1: false,
+      isIndeterminate1: true,
+      checkedButtons1: [],
+      buttons: [
+        { id: 1, name: '上海' },
+        { id: 2, name: '北京' },
+        { id: 3, name: '广州' },
+        { id: 4, name: '深圳' }
       ]
     };
   },
@@ -74,12 +116,26 @@ export default {
       this.tableData = response.data[0].data;
       console.info(this.tableData);
     }); */
+    console.info(this.$dict);
   },
   methods: {
     // 过滤数据
     loadFilter(data) {
       return data[0];
       // return [];
+    },
+    /**
+     * @desc 全选按钮
+     */
+    handleCheckAllChange(val) {
+      const options = _map(this.$refs['base-checkbox-group'].getStore(), o => o.id);
+      this.checkedButtons = val ? options : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckAllChange1(val) {
+      const options = _map(this.buttons, o => o.id);
+      this.checkedButtons1 = val ? options : [];
+      this.isIndeterminate1 = false;
     }
   }
 };
