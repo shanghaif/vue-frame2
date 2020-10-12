@@ -12,6 +12,7 @@ import _some from 'lodash/some';
 import _omit from 'lodash/omit';
 import _find from 'lodash/find';
 import _isArray from 'lodash/isArray';
+import _pick from 'lodash/pick';
 
 const BaseGridTable = {
   name: 'BaseGridTable',
@@ -74,9 +75,10 @@ const BaseGridTable = {
   },
   data() {
     this.curQueryParams = {};
-    this.loading = null;
+    // this.loading = null;
     this.currentRows = []; // 当前选中行集
     return {
+      loading: false,
       currentRow: {}, // 当前选中行
       tableData: []
     };
@@ -185,17 +187,20 @@ const BaseGridTable = {
       if (!this.api) {
         return;
       }
-      this.loadMask();
+      // this.loadMask();
+      (!this.loading) && (this.loading = true);
       const params = _assign(
         {},
         {
-          pageNum: this.getBaseGrid.currentPage,
-          pageSize: this.getBaseGrid.pageSize
+          [_get(this['$base-global-options'], 'grid.pageNum', 'pageNum')]: this.getBaseGrid.currentPage,
+          [_get(this['$base-global-options'], 'grid.pageSize', 'pageSize')]: this.getBaseGrid.pageSize
         },
-        this.queryParams,
-        this.curQueryParams
+        _omit(this.queryParams, ['data', 'headers']),
+        _omit(this.curQueryParams, ['data', 'headers'])
       );
-      this.$api[this.api]({ params })
+      const data = _get(_assign({}, _pick(this.queryParams, ['data']), _pick(this.curQueryParams, ['data'])), 'data', {});
+      const headers = _get(_assign({}, _pick(this.queryParams, ['headers']), _pick(this.curQueryParams, ['headers'])), 'headers', {});
+      this.$api[this.api]({ params, data, headers })
         .then(response => {
           this.getBaseGrid.setTotal(
             _get(
@@ -218,7 +223,8 @@ const BaseGridTable = {
           throw new Error(error);
         })
         .finally(() => {
-          this.loading.close();
+          // this.loading.close();
+          this.loading && (this.loading = false);
         });
     },
     /**
@@ -241,10 +247,10 @@ const BaseGridTable = {
      * @method
      */
     loadMask() {
-      this.loading = this.$loading({
-        lock: true,
-        target: this.$el
-      });
+      // this.loading = this.$loading({
+      //   lock: true,
+      //   target: this.$el
+      // });
     },
     /**
      * @desc 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
@@ -477,7 +483,14 @@ const BaseGridTable = {
             'row-dblclick': this._rowDblclickEvent,
             'row-click': this._rowClickEvent
           }
-        )
+        ),
+        directives: [
+          {
+            name: 'loading',
+            value: this.loading
+            // 'v-loading': true
+          }
+        ]
       },
       [
         this.indexColumn(),

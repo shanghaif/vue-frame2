@@ -67,15 +67,13 @@ export default {
     }
   },
   data() {
-    // this.checkedFirstMenu = null; // 选中的一级菜单
-    // this.checkedFirstMenu2BlockIndex = '';
-    // this.checkMenuIndexPath = '';
     return {
       layout: {
         northHeight: '60px',
         westWidth: 'auto',
         eastWidth: '0px',
-        southHeight: '0px'
+        southHeight: '0px',
+        northCls: this.$style.northCls
       },
       innerLayout: {
         northHeight: '30px',

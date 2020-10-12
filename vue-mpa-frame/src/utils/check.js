@@ -15,3 +15,7 @@ export const isStartWithNum = (str) => {
 export const hasLetter = (str) => {
   return /[a-z]/i.test(str + '');
 };
+
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path);
+}

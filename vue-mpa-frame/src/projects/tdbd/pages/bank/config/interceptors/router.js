@@ -6,6 +6,7 @@ import { HOME_ROUTER_NAME } from '@config/index.js';
 import { WINDOW_TITLE_UPDATE, ROUTER_WHITE_LIST } from '../index.js';
 import store from '../../store/index.js';
 import router from '../../router/index.js';
+import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 /**
  * @desc 全局前置守卫
@@ -54,6 +55,25 @@ const routerBeforeEachFunc = function (to, from, next) {
       });
     return;
   }
+  if (appStatus && _isEmpty(from.matched)) {
+    // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
+    Promise.all([
+      store.dispatch('platform/getDict'),
+      store.dispatch('platform/setRouter')
+    ]).then(() => {
+      if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
+        router.push({ name: '404' });
+      }
+      // 页面刷新重新设置 request.headers
+      store.dispatch('platform/setApiHeaderParams', {
+        token: store.getters['platform/getToken']
+      });
+    }).finally(() => {
+      next();
+      NProgress.done();
+    });
+    return;
+  }
   // 已登录并且初始化完成，组装路由参数
   /* if (loginStatus && appStatus) {
     store.dispatch('platform/setRouter').then(() => {
@@ -93,7 +113,7 @@ const routerOnReady = function (to) {
   // 判断 token 是否有效，无效直接打开登录页
   // if(){}
   // 刷新页面检测当前路由权限
-  const loginStatus = store.getters['platform/getLoginStatus'];
+  /* const loginStatus = store.getters['platform/getLoginStatus'];
   if (loginStatus) {
     // 载入字典数据
     store.dispatch('platform/getDict');
@@ -106,7 +126,7 @@ const routerOnReady = function (to) {
   // 页面刷新重新设置 request.headers
   store.dispatch('platform/setApiHeaderParams', {
     token: store.getters['platform/getToken']
-  });
+  }); */
 };
 
 export { routerBeforeEachFunc, routerAfterEachFunc, routerOnReady };

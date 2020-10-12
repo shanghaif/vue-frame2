@@ -4,7 +4,13 @@
  * true 表示验证通过 false 验证失败
  */
 import _has from 'lodash/has';
-import { isEmail, isMobilePhone, isPhone, checkSQLXss, checkInvalidChar } from '@utils/index.js';
+import {
+  isEmail,
+  isMobilePhone,
+  isPhone,
+  checkSQLXss,
+  checkInvalidChar
+} from '@utils/index.js';
 
 const Validator = {
   types: {
@@ -37,9 +43,9 @@ const Validator = {
     }
   },
   /**
-     * type types 中的验证函数 'checkNumber'
-     * val 外部传入的待验证值
-     */
+   * type types 中的验证函数 'checkNumber'
+   * val 外部传入的待验证值
+   */
   validate: function (type, val = '') {
     if (!_has(this.types, type)) {
       return { result: false, msg: '验证函数不存在' };

@@ -75,7 +75,6 @@ class DataDictFilter {
           if (Object.prototype.hasOwnProperty.call(defines, 'default')) {
             this._append(defines.default);
           } else if (Object.prototype.hasOwnProperty.call(defines, 'data') && Object.prototype.hasOwnProperty.call(defines, 'code')) {
-            // DICT-0
             if (_isArray(defines.data)) {
               for (let i = 0, length = defines.data.length; i < length; i++) {
                 const dictKeys = _keys(defines.data[i]);
@@ -84,7 +83,14 @@ class DataDictFilter {
                 const itemDict = _map(defines.data[i][dictList], (item) => {
                   return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
                 });
-                this._append({ [defines.data[i][dictName]]: itemDict });
+                if (/^[A-Za-z0-9]+$/.test(defines.data[i][dictName])) {
+                  this._append({ [defines.data[i][dictName]]: itemDict });
+                } else {
+                  const itemDict = _map(defines.data[i].data, (item) => {
+                    return { paramValue: item.id, paramDesc: item.name };
+                  });
+                  this._append({ ['DICT_' + i]: itemDict });
+                }
               }
             }
           } else {

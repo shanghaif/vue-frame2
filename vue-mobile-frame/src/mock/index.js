@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_PREVIEW === 'tr
   });
   // require('./services/user.js');
 
-  // 设置拦截 ajax 请求的相应时间（毫秒）
+  // 设置拦截 ajax 请求的相应时间（ 800 毫秒 ）
   Mock.setup({
     timeout: 800 // setter delay time
   });

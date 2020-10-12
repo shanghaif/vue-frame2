@@ -1,5 +1,6 @@
 'use strict';
 const webpack = require('webpack');
+const path = require('path');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
@@ -17,6 +18,19 @@ const otherDependencies = utils.arrayRemoveItems(
   Object.keys(packageConfig.dependencies),
   frameConfig.removeOtherDependenciesCacheGroupsLibs || []
 );
+const getNodeVersion = function () {
+  // 截取 node 的版本号
+  var str = process.version; // 'v12.18.3';
+  var reg = /(?<=v).+(.)/;
+  var matchResult = str.match(reg);
+  if (!matchResult) {
+    return 0;
+  }
+  if (matchResult.length > 0) {
+    return matchResult[0].split('.')[0]; // 12
+  }
+};
+const nodeVersion = getNodeVersion(); // node的版本
 // console.info('MiniCssExtractPlugin ', MiniCssExtractPlugin)
 const webpackConfig = merge(baseVueConfig, {
   productionSourceMap: processConfig.build.createMap,
@@ -78,17 +92,7 @@ const webpackConfig = merge(baseVueConfig, {
       }
     },
     module: {
-      rules: [
-        {
-          test: /\.(png|jpe?g|gif|svg|blob)(\?.*)?$/,
-          // 压缩图片
-          loader: 'image-webpack-loader',
-          // include: [resolve('src/assets/images-webpack')],
-          // 通过enforce: 'pre'我们提高了 img-webpack-loader 的优先级，保证在url-loader、file-loader和svg-url-loader之前就完成了图片的优化。
-          enforce: 'pre',
-          options: { bypassOnDebug: true }
-        }
-      ]
+      rules: []
     },
     plugins: [
       // 将配置的 cdn 文件注入到 html 文件内，默认是放到 body 底部
@@ -103,7 +107,7 @@ const webpackConfig = merge(baseVueConfig, {
         algorithm: 'gzip',
         test: productionGzipExtensions, // 匹配文件名
         threshold: 10240, // 对超过10kb的数据进行压缩
-        minRatio: 0.8
+        minRatio: 0.8 // 压缩比例，值为0 ~ 1
       }),
       // 导入自定义环境变量
       new webpack.DefinePlugin({
@@ -132,6 +136,20 @@ const webpackConfig = merge(baseVueConfig, {
     }
   }
 });
+// 图片按需压缩加载
+if (nodeVersion >= 12) {
+  const imagesWebpackLoader = {
+    // node 版本是8的时候 image-webpack-loader 打包构建会报错
+    test: /\.(png|jpe?g|gif|svg|blob)(\?.*)?$/,
+    // 压缩图片
+    loader: 'image-webpack-loader',
+    include: [path.join(__dirname, '..', 'src/assets/images-webpack')], // 某个文件下的图片进行压缩处理
+    // 通过enforce: 'pre'我们提高了 img-webpack-loader 的优先级，保证在url-loader、file-loader和svg-url-loader之前就完成了图片的优化。
+    enforce: 'pre',
+    options: { bypassOnDebug: true }
+  };
+  webpackConfig.configureWebpack.module.rules.push(imagesWebpackLoader);
+}
 // 查看 webpack 打包情况
 if (frameConfig.isBundleAnalyzer) {
   webpackConfig.configureWebpack.plugins.push(new BundleAnalyzerPlugin());

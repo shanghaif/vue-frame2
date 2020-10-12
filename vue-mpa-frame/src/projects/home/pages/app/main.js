@@ -53,7 +53,7 @@ new Vue({
     // 载入远程字典
     // this.$dict.import(this.$api['dict/getDictDataByTypeList']());
     // 模块常量
-    // console.info(this.$constant);
+    console.info(this.$constant);
   },
   render: h => h(App)
 }).$mount('#app');

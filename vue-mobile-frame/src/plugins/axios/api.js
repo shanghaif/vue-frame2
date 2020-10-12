@@ -23,6 +23,7 @@ import _now from 'lodash/now';
 import _isFunction from 'lodash/isFunction';
 // import _toUpper from 'lodash/toUpper'
 import _isArray from 'lodash/isArray';
+import _isNil from 'lodash/isNil';
 // window.Promise = Promise 如果是在 html 页面中直接测试（ie不支持Promise，Chrome则不用解释），请解释这句话
 /**
  * @class Loader
@@ -156,6 +157,8 @@ const Loader = class Api {
    * @prop {string} [args.responseType='json'] - 服务器响应的数据类型
    * @prop {object} [args.proxy=null] - 定义代理服务器的主机名称和端口
    * @prop {object} [args.isWhite=false] - 白名单接口
+   * @prop {object} [args.isLogin=false] - 是否登录接口（用在了token过期的调整判断）
+   * @prop {object} [args.isAbandonCheckedParams=false] - 是否放弃校验请求参数，默认 false 会校验，具体请求中设置 true 会放弃校验匹配
    * @example
    * namespace：'goods/fruit'
    * apiConfigModule: {name: 'read', desc: '', method:'GET', path: 'root/user/getUserInfo',mockPath: 'mock/root/user/getUserInfo',mock: false, cache: false, restful: {}, headers: {}, removeInvalidChar: true, params: {}, data: {},validator: {}, restfulValidator: {}, responseType: 'json', proxy: null}
@@ -181,7 +184,8 @@ const Loader = class Api {
       responseType,
       proxy,
       isWhite = false,
-      isLogin = false
+      isLogin = false,
+      isAbandonCheckedParams = false
     }
   ) {
     // eslint-disable-next-line
@@ -234,14 +238,18 @@ const Loader = class Api {
           {},
           {}
         ];
-        if ((_get(this, 'apiParamsConfig.mock') && !mock) || mock) {
-          // url = _isNil(mockPath) ? _get(this, 'apiParamsConfig.mockBasePath') : mockPath
+        // 全局 mock
+        if (
+          (_get(this, 'apiParamsConfig.mock') === true && _isNil(mock)) ||
+          (!_isNil(mock) && mock === true)
+        ) {
           url = !mockPath ? '' : mockPath;
           baseURL = _get(this, 'apiParamsConfig.mockBasePath');
         }
         if (!_isEmpty(_get(outParams, 'params', {})) || !_isEmpty(params)) {
-          pickParams = _pick(
+          let getParams = _pick(
             _assign(
+              {},
               params,
               _get(this, 'apiParamsConfig.gParams', {}),
               _get(outParams, 'params', {})
@@ -251,36 +259,66 @@ const Loader = class Api {
               _keys(_get(this, 'apiParamsConfig.gParams', {}))
             )
           );
+          if (isAbandonCheckedParams) {
+            // 放弃校验请求参数
+            getParams = _assign(
+              {},
+              params,
+              _get(this, 'apiParamsConfig.gParams', {}),
+              _get(outParams, 'params', {})
+            );
+          }
+          pickParams = getParams;
         }
         if ((!_get(this, 'apiParamsConfig.cache', false) && !cache) || !cache) {
           _set(pickParams, '_', _now());
         }
         if (!_isEmpty(_get(outParams, 'data', {})) || !_isEmpty(data)) {
+          let dataParams = _pick(
+            _assign({}, data, _get(outParams, 'data', {})),
+            _keys(data)
+          );
+          if (isAbandonCheckedParams) {
+            // 放弃校验请求参数
+            dataParams = _assign({}, data, _get(outParams, 'data', {}));
+          }
           pickData = Loader.transformStringPostData(
-            Loader.removeInvalidChar(
-              _pick(_assign(data, _get(outParams, 'data', {})), _keys(data)),
-              removeInvalidChar
-            ),
+            Loader.removeInvalidChar(dataParams, removeInvalidChar),
             headers,
             method
           );
         }
         if (!_isEmpty(_get(outParams, 'restful', {})) || !_isEmpty(restful)) {
-          url = Loader.transformRestfulUrl(
-            url,
-            _pick(
-              _assign(restful, _get(outParams, 'restful', {})),
-              _keys(restful)
-            )
+          let restfulParams = _pick(
+            _assign({}, restful, _get(outParams, 'restful', {})),
+            _keys(restful)
           );
+          if (isAbandonCheckedParams) {
+            // 放弃校验请求参数
+            restfulParams = _assign(
+              {},
+              restful,
+              _get(outParams, 'restful', {})
+            );
+          }
+          url = Loader.transformRestfulUrl(url, restfulParams);
         }
         if (!_isEmpty(_get(outParams, 'headers', {})) || !_isEmpty(headers)) {
           // headers 里的参数不进行特殊字符检查，防止比如 Content-Type 的这种原生参数设置被误检查出特殊字符
           // pickHeaders = Loader.removeInvalidChar(_pick(_assign(headers, _get(outParams, 'headers', {})), _keys(headers)), removeInvalidChar)
-          pickHeaders = _pick(
-            _assign(headers, _get(outParams, 'headers', {})),
+          let headersParams = _pick(
+            _assign({}, headers, _get(outParams, 'headers', {})),
             _keys(headers)
           );
+          if (isAbandonCheckedParams) {
+            // 放弃校验请求参数
+            headersParams = _assign(
+              {},
+              headers,
+              _get(outParams, 'headers', {})
+            );
+          }
+          pickHeaders = headersParams;
         }
         if (!_isEmpty(this.headerOptions)) {
           // 外部设置的通用请求头参数

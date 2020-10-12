@@ -312,7 +312,11 @@ const Loader = class Api {
           );
           if (isAbandonCheckedParams) {
             // 放弃校验请求参数
-            headersParams = _assign({}, headers, _get(outParams, 'headers', {}));
+            headersParams = _assign(
+              {},
+              headers,
+              _get(outParams, 'headers', {})
+            );
           }
           pickHeaders = headersParams;
         }

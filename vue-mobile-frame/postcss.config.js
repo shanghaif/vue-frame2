@@ -9,7 +9,7 @@ const px2remConfig = {
   rootValue: 750 / 10,
   // 这里是基本单位，前面设置了1vw
   unitPrecision: 1,
-  propList: ['*', '!font-size', '!border', '!border-bottom'], // 可以从 px 更改为 rem 的属性 （排除'!font-size'）
+  propList: ['*', '!font-size', '!border', '!border-bottom', '!border-left', '!border-right', '!border-top'], // 可以从 px 更改为 rem 的属性 （排除'!font-size'）
   replace: !!isProd, // 开发环境 .t{width: 621pr; width: 82.8rem;} 显示替换前的值，前面的值无效只是显示
   selectorBlackList: [
     'ignore',

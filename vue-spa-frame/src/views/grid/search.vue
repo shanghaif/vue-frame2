@@ -73,6 +73,7 @@ export default {
         productType: ''
       };
       this.getBaseGrid.setQueryParams(params);
+      // this.getBaseGrid.setQueryParams({ params: {name: '查询条件'}, data: { role: 1 }, headers: { myAutoId: '123' } }); // post请求 data 和 headers 参数怎么传递
       this.getBaseGrid.reloadGrid();
     },
     /**

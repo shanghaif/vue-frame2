@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev-port": "cross-env PORT=7060 npm run dev",
-    "dev": "npm run lint && npm run serve",
-    "serve": "vue-cli-service serve",
-    "serve:dev-preview": "npm run lint && vue-cli-service serve --mode preview",
+    "dev": "npm run createProxySelf && npm run lint && npm run serve",
+    "serve": "npm run createProxySelf && vue-cli-service serve",
+    "serve:dev-preview": "npm run createProxySelf && npm run lint && vue-cli-service serve --mode preview",
     "build": "vue-cli-service build",
     "lint": "eslint --ext .js --ext .jsx --ext .vue src/",
     "lint:no-fix": "vue-cli-service lint --no-fix",

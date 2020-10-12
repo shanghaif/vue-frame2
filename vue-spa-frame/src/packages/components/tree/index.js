@@ -370,7 +370,10 @@ const BaseTree = {
       const treeEventName = _has(this.$listeners, 'treeChange')
         ? 'treeChange'
         : 'tree-change';
-      this.$emit(treeEventName, _map(this.getTree().getCheckedNodes(), (o) => _get(o, this.valueField)));
+      this.$emit(
+        treeEventName,
+        _map(this.getTree().getCheckedNodes(), o => _get(o, this.valueField))
+      );
     },
     /**
      * @desc 当前选中节点变化时触发的事件 点击节点，并不是复选框
@@ -432,7 +435,11 @@ const BaseTree = {
             renderNode = this.$createElement(
               'el-popconfirm',
               {
-                props: { title: _get(option, 'title', ''), placement: 'left' },
+                props: {
+                  title: _get(option, 'title', ''),
+                  placement: 'left',
+                  iconColor: 'red'
+                },
                 on: {
                   onConfirm: () => {
                     _has(option, 'listeners.onConfirm') &&

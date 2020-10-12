@@ -9,6 +9,7 @@ import {
   ROOT_PAGE_NAME
 } from '../index.js';
 import store from '@/store';
+import _isEmpty from 'lodash/isEmpty';
 /**
  * @desc 全局前置守卫
  * @param {*} to
@@ -25,18 +26,37 @@ const routerBeforeEachFunc = function (to, from, next) {
     NProgress.done();
     return next();
   }
+  const loginStatus = store.getters['platform/getLoginStatus'];
   // 未登录状态且要跳转的页面不是登录页
-  if (!store.getters['platform/getLoginStatus'] && to.name !== LOGIN_PAGE_NAME) {
+  if (!loginStatus && to.name !== LOGIN_PAGE_NAME) {
     NProgress.done();
     return next({ name: `${LOGIN_PAGE_NAME}` });
   }
+  if (_isEmpty(from.matched)) {
+    // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
+    Promise.all([store.dispatch('platform/getDict')])
+      .then(() => {
+        // 页面刷新重新设置 request.headers
+        store.dispatch('platform/setApiHeaderParams', {
+          token: store.getters['platform/getToken']
+        });
+      })
+      .finally(() => {
+        next();
+        NProgress.done();
+      });
+    return;
+  }
   // 已登录且要跳转的页面是 to 登录页 from 主页面
-  if (store.getters['platform/getLoginStatus'] && to.name === ROOT_PAGE_NAME) {
-    store.dispatch('platform/getDict').then(() => {
-      next();
-    }).finally(() => {
-      NProgress.done();
-    });
+  if (loginStatus && to.name === ROOT_PAGE_NAME) {
+    store
+      .dispatch('platform/getDict')
+      .then(() => {
+        next();
+      })
+      .finally(() => {
+        NProgress.done();
+      });
     return;
   }
   next();
@@ -64,12 +84,12 @@ const routerAfterEachFunc = function (to, from) {
 const routerOnReady = function (to) {
   // 判断 token 是否有效，无效直接打开登录页
   // 载入字典数据
-  if (store.getters['platform/getLoginStatus']) {
+  /* if (store.getters['platform/getLoginStatus']) {
     store.dispatch('platform/getDict');
-  }
+  } */
   // if(){}
   // 页面刷新重新设置 request.headers
-  store.dispatch('platform/setApiHeaderParams', { token: store.getters['platform/getToken'] });
+  // store.dispatch('platform/setApiHeaderParams', { token: store.getters['platform/getToken'] });
 };
 
 export { routerBeforeEachFunc, routerAfterEachFunc, routerOnReady };

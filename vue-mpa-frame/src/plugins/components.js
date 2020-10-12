@@ -12,10 +12,17 @@ export default {
         page: 'page',
         size: 'size',
         total: 'data.totalRecord',
-        data: 'data.results'
+        data: 'data.results',
+        pageNum: 'current',
+        pageSize: 'size'
+      },
+      checkboxGroup: {
+        data: 'data'
       }
     };
-    Object.defineProperty(Vue.prototype, '$base-global-options', { value: defaultGlobalOptions });
+    Object.defineProperty(Vue.prototype, '$base-global-options', {
+      value: defaultGlobalOptions
+    });
     // 自动设置全局组件
     for (const key in AllComponents) {
       Vue.component(AllComponents[key].name, AllComponents[key]);

@@ -9,6 +9,7 @@ import _map from 'lodash/map';
 import _split from 'lodash/split';
 import _join from 'lodash/join';
 import _last from 'lodash/last';
+import _isNil from 'lodash/isNil';
 
 const BaseNavMenu = {
   name: 'BaseNavMenu',
@@ -18,6 +19,22 @@ const BaseNavMenu = {
     width: {
       type: String,
       default: '240px'
+    },
+    // 导航菜单顶部标题栏文字
+    navTitle: {
+      type: String
+    },
+    // 导航菜单顶部标题栏文字左侧小图标
+    navIcon: {
+      type: String
+    },
+    // 收起导航的位置
+    collapsePosition: {
+      type: String,
+      default: 'top',
+      validator(value) {
+        return ['top', 'bottom'].indexOf(value) !== -1;
+      }
     },
     collapseText: {
       type: String,
@@ -52,7 +69,8 @@ const BaseNavMenu = {
       firstSubMenuIndex: '',
       firstElMenuItem: '',
       collapseIcon: 'el-icon-s-fold', // 折叠图表
-      isCollapse: this.collapsed // 是否水平折叠收起菜单 （仅在 mode 为 vertical 时可用）
+      isCollapse: this.collapsed, // 是否水平折叠收起菜单 （仅在 mode 为 vertical 时可用）
+      collapsePanelWidth: 'auto'
     };
   },
   watch: {
@@ -70,13 +88,16 @@ const BaseNavMenu = {
     } */
   },
   created() {
-    /* this.$nextTick(function () {
-      console.info('....nextTick....');
-    }); */
-    /*
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.$emit('update:width', '64px');
     }, 3000); */
+  },
+  mounted() {
+    this.$nextTick(function () {
+      // DOM 现在更新了
+      // `this` 绑定到当前实例
+      this.collapsePanelWidth = `${this.$parent.$el.clientWidth}px`;
+    });
   },
   methods: {
     /**
@@ -176,15 +197,54 @@ const BaseNavMenu = {
       this.$refs[`${this._uid}-base-nav-menu-ref`].close(index);
     },
     /**
-     * @desc 创建 搜索导航
+     * @desc 创建 导航菜单顶部标题栏
+     */
+    createNavTitle() {
+      const vNode = [];
+      const style = {};
+      vNode.push(
+        this.$createElement(
+          'div',
+          { class: { 'nav-top-title': true }, style },
+          [
+            !_isNil(this.navIcon) && this.$createElement('i', { class: this.navIcon }, []),
+            this.$createElement(
+              'span',
+              {
+                style: { display: !this.isCollapse ? 'inline-block' : 'none' }
+              },
+              this.navTitle
+            )
+          ]
+        )
+      );
+      return vNode;
+    },
+    /**
+     * @desc 创建 收起导航
      */
     createContractBlock() {
       const vNode = [];
-      if (!_has(this.$attrs, 'mode') || (_has(this.$attrs, 'mode') && this.$attrs.mode !== 'horizontal')) {
-        vNode.push(this.$createElement('template', { slot: 'default' }, [
+      if (
+        !_has(this.$attrs, 'mode') ||
+        (_has(this.$attrs, 'mode') && this.$attrs.mode !== 'horizontal')
+      ) {
+        const style = {
+          'background-color': this.$attrs.backgroundColor
+        };
+        if (this.collapsePosition === 'bottom') {
+          _assign(style, { position: 'absolute', bottom: '0px' });
+        } else {
+          _assign(style, {
+            'border-bottom': '1px solid rgba(236, 236, 236, 0.5)'
+          });
+        }
+        vNode.push(
+          // this.$createElement('template', { slot: 'default' }, [
           this.$createElement(
             'div',
             {
+              style: style,
               class: { collapse: true },
               on: {
                 click: () => {
@@ -196,15 +256,20 @@ const BaseNavMenu = {
               }
             },
             [
-              this.$createElement('i', { class: { [this.collapseIcon]: true } }),
+              this.$createElement('i', {
+                class: { [this.collapseIcon]: true }
+              }),
               this.$createElement(
                 'span',
-                { style: { display: !this.isCollapse ? 'block' : 'none' } },
+                {
+                  style: { display: !this.isCollapse ? 'inline-block' : 'none' }
+                },
                 this.collapseText
               )
             ]
           )
-        ]));
+          // ])
+        );
       }
       return vNode;
     },
@@ -219,14 +284,17 @@ const BaseNavMenu = {
         const menu = this.menus[i];
         let menuVNode = null;
         if (_has(menu, 'children') && !_isEmpty(menu.children)) {
+          const subMenuIndex =
+            this.grade1Index !== '' ? this.grade1Index + '-' + i : i + '';
+          this.subMenuList.push(subMenuIndex);
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
               text: _get(menu, 'menuName', '')
             });
           }
-          const subMenuIndex = this.grade1Index !== '' ? (this.grade1Index + '-' + i) : (i + '');
-          this.firstSubMenuIndex = subMenuIndex;
-          this.subMenuList.push(subMenuIndex);
+          if (i === 0) {
+            this.firstSubMenuIndex = subMenuIndex;
+          }
           // 二级
           menuVNode = this.$createElement(
             'el-submenu',
@@ -247,7 +315,8 @@ const BaseNavMenu = {
             ]
           );
         } else {
-          const menuItemIndex = this.grade1Index !== '' ? (this.grade1Index + '-' + i + '') : (i + '');
+          const menuItemIndex =
+            this.grade1Index !== '' ? this.grade1Index + '-' + i + '' : i + '';
           if (this.firstElMenuItem === '') {
             this.firstElMenuItem = menuItemIndex;
           }
@@ -295,7 +364,10 @@ const BaseNavMenu = {
                 text: _get(item, 'menuName', '')
               });
             }
-            const menuItemIndex = this.grade1Index !== '' ? (this.grade1Index + '-' + parentIndex + '-' + i + '-' + key) : (parentIndex + '-' + i + '-' + key);
+            const menuItemIndex =
+              this.grade1Index !== ''
+                ? this.grade1Index + '-' + parentIndex + '-' + i + '-' + key
+                : parentIndex + '-' + i + '-' + key;
             if (this.firstElMenuItem === '') {
               this.firstElMenuItem = menuItemIndex;
             }
@@ -308,8 +380,13 @@ const BaseNavMenu = {
               ]
             );
           });
-          const subMenuIndex = this.grade1Index !== '' ? (this.grade1Index + '-' + parentIndex + '-' + i) : (parentIndex + '-' + i);
-          this.firstSubMenuIndex = subMenuIndex;
+          const subMenuIndex =
+            this.grade1Index !== ''
+              ? this.grade1Index + '-' + parentIndex + '-' + i
+              : parentIndex + '-' + i;
+          if (parentIndex === 0) {
+            this.firstSubMenuIndex = subMenuIndex;
+          }
           this.subMenuList.push(subMenuIndex);
           vNodes.push(
             this.$createElement(
@@ -333,12 +410,22 @@ const BaseNavMenu = {
             });
           }
           if (this.firstElMenuItem === '') {
-            this.firstElMenuItem = this.grade1Index !== '' ? (this.grade1Index + '-' + parentIndex + '-' + i) : (parentIndex + '-' + i);
+            this.firstElMenuItem =
+              this.grade1Index !== ''
+                ? this.grade1Index + '-' + parentIndex + '-' + i
+                : parentIndex + '-' + i;
           }
           vNodes.push(
             this.$createElement(
               'el-menu-item',
-              { props: { index: this.grade1Index !== '' ? (this.grade1Index + '-' + parentIndex + '-' + i) : (parentIndex + '-' + i) } },
+              {
+                props: {
+                  index:
+                    this.grade1Index !== ''
+                      ? this.grade1Index + '-' + parentIndex + '-' + i
+                      : parentIndex + '-' + i
+                }
+              },
               [
                 this.$createElement('i', {
                   class: _get(children[i], 'iconUrl', '')
@@ -353,11 +440,44 @@ const BaseNavMenu = {
     }
   },
   render(h) {
-    const style = {};
+    const style = { height: '100%' };
     if (_has(this.$attrs, 'mode') && this.$attrs.mode === 'horizontal') {
       style.width = '100%';
     }
     return h(
+      'div',
+      {
+        style: {
+          height: '100%',
+          'overflow-y': 'hidden',
+          'background-color': this.$attrs.backgroundColor
+        },
+        class: { 'base-nav-menu-box': true }
+      },
+      [
+        this.collapsePosition === 'top' && this.createContractBlock(),
+        this.navTitle && this.createNavTitle(),
+        h(
+          'el-menu',
+          {
+            ref: `${this._uid}-base-nav-menu-ref`,
+            style,
+            attrs: {
+              id: this.$attrs.id
+            },
+            class: { 'base-nav-menu': true },
+            props: _assign({}, this.$attrs, {
+              'default-active': this.$attrs.defaultActive,
+              collapse: this.isCollapse
+            }),
+            on: this.$listeners
+          },
+          [this.createSubMenu()]
+        ),
+        this.collapsePosition === 'bottom' && this.createContractBlock()
+      ]
+    );
+    /* return h(
       'el-menu',
       {
         ref: `${this._uid}-base-nav-menu-ref`,
@@ -373,10 +493,12 @@ const BaseNavMenu = {
         on: this.$listeners
       },
       [
-        this.createContractBlock(),
-        this.createSubMenu()
+        this.navTitle && this.createNavTitle(),
+        this.collapsePosition === 'top' && this.createContractBlock(),
+        this.createSubMenu(),
+        this.collapsePosition === 'bottom' && this.createContractBlock()
       ]
-    );
+    ); */
   }
 };
 

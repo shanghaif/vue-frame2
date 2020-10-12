@@ -16,3 +16,26 @@ Vue.use(ElementUI, {
 Vue.use(ElementUI);
 Vue.use(frameComponents);
 Vue.prototype.$message = ElementUI.Message;
+function messageFun(message, type = 'success') { // type success/warning/info/error
+  ElementUI.Message({
+    type,
+    message,
+    customClass: 'global-message-cls'
+  });
+}
+function success(message) {
+  messageFun(message);
+}
+function fail(message) {
+  messageFun(message, 'error');
+}
+function info(message) {
+  messageFun(message, 'info');
+}
+function warn(message) {
+  messageFun(message, 'warn');
+}
+Vue.prototype.$successMsg = success;
+Vue.prototype.$errorMsg = fail;
+Vue.prototype.$infoMsg = info;
+Vue.prototype.$warnMsg = warn;

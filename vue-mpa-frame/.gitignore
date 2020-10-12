@@ -22,7 +22,10 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# lib version files
 package-lock.json
-.huskyrc
-.lintstagedrc
-commitlint.config.js
+yarn.lock
+
+# user option files
+proxy-self.js
+

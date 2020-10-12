@@ -1,5 +1,8 @@
 <template>
-  <basic-layout v-bind="basicLayout" :titleClick="basicLayout.titleClick.bind(this)"></basic-layout>
+  <basic-layout
+    v-bind="basicLayout"
+    :titleClick="basicLayout.titleClick.bind(this)"
+  ></basic-layout>
 </template>
 
 <script>
@@ -13,12 +16,8 @@ export default {
       basicLayout: DEFAULT_SETTINGS
     };
   },
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

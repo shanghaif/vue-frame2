@@ -12,6 +12,7 @@ import _some from 'lodash/some';
 import _omit from 'lodash/omit';
 import _find from 'lodash/find';
 import _isArray from 'lodash/isArray';
+import _pick from 'lodash/pick';
 
 const BaseGridTable = {
   name: 'BaseGridTable',
@@ -77,7 +78,7 @@ const BaseGridTable = {
     // this.loading = null;
     this.currentRows = []; // 当前选中行集
     return {
-      loading: true,
+      loading: false,
       currentRow: {}, // 当前选中行
       tableData: []
     };
@@ -194,10 +195,12 @@ const BaseGridTable = {
           [_get(this['$base-global-options'], 'grid.pageNum', 'pageNum')]: this.getBaseGrid.currentPage,
           [_get(this['$base-global-options'], 'grid.pageSize', 'pageSize')]: this.getBaseGrid.pageSize
         },
-        this.queryParams,
-        this.curQueryParams
+        _omit(this.queryParams, ['data', 'headers']),
+        _omit(this.curQueryParams, ['data', 'headers'])
       );
-      this.$api[this.api]({ params })
+      const data = _get(_assign({}, _pick(this.queryParams, ['data']), _pick(this.curQueryParams, ['data'])), 'data', {});
+      const headers = _get(_assign({}, _pick(this.queryParams, ['headers']), _pick(this.curQueryParams, ['headers'])), 'headers', {});
+      this.$api[this.api]({ params, data, headers })
         .then(response => {
           this.getBaseGrid.setTotal(
             _get(

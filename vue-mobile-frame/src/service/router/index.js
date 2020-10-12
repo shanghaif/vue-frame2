@@ -48,7 +48,7 @@ const routes = [
   {
     path: '/404',
     name: '404',
-    component: () => import(/* webpackChunkName:"views/404" */ '../../views/error-page/404.vue'),
+    component: () => import(/* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'),
     meta: { title: '404' }
   },
   {

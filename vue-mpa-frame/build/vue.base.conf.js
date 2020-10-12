@@ -235,7 +235,7 @@ const baseConfig = {
       .tap(options => {
         return merge(options, createCssLoaderConfig(isDev));
       });
-    // babel-loader （src、test、static/plugins/babel-modules 会使用 babel-loader 处理，其它目录不使用）
+    // babel-loader （src、test、static/plugins/babel-modules 会使用 babel-loader 处理，其它目录需要使用 exclude 添加过虑规则不使用 babel-loader ）
     /* config.module
       .rule('js')
       .include.add([

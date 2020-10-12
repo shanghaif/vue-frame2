@@ -25,7 +25,7 @@ if (isHavePr2rem !== -1) {
     // 这里是基本单位，前面设置了1vw
     unitPrecision: 1,
     propWhiteList: [], // 白名单
-    propBlackList: ['font-size', 'border', 'border-bottom'], // 黑名单 （font-size 我们可能需要直接设置 rem、vw或者px）
+    propBlackList: ['font-size', 'border', 'border-bottom', 'border-left', 'border-right', 'border-top'], // 黑名单 （font-size 我们可能需要直接设置 rem、vw或者px）
     selectorBlackList: [], // 要忽略的选择器，保留为px 比如：['body'] 将匹配 .body-class
     // ignoreIdentifier: '00',
     replace: !!isProd, // 开发环境 .t{width: 621pr; width: 82.8rem;} 显示替换前的值，前面的值无效只是显示

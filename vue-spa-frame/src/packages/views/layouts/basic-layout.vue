@@ -69,7 +69,8 @@ export default {
         northHeight: '60px',
         westWidth: 'auto',
         eastWidth: '0px',
-        southHeight: '0px'
+        southHeight: '0px',
+        northCls: this.$style.northCls
       },
       innerLayout: {
         northHeight: '30px',
@@ -150,7 +151,7 @@ export default {
           const index2LastMenu = this.$refs.menu.getLastMenu(
             this.menuProps.defaultActive
           );
-          if (!_isEmpty(index2LastMenu.menuCode)) {
+          if (!_isNil(index2LastMenu) && !_isEmpty(index2LastMenu.menuCode)) {
             this.$router.push({ name: index2LastMenu.menuCode });
           }
           /* this.$router.push({

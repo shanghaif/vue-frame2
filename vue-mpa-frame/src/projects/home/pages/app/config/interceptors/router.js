@@ -8,9 +8,10 @@ import {
   LOGIN_PAGE_NAME,
   ROOT_PAGE_NAME
 } from '../index.js';
-import store from '../../store/index.js';
+import store, { sStorageKey } from '../../store/index.js';
 import _has from 'lodash/has';
 import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
 /**
  * @desc 全局前置守卫
  * @param {*} to
@@ -22,7 +23,6 @@ const routerBeforeEachFunc = function (to, from, next) {
   if ('title' in to.meta && WINDOW_TITLE_UPDATE) {
     document.title = to.meta.title;
   }
-  console.info(to);
   // 白名单直接跳转
   if (ROUTER_WHITE_LIST.includes(to.name)) {
     NProgress.done();
@@ -34,6 +34,15 @@ const routerBeforeEachFunc = function (to, from, next) {
   if (!loginStatus && to.name !== LOGIN_PAGE_NAME) {
     NProgress.done();
     return next({ name: LOGIN_PAGE_NAME });
+  }
+  if (appStatus && _isEmpty(from.matched)) {
+    // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
+    if (_has(window.localStorage, sStorageKey)) {
+      const oStorage = JSON.parse(_get(window.localStorage, sStorageKey, '{}'));
+      store.dispatch('platform/setApiHeaderParams', {
+        token: oStorage.platform.token
+      });
+    }
   }
   // 已登录未初始化完成，加载菜单
   if (loginStatus && !appStatus && to.name === ROOT_PAGE_NAME) {
@@ -76,12 +85,12 @@ const routerOnReady = function () {
   // 刷新页面路由权限 isOpen 判断
   // if(){}
   // 页面刷新重新设置 request.headers
-  if (_has(window.localStorage, 'appVuex')) {
+  /* if (_has(window.localStorage, 'appVuex')) {
     const oStorage = JSON.parse(_get(window.localStorage, 'appVuex', '{}'));
     store.dispatch('platform/setApiHeaderParams', {
       token: oStorage.platform.token
     });
-  }
+  } */
 };
 
 export { routerBeforeEachFunc, routerAfterEachFunc, routerOnReady };

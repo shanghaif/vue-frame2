@@ -27,6 +27,8 @@ npm run lint:no-fix | eslint 代码校验 （同 npm run lint 但在没有 eslin
 npm run lint-fix | eslint 代码修复
 npm run clear| 删除 node_modules 依赖并重新安装
 npm run changelog | 生成 changelog 日志文件
+npm run icon | 生成 iconfont 相关的样式图标文件 `iconfont-classname.js`
+npm run createProxySelf | 生成 dev 请求代理文件 proxy-self.js 用于代理请求的发送，proxy-self.js 是被 .gitignore 收录的过滤文件不需要传递上远端
 
 浏览器地址：
 
@@ -38,7 +40,9 @@ http://localhost:8010/app
 
 ```
 build webpack配置文件目录
+ |-create-proxy-self.js
  |-css-loader.conf.js
+ |-read-icon.js
  |-utils.js
  |-vue.base.conf.js
  |-vue.dev.conf.js 开发配置

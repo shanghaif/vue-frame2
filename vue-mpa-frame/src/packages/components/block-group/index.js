@@ -14,6 +14,23 @@ const BaseBlockGroup = {
     width: {
       type: String
     },
+    height: {
+      type: String
+    },
+    // 是否显示边框
+    border: {
+      type: Boolean,
+      default: true
+    },
+    // 子项之间的边距值
+    spaceVal: {
+      type: String
+    },
+    // 是否显示小图标 icon
+    isShowIcon: {
+      type: Boolean,
+      default: true
+    },
     // 当前激活的菜单项（0 是第一个）
     defaultActive: {
       type: Number,
@@ -41,6 +58,10 @@ const BaseBlockGroup = {
     // 配置项
     buttonGroup: {
       type: Array
+    },
+    // 自定义样式
+    ctCls: {
+      type: String
     }
   },
   data() {
@@ -75,7 +96,7 @@ const BaseBlockGroup = {
         []
       );
       if (aChildrenList.length > this.isActive) {
-        aChildrenList[this.isActive].click();
+        !_isNil(aChildrenList[this.isActive]) && aChildrenList[this.isActive].click();
       }
     },
     /**
@@ -93,53 +114,63 @@ const BaseBlockGroup = {
         for (let i = 0, len = this.buttonGroup.length; i < len; i++) {
           const option = this.buttonGroup[i];
           let icon = null;
-          if (_has(option, 'icon') || _has(option, 'iconUrl')) {
+          if ((_has(option, 'icon') || _has(option, 'iconUrl')) && this.isShowIcon) {
             icon = this.$createElement('i', {
               class: option.icon || option.iconUrl
             });
           }
-          const vNode = this.$createElement(
-            'div',
-            {
-              style: {
-                width: this.width,
-                'background-color':
-                  this.backgroundColor && this.isActive !== i
-                    ? this.backgroundColor
-                    : null
-              },
-              class: {
-                active: this.isActive === i,
-                [this.activeCls]: this.activeCls && this.isActive === i
-              },
-              on: {
-                click: event => {
-                  if (this.isActive !== i) {
-                    this.isActive = i; // 设置选中项
-                    this.$emit('update:defaultActive', i);
-                  }
-                  if (_has(this.$listeners, 'click')) {
-                    this.$listeners.click(event, _assign({}, option), i);
+          let vNode;
+          if (_has(this.$scopedSlots, 'default')) {
+            // 自定义节点的内容
+            vNode = this.$scopedSlots.default({ index: i, props: this.$props, menuOption: this.buttonGroup[i] });
+          } else {
+            vNode = this.$createElement(
+              'div',
+              {
+                style: {
+                  width: this.width,
+                  height: this.height,
+                  border: !this.border ? 'none' : true,
+                  marginLeft: (i === 0) ? '0px' : this.spaceVal,
+                  'background-color':
+                    this.backgroundColor && this.isActive !== i
+                      ? this.backgroundColor
+                      : null
+                },
+                class: {
+                  'block-group-item': true,
+                  active: this.isActive === i,
+                  [this.activeCls]: this.activeCls && this.isActive === i
+                },
+                on: {
+                  click: event => {
+                    if (this.isActive !== i) {
+                      this.isActive = i; // 设置选中项
+                      this.$emit('update:defaultActive', i);
+                    }
+                    if (_has(this.$listeners, 'click')) {
+                      this.$listeners.click(event, _assign({}, option), i);
+                    }
                   }
                 }
-              }
-            },
-            [
-              icon,
-              this.$createElement(
-                'span',
-                {
-                  style: {
-                    color:
-                      this.isActive === i
-                        ? this.activeTextColor
-                        : this.textColor
-                  }
-                },
-                option.text || option.menuName
-              )
-            ]
-          );
+              },
+              [
+                icon,
+                this.$createElement(
+                  'span',
+                  {
+                    style: {
+                      color:
+                        this.isActive === i
+                          ? this.activeTextColor
+                          : this.textColor
+                    }
+                  },
+                  option.text || option.menuName
+                )
+              ]
+            );
+          }
           vNodes.push(vNode);
         }
       }
@@ -152,7 +183,7 @@ const BaseBlockGroup = {
       {
         ref: `${this._uid}-base-button-group`,
         attrs: { id: this.$attrs.id },
-        class: { 'base-button-group': true }
+        class: { 'base-button-group': true, [this.ctCls]: this.ctCls }
       },
       this.createItem()
     );

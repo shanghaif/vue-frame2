@@ -38,7 +38,7 @@ npm run changelog | 生成 changelog 日志文件（新发布版本时生成日�
 浏览器地址：
 
 ```
-http://localhost:8010
+http://localhost:8010/spa
 ```
 
 
@@ -46,7 +46,9 @@ http://localhost:8010
 
 ```
 build webpack配置文件目录
+ |-create-proxy-self.js
  |-css-loader.conf.js
+ |-read-icon.js
  |-utils.js
  |-vue.base.conf.js
  |-vue.dev.conf.js 开发配置
@@ -62,6 +64,8 @@ public
  |-meta.html
 src
  |-assets 静态资源
+    |-images 普通图片资源文件目录
+    |-images-webpack 生成环境打包会通过 images-webpack-loader 进行图片压缩（体积比较大的图推荐放在这里）
  |-config 全局配置目录
     |-interceptor 拦截器
     |-index.js
@@ -110,7 +114,7 @@ src
         |-role 角色管理
  |-utils 工具类
 static 静态资源
- |-images
+ |-images 图片目录（推荐 背景图 background: url() 放到这里）
  |-plugins // 外部插件
    |-babel-modules 使用 babel 处理的 js 插件
 .browserslistrc 浏览器兼容性配置

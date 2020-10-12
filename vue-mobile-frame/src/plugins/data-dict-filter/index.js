@@ -5,7 +5,7 @@
  * 例如在 methods 中请使用Vue根实例过滤转换器 plugins/root-filters.js
  */
 import Vue from 'vue';
-import dictionary from './data-dict.js';
+import dictionary from '@service/data-dict/index.js';
 import _omit from 'lodash/omit';
 import _forEach from 'lodash/forEach';
 import _get from 'lodash/get';
@@ -15,7 +15,9 @@ import _keys from 'lodash/keys';
 import _find from 'lodash/find';
 
 class DataDictFilter {
-  constructor() {
+  constructor({ label = 'name', code = 'id' } = {}) {
+    this.label = label;
+    this.code = code; // 具体的取值字段
     this.filterKeys = [];
     this.dictData = [];
     this.init();
@@ -76,11 +78,18 @@ class DataDictFilter {
             // DICT-0
             if (_isArray(defines.data)) {
               for (let i = 0, length = defines.data.length; i < length; i++) {
-                console.info(defines.data[i]);
-                const itemDict = _map(defines.data[i].data, (item) => {
+                const dictKeys = _keys(defines.data[i]);
+                const dictName = !_isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
+                const dictList = _isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
+                const itemDict = _map(defines.data[i][dictList], (item) => {
+                  return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
+                });
+                this._append({ [defines.data[i][dictName]]: itemDict });
+                // 项目中字典数据如果没有名称 dictName 提供，那么使用默认的 DICT-0 这种形式
+                /* const itemDict = _map(defines.data[i].data, (item) => {
                   return { paramValue: item.id, paramDesc: item.name };
                 });
-                this._append({ ['DICT_' + i]: itemDict });
+                this._append({ ['DICT_' + i]: itemDict }); */
               }
             }
           } else {
@@ -125,4 +134,4 @@ class DataDictFilter {
     return dict ? Object.values(dict)[0] : dict;
   }
 }
-export default new DataDictFilter();
+export default DataDictFilter;

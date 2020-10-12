@@ -18,10 +18,12 @@ export default {
     window.apiRequestEndHandler = apiRequestEndHandler;
     window.apiRequestInterceptErrorHandler = apiRequestInterceptErrorHandler;
 
+    const dictInstance = new DataDictFilter({ label: 'name', code: 'id' });
+
     Object.defineProperty(Vue.prototype, '$loaderApiLibrary', { value: Loader });
     Object.defineProperty(Vue.prototype, '$api', { value: Loader.api });
     Object.defineProperty(Vue.prototype, '$axios', { value: axios });
-    Object.defineProperty(Vue.prototype, '$dict', { value: DataDictFilter });
+    Object.defineProperty(Vue.prototype, '$dict', { value: dictInstance });
     Object.defineProperty(Vue.prototype, '$vBus', { value: vBus });
     Object.defineProperty(Vue.prototype, '$constant', { value: moduleConst });
   }

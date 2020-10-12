@@ -440,7 +440,7 @@ const BaseNavMenu = {
     }
   },
   render(h) {
-    const style = { height: '100%' };
+    const style = { }; // height: '100%'
     if (_has(this.$attrs, 'mode') && this.$attrs.mode === 'horizontal') {
       style.width = '100%';
     }
@@ -448,8 +448,6 @@ const BaseNavMenu = {
       'div',
       {
         style: {
-          height: '100%',
-          'overflow-y': 'hidden',
           'background-color': this.$attrs.backgroundColor
         },
         class: { 'base-nav-menu-box': true }

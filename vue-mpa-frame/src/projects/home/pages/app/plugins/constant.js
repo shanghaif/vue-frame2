@@ -1,6 +1,6 @@
 /**
- * 服务层 const 插件
- * this.$const['USER']['value']
+ * 服务层 constant 插件
+ * this.$constant['USER']['value']
  */
 import { CONST_DEFAULT_CONFIG } from '../config/index.js';
 import CONST_CONFIG from '../service/constant/index.js';

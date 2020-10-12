@@ -20,13 +20,14 @@ export default {
         data: 'data'
       }
     };
-    Object.defineProperty(Vue.prototype, '$base-global-options', { value: defaultGlobalOptions });
+    Object.defineProperty(Vue.prototype, '$base-global-options', {
+      value: defaultGlobalOptions
+    });
     // 自动设置全局组件
     for (const key in AllComponents) {
       Vue.component(AllComponents[key].name, AllComponents[key]);
     }
     for (const key in AllViewComponents) {
-      console.info(AllViewComponents[key].name);
       Vue.component(AllViewComponents[key].name, AllViewComponents[key]);
     }
   }

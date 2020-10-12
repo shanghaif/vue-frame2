@@ -1,9 +1,15 @@
+@collapse-height: 48px;
 .base-nav-menu-box {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: hidden;
   position: relative;
   .base-nav-menu{
-    height: 100%;
+    // height: 100%;
+    height: calc(100% - @collapse-height);
     border-right: none;
     box-sizing: border-box;
+    overflow: auto;
     &:not(.el-menu--collapse) {
       width: 210px;
     }
@@ -13,7 +19,7 @@
     cursor: pointer;
     display: flex;
     flex-direction: row;
-    height: 48px;
+    height: @collapse-height;
     justify-content: flex-start;
     font-size: 14px;
     width: 100%;

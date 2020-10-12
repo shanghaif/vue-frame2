@@ -1,12 +1,12 @@
 <template>
-  <div :class="[$style.baseDoubleWingContainer,ctCls]">
-    <div :class="$style.view">
+  <div :class="{ 'base-double-wing-container': true, [ctCls]: ctCls }">
+    <div class="view">
       <div class="le">
         <slot name="left">
           <!--子列-->
         </slot>
       </div>
-      <div :class="$style.mi">
+      <div class="mi">
         <slot name="middle">
           <!--主列-->
         </slot>
@@ -39,22 +39,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" module>
-.base-double-wing-container {
-  height: 100%;
-}
-.view {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.view > div {
-  height: 100%;
-}
-.mi {
-  flex: 1; /*占满剩下的全局空间*/
-}
-</style>

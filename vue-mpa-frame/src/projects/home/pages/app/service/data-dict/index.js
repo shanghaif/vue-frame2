@@ -1,5 +1,5 @@
 /**
- * @desc 公共的一些字典
+ * @desc 公共的一些字典（本项目）
  */
 export default {
   WF_TYPE: [

@@ -67,39 +67,45 @@ const BaseDropDown = {
     }
   },
   render(h) {
-    return h(
-      'el-dropdown',
-      {
-        ref: `${this._uid}-base-drop-down`,
-        attrs: {
-          id: this.$attrs.id
-        },
-        class: { 'base-drop-down': true, [this.cls]: this.cls },
-        props: _assign({}, this.$attrs),
-        on: this.$listeners
-      },
-      [
-        h(
-          'span',
-          {
-            class: { 'el-dropdown-link': true, [this.ctCls]: this.ctCls }
+    if (this.options.length === 0) {
+      return _has(this.$slots, 'title')
+        ? this.$slots.title
+        : h('span', { style: 'cursor: pointer;' }, [this.title]);
+    } else {
+      return h(
+        'el-dropdown',
+        {
+          ref: `${this._uid}-base-drop-down`,
+          attrs: {
+            id: this.$attrs.id
           },
-          [
-            _has(this.$slots, 'title') ? this.$slots.title : this.title,
-            h('i', {
-              class: _isNil(this.icon)
-                ? 'el-icon-arrow-down el-icon--right'
-                : this.icon
-            })
-          ]
-        ),
-        h(
-          'el-dropdown-menu',
-          { slot: 'dropdown' },
-          this.createElDropdownItem()
-        )
-      ]
-    );
+          class: { 'base-drop-down': true, [this.cls]: this.cls },
+          props: _assign({}, this.$attrs),
+          on: this.$listeners
+        },
+        [
+          h(
+            'span',
+            {
+              class: { 'el-dropdown-link': true, [this.ctCls]: this.ctCls }
+            },
+            [
+              _has(this.$slots, 'title') ? this.$slots.title : this.title,
+              h('i', {
+                class: _isNil(this.icon)
+                  ? 'el-icon-arrow-down el-icon--right'
+                  : this.icon
+              })
+            ]
+          ),
+          h(
+            'el-dropdown-menu',
+            { slot: 'dropdown' },
+            this.createElDropdownItem()
+          )
+        ]
+      );
+    }
   }
 };
 export default BaseDropDown;

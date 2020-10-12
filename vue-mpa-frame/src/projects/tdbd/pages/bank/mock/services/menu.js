@@ -125,6 +125,29 @@ const getMenu = (options) => {
         ]
       },
       {
+        id: 22,
+        menuCode: 'tree',
+        menuName: 'tree 树形控件',
+        menuUrl: '/tree',
+        iconUrl: 'el-icon-share',
+        children: [
+          {
+            id: 23,
+            menuCode: 'base-tree',
+            menuName: '基础-tree',
+            menuUrl: '/base-tree',
+            iconUrl: 'el-icon-share'
+          },
+          {
+            id: 32,
+            menuCode: 'base-select-tree',
+            menuName: 'select-tree',
+            menuUrl: 'base-select-tree',
+            iconUrl: 'el-icon-share'
+          }
+        ]
+      },
+      {
         id: 5,
         menuCode: 'personal',
         menuName: '个人中心',

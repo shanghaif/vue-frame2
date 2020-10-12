@@ -33,7 +33,7 @@ export const apiDefaultConfig = {
   seq: '/',
   // 进行特殊字符过滤的字符
   invalidChar: '[`~!@#$^&*()=|{}\':;\',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“\'。，、？]',
-  // 前端response返回状态码提示短语
+  // 前端 response 返回状态码提示短语 https://blog.csdn.net/chuxuan0215/article/details/90676692
   statusMessage: {
     400: '错误请求', // Bad Request
     401: '未经授权', // Unauthorized

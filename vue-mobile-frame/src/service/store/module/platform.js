@@ -53,7 +53,7 @@ const actions = {
     });
   },
   // 登出
-  handle_exit({ commit, state }) {
+  handleExit({ commit, state }) {
     return new Promise((resolve, reject) => {
       // 发送登出请求 （销毁 token api请求）
       Vue.prototype.$api['login/logout']({
@@ -80,13 +80,11 @@ const actions = {
   },
   // 加载远程数据字典-保证页面展示时字典数据已经获取
   getDict({ commit, state }) {
-    // 载入本包中的字典
-    const p1 = Vue.prototype.$dict.import(import('../../data-dict/index.js'));
     // 载入远程字典
     const p2 = Vue.prototype.$dict.import(
       Vue.prototype.$api['dict/getDictDataByTypeList']()
     );
-    return Promise.all([p1, p2]);
+    return Promise.all([p2]);
     // Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
   }
 };
@@ -105,7 +103,9 @@ const mutations = {
     state.token = '';
     state.isLogin = false;
     setTimeout(() => {
+      // 移除全部缓存
       localStorage.removeItem(sStorageKey);
+      // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
   }
 };

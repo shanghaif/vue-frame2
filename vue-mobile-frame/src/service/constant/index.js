@@ -20,5 +20,4 @@ requireModule.keys().forEach(fileName => {
     ...requireModule(fileName)
   }.default;
 });
-// console.info('const modules ', modules);
 export default modules;

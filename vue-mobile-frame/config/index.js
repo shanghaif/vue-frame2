@@ -3,6 +3,8 @@
  */
 'use strict';
 const path = require('path');
+const proxyTableConfig = require('./proxy-table.js');
+
 module.exports = {
   dev: {
     assetsSubDirectory: 'static',
@@ -18,30 +20,7 @@ module.exports = {
      */
     devtool: 'cheap-module-eval-source-map',
     // 服务器代理设置
-    proxyTable: {
-      '/devApi': {
-        target: 'http://10.1.1.121:8821',
-        changeOrigin: true, // 跨域和突破网站对爬虫的禁止，一般建议配置
-        pathRewrite: { '^/devApi': '' } // 路径重写
-      },
-      '/api': {
-        // target: 'http://10.1.2.235:8680', // 日鑫
-        // target: 'http://10.1.2.209:8680',
-        // target: 'http://10.1.2.54:8680', // 张洪
-        // target: 'http://10.1.2.227:8680/', // 海东
-        target: 'http://10.1.1.123:8110',
-        secure: false, // 如果我们需要转发的网站是支持 https 的，那么需要增加secure=false，来防止转发失败
-        changeOrigin: true // 跨域和突破网站对爬虫的禁止，一般建议配置
-        // pathRewrite: { '^/devApi': '' }
-      },
-      '/api1': {
-        target: 'http://10.1.1.128:8120/', // 测试环境
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api1': ''
-        }
-      }
-    },
+    proxyTable: proxyTableConfig.proxyTable,
     host: '0.0.0.0', // 服务器（默认值），可以通过 dev.env.js 设置 HOST 参数来改写
     port: 8010, // 端口号（默认值），可以通过 dev.env.js 设置 PORT 参数来改写
     hot: true, // 通知 webpack-dev-server 开启 Hot Module Replacement 这样的一个功能 （需要配置 webpack.HotModuleReplacementPlugin 一起使用）
@@ -70,7 +49,7 @@ module.exports = {
     // 我们最终打包出的 chunk 可能会放到一台 cdn 服务器上，所以我们在 index.html（index.html和chunks文件不放在一起） 访问这些 chunk 时需要带上统一的远程地址（比如：http://cdn.com.cn/）
     // assetsPublicPath: 'http://cdn.com.cn/'
     assetsPublicPath: '/',
-    urlLoaderPublicPath: '', // （图片等资源文件）url-loader中单独配置cdn，做到js访问线上路径，静态资源使用cdn，两者互不影响
+    urlLoaderPublicPath: '/', // （图片等资源文件）url-loader中单独配置cdn，做到js访问线上路径，静态资源使用cdn，两者互不影响
     /**
      * Source Maps
      */

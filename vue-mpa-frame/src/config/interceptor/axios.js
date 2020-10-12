@@ -130,7 +130,7 @@ export function responseSuccessFunc(response) {
 export function responseErrorFunc(responseError) {
   if (_isFunction(_get(window, 'apiRequestEndHandler', null))) {
     // 通知函数定义处-请求结束
-    _spread(_get(window, 'apiRequestEndHandler'))(responseError);
+    _spread(_get(window, 'apiRequestEndHandler'))([responseError]);
   }
   const response = _get(responseError, 'response', null);
   if (

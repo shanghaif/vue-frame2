@@ -15,7 +15,9 @@ import _keys from 'lodash/keys';
 import _find from 'lodash/find';
 
 class DataDictFilter {
-  constructor() {
+  constructor({ label = 'name', code = 'id' } = {}) {
+    this.label = label;
+    this.code = code; // 具体的取值字段
     this.filterKeys = [];
     this.dictData = [];
     this.init();
@@ -73,13 +75,22 @@ class DataDictFilter {
           if (Object.prototype.hasOwnProperty.call(defines, 'default')) {
             this._append(defines.default);
           } else if (Object.prototype.hasOwnProperty.call(defines, 'data') && Object.prototype.hasOwnProperty.call(defines, 'code')) {
-            // DICT-0
             if (_isArray(defines.data)) {
               for (let i = 0, length = defines.data.length; i < length; i++) {
-                const itemDict = _map(defines.data[i].data, (item) => {
-                  return { paramValue: item.id, paramDesc: item.name };
+                const dictKeys = _keys(defines.data[i]);
+                const dictName = !_isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
+                const dictList = _isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
+                const itemDict = _map(defines.data[i][dictList], (item) => {
+                  return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
                 });
-                this._append({ ['DICT_' + i]: itemDict });
+                if (/^[A-Za-z0-9]+$/.test(defines.data[i][dictName])) {
+                  this._append({ [defines.data[i][dictName]]: itemDict });
+                } else {
+                  const itemDict = _map(defines.data[i].data, (item) => {
+                    return { paramValue: item.id, paramDesc: item.name };
+                  });
+                  this._append({ ['DICT_' + i]: itemDict });
+                }
               }
             }
           } else {
@@ -124,4 +135,4 @@ class DataDictFilter {
     return dict ? Object.values(dict)[0] : dict;
   }
 }
-export default new DataDictFilter();
+export default DataDictFilter;

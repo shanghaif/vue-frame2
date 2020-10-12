@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <base-route-view :keep-alive="false"></base-route-view>
   </div>
 </template>
 

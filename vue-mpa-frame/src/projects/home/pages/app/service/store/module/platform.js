@@ -2,6 +2,7 @@
  * @desc 这个网站的 store
  */
 import _get from 'lodash/get';
+// import { sStorageKey } from '../../../store/index.js';
 
 const state = {
   data: {}, // 用户信息
@@ -139,7 +140,10 @@ const mutations = {
     state.isLogin = false;
     state.initedApp = false;
     setTimeout(() => {
+      // 移除全部缓存
       localStorage.clear();
+      // localStorage.removeItem(sStorageKey); // 移除这个项目内的缓存
+      // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
   }
 };

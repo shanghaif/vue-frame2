@@ -1,15 +1,15 @@
 /**
  * @desc 全局视图组件
  */
+import BaseRouteView from './route-view.vue';
+import BasePersonal from './common-view/personal.vue';
 import BlankLayout from './layouts/blank-layout.vue';
-import NotFindPage from './404.vue';
-import ComponentA from './a.vue';
 
 export {
-  BlankLayout,
-  NotFindPage
+  BlankLayout
 };
 
 export default {
-  ComponentA
+  BaseRouteView,
+  BasePersonal
 };

@@ -119,7 +119,6 @@ export default {
     // 监听路由改变，路由动态改变（获取路由对应的一级菜单项）
     $route: {
       handler(to, from) {
-        console.info('------------------');
         if (!_isEmpty(to.matched)) {
           const rootPageName = to.matched[0].name; // 匹配到的路由路径列表，第一个是匹配到的根路由
           if (rootPageName !== this.ROOT_PAGE_NAME) {
@@ -127,7 +126,6 @@ export default {
           }
         }
         const aPathKeyList = this.getPathKeyList();
-        console.info('aPathKeyList ', aPathKeyList);
         if (!_isEmpty(aPathKeyList)) {
           if (aPathKeyList[0] !== this.buttonGroupOption.defaultActive) {
             this.buttonGroupOption.defaultActive = aPathKeyList[0];

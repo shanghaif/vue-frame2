@@ -4,8 +4,8 @@
  * 注册的事件需要手动移除,防止发生内存泄露和重复注册 once的事件不需要调用off()
  * ps: 大部分业务需求通过vuex维护状态就能解决,注册全局需要操控视图层的事件可以使用 vBus
  * 或者views和components交互可以使用 vBus ，非父子组件之间的通信可以使用 vBus
- * window.GVBus.$vBus.on('user.rowClick',this.myHandle) 绑定
- * window.GVBus.$vBus.emit('user.rowClick',{}); 触发
+ * window.GvBus.$vBus.on('user.rowClick',this.myHandle) 绑定
+ * window.GvBus.$vBus.emit('user.rowClick',{}); 触发
  */
 import _hasIn from 'lodash/hasIn';
 import _isNil from 'lodash/isNil';
@@ -20,13 +20,13 @@ class MakeVBus {
     if (!_isNil(this.events[name])) {
       throw new Error(`please remove ${name} event`);
     }
-    window.GVBus.vBus.$on(name, handler); // 事件添加在 vue 实例对象上
+    window.GvBus.vBus.$on(name, handler); // 事件添加在 vue 实例对象上
     this.events[name] = handler;
   }
 
   // 注册一次 不需要调用 off 销毁
   once(name, handler) {
-    window.GVBus.vBus.$once(name, handler);
+    window.GvBus.vBus.$once(name, handler);
   }
 
   /**
@@ -34,7 +34,7 @@ class MakeVBus {
    * 推荐在页面/组件 beforeDestroy() 方法执行
    */
   off(name) {
-    window.GVBus.vBus.$off(name, this.events[name]);
+    window.GvBus.vBus.$off(name, this.events[name]);
     if (_hasIn(this.events, name)) {
       delete this.events[name];
     }
@@ -45,7 +45,7 @@ class MakeVBus {
    * 跨页面/组件触发事件
    */
   emit(name, params) {
-    window.GVBus.vBus.$emit(name, params);
+    window.GvBus.vBus.$emit(name, params);
   }
 }
 

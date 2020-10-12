@@ -26,6 +26,4 @@ package-lock.json
 yarn.lock
 
 # user option files
-/config/proxy-table.js
-
 proxy-self.js

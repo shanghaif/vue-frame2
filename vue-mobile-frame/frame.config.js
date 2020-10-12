@@ -32,7 +32,9 @@ module.exports = {
     '@plugins': 'src/plugins',
     '@utils': 'src/utils',
     '@views': 'src/views',
-    '@packages': 'src/packages'
+    '@packages': 'src/packages',
+    '@mock': 'src/mock',
+    '@service': 'src/service'
   },
   // 指定的依赖库不会被 splitChunks 分割到 otherDependencies 缓存组内
   removeOtherDependenciesCacheGroupsLibs: [

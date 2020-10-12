@@ -856,3 +856,8 @@ export const removeInvalidChar = (val) => {
   }
   return rs;
 };
+
+// 生成随机id
+export const getRandomID = () => {
+  return `r${parseInt(Math.random() * 1000000000000)}`;
+};

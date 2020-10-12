@@ -9,6 +9,10 @@ const BaseBreadCrumb = {
   name: 'BaseBreadCrumb',
   inheritAttrs: false,
   props: {
+    // 自定义样式
+    ctCls: {
+      type: String
+    },
     // 子项
     /**
      * @desc 子项
@@ -49,7 +53,7 @@ const BaseBreadCrumb = {
       attrs: {
         id: this.$attrs.id
       },
-      class: { 'base-bread-crumb': true },
+      class: { 'base-bread-crumb': true, [this.ctCls]: this.ctCls },
       props: _assign({}, this.$attrs)
     }, this.createElBreadcrumb());
   }

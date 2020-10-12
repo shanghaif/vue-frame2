@@ -52,7 +52,7 @@ export const apiDefaultConfig = {
     414: '请求URI太长', // Request-URI Too Long
     415: '不支持的媒体类型', // Unsupported Media Type
     416: '请求的范围不可满足', // Requested Range Not Satisfiable
-    417: 'Expectation Failed', // 期望失败
+    417: '期望失败', // Expectation Failed
     500: '内部服务器错误', // Internal Server Error
     501: '未实现', // Not Implemented
     502: '错误网关', // Bad Gateway

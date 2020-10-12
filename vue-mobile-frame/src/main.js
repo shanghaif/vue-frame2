@@ -19,12 +19,24 @@ import './mock/index.js';
 // 自定义指令
 import VFocus from './directives/v-focus.js';
 import VAuthority from './directives/v-authority.js';
+// iconfont
+import '@/assets/font/iconfont/iconfont.css';
 
 // ios延迟关闭 300ms延迟
-fastClick.attach(document.body);
+// fastClick.attach(document.body);
+fastClick.prototype.focus = function (targetElement) {
+  let length;
+  if (targetElement.setSelectionRange && targetElement.type.indexOf('date') !== 0 && targetElement.type !== 'time' && targetElement.type !== 'month' && targetElement.type !== 'email') {
+    length = targetElement.value.length;
+    targetElement.focus();
+    targetElement.setSelectionRange(length, length);
+  } else {
+    targetElement.focus();
+  }
+};
 // 全局通知 巴士事件
-window.GVBus = {};
-window.GVBus.vBus = new Vue({
+window.GvBus = {};
+window.GvBus.vBus = new Vue({
   data: {
     // 自定义扩展实例属性，程序中可以监听 vBus 中的属性（状态存储是响应式的），触发自身的业务逻辑
   }
