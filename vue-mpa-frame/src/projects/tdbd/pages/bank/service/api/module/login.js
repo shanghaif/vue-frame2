@@ -12,5 +12,15 @@ export default [
     isLogin: true, // 登录接口
     isWhite: true // 白名单（设置为 true 则会去除 token 参数）
     // headers: { token: 'test_123' } // 会和 api.js 插件中的 this.headerOptions 通用请求头参数进行对比，如果参数冲突会以接口中的参数替换 this.headerOptions 中的对应参数
+    /* validator: {
+      Authorization: [
+        {
+          required: true,
+          type: String,
+          not: null,
+          msg: null // 验证但不进行弹框提示
+        }
+      ]
+    } */
   }
 ];

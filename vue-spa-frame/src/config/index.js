@@ -34,6 +34,7 @@ export const ROUTER_DEFAULT_CONFIG = {
 };
 // api 接口模型配置参数-用于覆盖 apiDefaultConfig 中的参数
 export const USER_API_CONFIG = {
+  isShowNProgress: true, // 是否在顶部显示加载进度条
   mockBasePath: '/', // mock 为 true 时使用的地址，如：https://yapi.tianli.shop/mock/438/
   mock: true, // mock 总开关（true 打开 false 关闭）
   console_request_enable: false,

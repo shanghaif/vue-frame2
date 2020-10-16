@@ -65,7 +65,7 @@ const BaseTree = {
     root: {
       type: Object,
       default() {
-        return { id: 0, [this.displayField]: this.rootLabel, children: [] };
+        return { id: 0, [this.displayField]: this.rootLabel, [this.props.children]: [] };
       }
     },
     // 是否渲染根节点
@@ -143,7 +143,7 @@ const BaseTree = {
       this.loadStore().then(data => {
         if (!_isEmpty(data)) {
           if (this.isRenderRoot) {
-            this.root.children = data;
+            this.root[this.props.children] = data;
             this.curData = [this.root];
           } else {
             this.curData = data;

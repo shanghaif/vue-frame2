@@ -84,7 +84,16 @@ class DataDictFilter {
                 const itemDict = _map(defines.data[i][dictList], (item) => {
                   return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
                 });
-                this._append({ [defines.data[i][dictName]]: itemDict });
+                // 由数字、26个英文字母或者下划线组成的字符串
+                if (/^\w+$/.test(defines.data[i][dictName])) {
+                  this._append({ [defines.data[i][dictName]]: itemDict });
+                } else {
+                  const itemDict = _map(defines.data[i].data, (item) => {
+                    return { paramValue: item.id, paramDesc: item.name };
+                  });
+                  this._append({ ['DICT_' + i]: itemDict });
+                }
+                // this._append({ [defines.data[i][dictName]]: itemDict });
                 // 项目中字典数据如果没有名称 dictName 提供，那么使用默认的 DICT-0 这种形式
                 /* const itemDict = _map(defines.data[i].data, (item) => {
                   return { paramValue: item.id, paramDesc: item.name };

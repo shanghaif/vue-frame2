@@ -52,7 +52,8 @@ const webpackConfig = merge(baseVueConfig, {
           vueBase: {
             name: 'vueBase',
             minSize: 15000,
-            test: /[\\/]node_modules[\\/](_vue@2.6.11@vue)[\\/]|[\\/]node_modules[\\/](_vuex@3.5.1@vuex)[\\/]|[\\/]node_modules[\\/](_vue-router@3.3.4@vue-router)[\\/]/gi,
+            // test: /[\\/]node_modules[\\/](_vue@2.6.12@vue)[\\/]|[\\/]node_modules[\\/](_vuex@3.5.1@vuex)[\\/]|[\\/]node_modules[\\/](_vue-router@3.4.6@vue-router)[\\/]/gi,
+            test: /[\\/]node_modules[\\/](_vue@.*@vue)[\\/]|[\\/]node_modules[\\/](_vuex@.*@vuex)[\\/]|[\\/]node_modules[\\/](_vue-router@.*@vue-router)[\\/]/gi,
             enforce: true
           },
           vantUi: {

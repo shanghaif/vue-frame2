@@ -83,7 +83,8 @@ class DataDictFilter {
                 const itemDict = _map(defines.data[i][dictList], (item) => {
                   return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
                 });
-                if (/^[A-Za-z0-9]+$/.test(defines.data[i][dictName])) {
+                // 由数字、26个英文字母或者下划线组成的字符串
+                if (/^\w+$/.test(defines.data[i][dictName])) {
                   this._append({ [defines.data[i][dictName]]: itemDict });
                 } else {
                   const itemDict = _map(defines.data[i].data, (item) => {

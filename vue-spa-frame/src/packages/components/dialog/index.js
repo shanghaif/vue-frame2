@@ -6,7 +6,8 @@ import _assign from 'lodash/assign';
 import _omit from 'lodash/omit';
 import _keys from 'lodash/keys';
 import _has from 'lodash/has';
-
+import _get from 'lodash/get';
+import _concat from 'lodash/concat';
 /**
  * @typedef {Object} options - 选项配置对象
  * @property {Object} component - 组件对象
@@ -31,13 +32,45 @@ const BaseDialog = function (options = {}) {
   const VueModal = Vue.extend({
     props: optionsKey,
     render(h) {
+      let customClass = 'base-el-dialog';
+      if (
+        _has(this.$props, 'customClass') ||
+        _has(this.$props, 'custom-class')
+      ) {
+        customClass +=
+          ' ' +
+          _get(this.$props, 'customClass', '') +
+          ' ' +
+          _get(this.$props, 'custom-class', '');
+      }
+      let contentNode = h();
+      if (_has(options.component, 'render')) {
+        contentNode = h(options.component);
+      } else if (_has(options.component(), 'el')) {
+        const detailOption = options.component();
+        contentNode = h(
+          detailOption.el,
+          _omit(detailOption, ['el']),
+          [_get(detailOption, 'text')]
+        );
+      } else {
+        contentNode = options.component();
+      }
       return h(
         'el-dialog',
         {
-          class: { 'base-dialog': true, [options.ctCls]: options.ctCls },
+          class: {
+            'base-dialog__wrapper': true,
+            [options.ctCls]: options.ctCls
+          },
           props: _assign(
-            { destroyOnClose: true, title: '详情', visible: this.visible },
-            _omit(this.$props, ['listeners']),
+            {
+              destroyOnClose: true,
+              title: '详情',
+              visible: this.visible,
+              customClass
+            },
+            _omit(this.$props, ['listeners', 'customClass']),
             {}
           ),
           on: {
@@ -58,6 +91,9 @@ const BaseDialog = function (options = {}) {
               }
             },
             closed: () => {
+              if (options.isDestroy) {
+                this.$destroy();
+              }
               if (_has(options, 'listeners.closed')) {
                 options.listeners.closed();
               }
@@ -65,7 +101,7 @@ const BaseDialog = function (options = {}) {
           }
         },
         [
-          _has(options.component, 'render') ? h(options.component) : options.component,
+          contentNode,
           h('template', { slot: 'title' }, this.appendTitle()),
           h('template', { slot: 'footer' }, this.appendFooter())
         ]
@@ -78,6 +114,11 @@ const BaseDialog = function (options = {}) {
       return {
         visible: false
       };
+    },
+    created() {
+      this.$nextTick(() => {
+        document.body.appendChild(instance.$mount().$el);
+      });
     },
     mounted() {},
     methods: {
@@ -97,16 +138,21 @@ const BaseDialog = function (options = {}) {
       },
       // Dialog 按钮操作区的内容
       appendFooter() {
+        const buttonsVNode = [];
+        for (let i = 0, len = _get(options, 'buttons', []).length; i < len; i++) {
+          const option = options.buttons[i];
+          buttonsVNode.push(this.$createElement('el-button', _omit(option, ['text']), [option.text]));
+        }
         return _has(this.$props, 'slotNode.footer')
-          ? [this.$props.slotNode.footer(this.$createElement)]
-          : [];
+          ? _concat([this.$props.slotNode.footer(this.$createElement)], buttonsVNode)
+          : _concat([], buttonsVNode);
       }
     }
   });
   /* if (_has(options, 'container')) {
     options.container.appendChild(instance.$mount().$el);
   } */
-  document.body.appendChild(instance.$mount().$el);
+  // document.body.appendChild(instance.$mount().$el);
   return instance;
 };
 export default BaseDialog;

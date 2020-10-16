@@ -49,6 +49,10 @@ export function requestSuccessFunc(requestConfig = {}) {
     _get(requestConfig, 'restfulValidator', {}),
     _keys(_get(requestConfig, 'restful', {}))
   );
+  const headersValidatorRule = _pick(
+    _get(requestConfig, 'validator', {}),
+    _keys(_get(requestConfig, 'headers', {}))
+  );
   if (
     _has(requestConfig, 'validator') &&
     !_isEmpty(_get(requestConfig, 'params'))
@@ -69,6 +73,14 @@ export function requestSuccessFunc(requestConfig = {}) {
   ) {
     validateResult.push(
       validate(_get(requestConfig, 'restful', {}), restfulValidatorRule)
+    );
+  }
+  if (
+    _has(requestConfig, 'restfulValidator') &&
+    !_isEmpty(_get(requestConfig, 'headers'))
+  ) {
+    validateResult.push(
+      validate(_get(requestConfig, 'headers', {}), headersValidatorRule)
     );
   }
   let status = false;

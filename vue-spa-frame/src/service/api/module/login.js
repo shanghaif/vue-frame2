@@ -28,6 +28,14 @@ export default [
         },
         { sqlXss: true, msg: '密码含有特殊字符!' }
       ]
+      /* token: [
+        {
+          required: true,
+          type: String,
+          not: null,
+          msg: null // 验证但不进行弹框提示
+        }
+      ] */
     }
   },
   {

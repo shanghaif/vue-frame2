@@ -35,6 +35,18 @@ const BaseDropDown = {
   },
   methods: {
     /**
+     * @desc 获取原生节点对象
+     */
+    getEl() {
+      return this.$refs[`${this._uid}-base-drop-down`];
+    },
+    /**
+     * @desc 手动隐藏下拉菜单
+     */
+    hide() {
+      this.$refs[`${this._uid}-base-drop-down`].hide();
+    },
+    /**
      * @desc 创建 el-dropdown-item
      */
     createElDropdownItem() {
@@ -53,7 +65,7 @@ const BaseDropDown = {
               },
               [
                 _has(option, 'render')
-                  ? option.render(this.$createElement)
+                  ? option.render.call(this.$parent, this.$createElement)
                   : option.text
               ]
             );

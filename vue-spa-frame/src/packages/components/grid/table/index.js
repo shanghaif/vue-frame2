@@ -422,6 +422,9 @@ const BaseGridTable = {
                     return `${dict.paramDesc}${_get(elem, 'unit', '')}`;
                   }
                 }
+                if (_isNil(row[column.property])) {
+                  return '';
+                }
                 return `${row[column.property]}${_get(elem, 'unit', '')}`;
               }
             },

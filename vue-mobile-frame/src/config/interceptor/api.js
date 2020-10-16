@@ -8,13 +8,15 @@ import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 import router from '../../router/index.js';
 import store from '../../store/index.js';
-import { LOGIN_PAGE_NAME } from '@config/index.js';
+import { LOGIN_PAGE_NAME, USER_API_CONFIG } from '@config/index.js';
 
 let unTokenExpireWatch = null; // 动态监听器 watch
 
 // 请求开始发送
 const apiRequestStartHandler = function () {
-  NProgress.start();
+  if (USER_API_CONFIG.isShowNProgress) {
+    NProgress.start();
+  }
 };
 
 // 请求结束
@@ -64,6 +66,9 @@ const apiRequestEndHandler = function (response = {}) {
     if (_has(response, 'data.message')) {
       msg = _get(response, 'data.message');
     }
+    if (_has(response, 'data.mesg')) {
+      msg = _get(response, 'data.mesg');
+    }
     // const msg = _get(response, 'data.msg', '-100');
     Vue.prototype.$notify({ message: '错误：' + msg, type: 'danger' });
   }
@@ -76,15 +81,21 @@ const apiRequestEndHandler = function (response = {}) {
       delete Vue.prototype.tokenExpireTipFn;
     } */
   }
-  NProgress.done();
+  if (USER_API_CONFIG.isShowNProgress) {
+    NProgress.done();
+  }
 };
 
 // 请求出现拦截器无法捕获的异常 例如：timeout 请求超时
 const apiRequestInterceptErrorHandler = function (message) {
   if ('$notify' in Vue.prototype) {
-    Vue.prototype.$notify({ type: 'danger', message: '错误：' + message });
+    if (message.length > 0) {
+      Vue.prototype.$notify({ type: 'danger', message: '错误：' + message });
+    }
   }
-  NProgress.done();
+  if (USER_API_CONFIG.isShowNProgress) {
+    NProgress.done();
+  }
 };
 
 // 请求出现后置拦截器错误，例如：Request failed with status code 502
@@ -104,7 +115,9 @@ const requestErrorCallback = function (
       message: `错误：${code} ${msg}`
     });
   }
-  NProgress.done();
+  if (USER_API_CONFIG.isShowNProgress) {
+    NProgress.done();
+  }
 };
 
 export {

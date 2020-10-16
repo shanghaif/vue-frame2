@@ -34,13 +34,12 @@ const routerBeforeEachFunc = function (to, from, next) {
   }
   if (_isEmpty(from.matched)) {
     // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
+    // 页面刷新重新设置 request.headers
+    store.dispatch('platform/setApiHeaderParams', {
+      token: store.getters['platform/getToken']
+    });
     Promise.all([store.dispatch('platform/getDict')])
-      .then(() => {
-        // 页面刷新重新设置 request.headers
-        store.dispatch('platform/setApiHeaderParams', {
-          token: store.getters['platform/getToken']
-        });
-      })
+      .then(() => {})
       .finally(() => {
         next();
         NProgress.done();
@@ -51,10 +50,9 @@ const routerBeforeEachFunc = function (to, from, next) {
   if (loginStatus && to.name === ROOT_PAGE_NAME) {
     store
       .dispatch('platform/getDict')
-      .then(() => {
-        next();
-      })
+      .then(() => {})
       .finally(() => {
+        next();
         NProgress.done();
       });
     return;

@@ -45,18 +45,21 @@ const routerBeforeEachFunc = function (to, from, next) {
       .then(() => {
         // 判断路由是否有权限访问
         if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
-          next({ path: '404' });
-        } else {
-          next();
+          router.push({ path: '404' });
         }
       })
       .finally(() => {
+        next();
         NProgress.done();
       });
     return;
   }
   if (appStatus && _isEmpty(from.matched)) {
     // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
+    // 页面刷新重新设置 request.headers
+    store.dispatch('platform/setApiHeaderParams', {
+      token: store.getters['platform/getToken']
+    });
     Promise.all([
       store.dispatch('platform/getDict'),
       store.dispatch('platform/setRouter')
@@ -64,10 +67,6 @@ const routerBeforeEachFunc = function (to, from, next) {
       if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
         router.push({ name: '404' });
       }
-      // 页面刷新重新设置 request.headers
-      store.dispatch('platform/setApiHeaderParams', {
-        token: store.getters['platform/getToken']
-      });
     }).finally(() => {
       next();
       NProgress.done();
