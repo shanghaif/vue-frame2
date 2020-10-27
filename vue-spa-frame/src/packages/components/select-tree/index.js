@@ -6,6 +6,8 @@ import _includes from 'lodash/includes';
 import _findIndex from 'lodash/findIndex';
 import _isNil from 'lodash/isNil';
 import _toNumber from 'lodash/toNumber';
+import _isEmpty from 'lodash/isEmpty';
+import _has from 'lodash/has';
 
 const BaseSelectTree = {
   name: 'BaseSelectTree',
@@ -256,6 +258,7 @@ const BaseSelectTree = {
      */
     createTree() {
       const h = this.$createElement;
+      const that = this;
       return h('base-tree', {
         style: {
           height: '100%',
@@ -279,6 +282,10 @@ const BaseSelectTree = {
               nodeClick: (record, node, tree) => {
                 // 使 input 失去焦点，并隐藏下拉框
                 this.$refs[`${this._uid}-base-select-tree-ref`].blur();
+                const eventName = _has(this.$listeners, 'nodeClick')
+                  ? 'nodeClick'
+                  : 'node-click';
+                this.$emit(eventName, record, node, tree);
               },
               checkChange: (record, checked, childCheckNodes) => {
                 if (
@@ -309,7 +316,30 @@ const BaseSelectTree = {
         ),
         on: {
           // 数据加载完成
-          afterLoadStore(data) {},
+          afterLoadStore(data) {
+            // 默认选中
+            if (!_isNil(that.selectTreeValue)) {
+              if (that.multiple) {
+                that.curDefaultCheckedKeys.push(...that.selectTreeValue);
+              } else {
+                that.curDefaultCheckedKeys.push(that.selectTreeValue);
+              }
+              setTimeout(() => {
+                const nodes = that.$refs[that.treeUserRef].getCheckedNodes();
+                if (!_isEmpty(nodes)) {
+                  for (let i = 0, len = nodes.length; i < len; i++) {
+                    that.options.push({ [that.valueField]: nodes[i][that.valueField], [that.displayField]: nodes[i][that.displayField] });
+                    if (that.multiple) {
+                      that.curSelectValueList.push(nodes[i][that.valueField]);
+                    }
+                  }
+                  if (!that.multiple) {
+                    that.curSelectValue = nodes[0][that.valueField];
+                  }
+                }
+              }, 0);
+            }
+          },
           check: (node, treeCheckedNode) => {
             // 多选-点击复选框
             this.$refs.bbb.click(); // 防止下拉树面板在点击后隐藏

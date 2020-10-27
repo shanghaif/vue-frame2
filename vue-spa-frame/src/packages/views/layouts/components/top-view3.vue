@@ -292,6 +292,13 @@ export default {
         menu.menuCode !== ''
       ) {
         this.$router.push({ name: menu.menuCode });
+      } else {
+        // 调用路由对应页面的 routerActivated 方法
+        const { matched } = this.$router.currentRoute;
+        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+          const that = matched[matched.length - 1].instances.default;
+          that.$options.routerActivated.call(that);
+        }
       }
     },
     /**

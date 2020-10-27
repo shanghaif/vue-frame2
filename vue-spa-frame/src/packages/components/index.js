@@ -22,6 +22,8 @@ import BaseSelectTree from './select-tree/index.js';
 import BaseTempVar from './temp-var/index.js';
 import BaseSelectInput from './select-input/index.js';
 import BaseCheckboxGroup from './checkbox-group/index.js';
+import BaseViewCollapse from './view-collapse/index.js';
+import BaseDeferInput from './defer-input/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
@@ -49,5 +51,7 @@ export default {
   BaseSelectTree,
   BaseTempVar,
   BaseSelectInput,
-  BaseCheckboxGroup
+  BaseCheckboxGroup,
+  BaseViewCollapse,
+  BaseDeferInput
 };

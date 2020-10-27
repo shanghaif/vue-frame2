@@ -187,6 +187,54 @@ const getMenu = (options) => {
           { id: 12, name: '添加', code: 'add', status: 0 },
           { id: 13, name: '删除', code: 'delete', status: 1 }
         ]
+      },
+      {
+        id: 29,
+        menuCode: 'zjs-province',
+        menuName: '浙江省',
+        menuUrl: '/zjs-province',
+        iconUrl: 'el-icon-user',
+        // 是否在组内展示，true 展示 false 隐藏，注意：如果是父级菜单设置为 false 那么如果单独展示该菜单的子级菜单需要使用 menuId 来获取，但是如果菜单的子级菜单中有 false 的子菜单那么还是不会展示
+        isGroupShow: false,
+        children: [
+          {
+            id: 31,
+            menuCode: 'hz-city',
+            menuName: '杭州市',
+            menuUrl: 'hz-city',
+            iconUrl: 'el-icon-eleme',
+            children: [
+              {
+                id: 34,
+                menuCode: 'jgq-area',
+                menuName: '江干区',
+                menuUrl: 'jgq-area',
+                iconUrl: 'el-icon-circle-check'
+              },
+              {
+                id: 35,
+                menuCode: 'xh-area',
+                menuName: '西湖区',
+                menuUrl: 'xh-area',
+                iconUrl: 'el-icon-video-camera'
+              }
+            ]
+          },
+          {
+            id: 33,
+            menuCode: 'jx-city',
+            menuName: '嘉兴市',
+            menuUrl: 'jx-city',
+            iconUrl: 'el-icon-star-off'
+          }
+        ]
+      },
+      {
+        id: 36,
+        menuCode: 'view-collapse',
+        menuName: '视图-折叠面板',
+        menuUrl: '/view-collapse',
+        iconUrl: 'el-icon-document-copy'
       }
     ]
   }

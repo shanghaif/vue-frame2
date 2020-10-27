@@ -15,6 +15,7 @@
       >
       <el-button size="small" @click="onDown">下载1</el-button>
       <el-button size="small" @click="onOpenUserPage">路由跳转</el-button>
+      <el-button size="small" @click="onOpenMenuPage">打开指定菜单 menuId</el-button>
     </div>
     <br />
     <div>
@@ -88,6 +89,9 @@ export default {
       }, 0);
     },
     onAdd() {
+      const obj = { name: '张三' };
+      console.info(_get(obj, name));
+
       this.$vBus.on('b', function (p) {
         console.info('添加事件', p);
       });
@@ -101,6 +105,15 @@ export default {
     onOpenUserPage() {
       console.info('personal');
       this.$router.push('personal');
+    },
+    onOpenMenuPage() {
+      const routeData = this.$router.resolve({
+        name: 'jgq-area',
+        params: {
+          menuId: 29
+        }
+      });
+      window.open(routeData.href, '_blank');
     },
     onDown() {
       const fileName = '机构账号导出3.xlsx';

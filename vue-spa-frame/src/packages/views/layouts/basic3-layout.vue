@@ -12,6 +12,7 @@
               <base-bread-crumb
                 separator-class="el-icon-arrow-right"
                 :options="breadCrumbOptions"
+                @bread-click="onBreadClick"
               ></base-bread-crumb>
             </div>
           </template>
@@ -34,6 +35,7 @@ import TopView3 from './components/top-view3.vue';
 import {
   DEFAULT_SETTINGS
 } from '@config/index.js';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'Basic3Layout',
@@ -75,6 +77,56 @@ export default {
     // }, 3000);
   },
   methods: {
+    /**
+     * @desc 设置面包屑
+     * @param {string[]} options - 面包屑参数
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    setBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = options;
+      }
+    },
+    /**
+     * @desc 追加面包屑
+     * @param {string[]} options - 面包屑参数
+     * @example
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    appendBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = _concat(this.breadCrumbOptions, options);
+      }
+    },
+    /**
+     * @desc 删除面包屑
+     * @example
+     * @param {array[]} name - 面包屑名字
+     * this.getBaseLayout().removeBreadCrumbOptions()
+     */
+    removeBreadCrumbOptions(name = []) {
+      const breadCrumbOptions = [];
+      if (name && this.breadCrumbOptions.length > 0) {
+        // _drop(this.breadCrumbOptions, this.breadCrumbOptions.length);
+        for (const item of this.breadCrumbOptions) {
+          if (!name.includes(item.text)) {
+            breadCrumbOptions.push(item);
+          }
+        }
+      }
+      this.breadCrumbOptions = _cloneDeep(breadCrumbOptions);
+    },
+    /**
+     * @desc 面包屑点击事件
+     * @event
+     */
+    onBreadClick(option, event) {
+      const { matched } = this.$router.currentRoute;
+      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+        const that = matched[matched.length - 1].instances.default;
+        _has(that, 'breadClickEvent') && that.breadClickEvent(option);
+      }
+    }
   }
 };
 </script>

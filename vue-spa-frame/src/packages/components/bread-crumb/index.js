@@ -32,12 +32,19 @@ const BaseBreadCrumb = {
      */
     createElBreadcrumb() {
       const vNodes = [];
+      const cursor = _has(this.$listeners, 'bread-click') ? 'pointer' : 'auto';
       if (!_isNil(this.options)) {
         for (let i = 0, len = this.options.length; i < len; i++) {
           const option = this.options[i];
           vNodes.push(
             this.$createElement('el-breadcrumb-item', {
-              props: _omit(option, ['text'])
+              style: { cursor },
+              props: _omit(option, ['text']),
+              nativeOn: {
+                click: (event) => {
+                  this.$emit('bread-click', option, event);
+                }
+              }
             }, [
               option.text
             ])

@@ -130,9 +130,15 @@ const BaseGridPagination = {
     }
   },
   render(h) {
+    const style = {};
+    // v-show
+    if (_isEqual(this.isShowPagination, false)) {
+      _set(style, 'display', 'none');
+    }
     return h(
       'el-pagination',
       {
+        style,
         props: _assign({ layout: this.layout }, this.paginationAttributes, {
           total: this.total,
           currentPage: this.currentPage,

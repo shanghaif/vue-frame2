@@ -50,7 +50,9 @@ const actions = {
       // Vue.prototype.$api['login/doLogin']({code: code,password: password},{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
       Vue.prototype.$api['login/doLogin']({
         data: { userName, password },
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        }
       })
         .then(resData => {
           if (
@@ -83,15 +85,19 @@ const actions = {
       // 发送登出请求
       Vue.prototype.$api['login/logout']({
         headers: { token: state.token }
-      }).then((resData) => {
-        if (resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE) {
-          this.dispatch('platform/handlerDestroy');
-        }
-        resolve();
-      }).catch(error => {
-        reject(error);
-        console.info(error);
-      });
+      })
+        .then(resData => {
+          if (
+            resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+          ) {
+            this.dispatch('platform/handlerDestroy');
+          }
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
+          console.info(error);
+        });
     });
   },
   // 销毁缓存和变量
@@ -118,13 +124,16 @@ const actions = {
       return;
     }
     const routes = router.options.routes;
-    // const rootRouterRedirect = [];
     const checkChildren = function (oRouter, aMenusList) {
       for (const value of Object.values(oRouter)) {
         const oMenu = _find(aMenusList, menu => menu.menuCode === value.name);
         if (_has(value, 'children') && !_isEmpty(value.children)) {
+          // console.info(value, aMenusList, oMenu);
           setRouterMeta(value, oMenu);
-          !_isNil(oMenu) && checkChildren(value.children, oMenu.children);
+          if (_isNil(oMenu)) {
+          } else {
+            // checkChildren(value.children, oMenu.children);
+          }
         } else {
           setRouterMeta(value, oMenu);
         }
@@ -132,16 +141,44 @@ const actions = {
     };
     const setRouterMeta = function (router, oMenu) {
       !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
+      // console.info(router, oMenu);
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
         _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
+        // 如果父节点是 false，那么对应的所有子节点都应该是 false
+        const doWhileFn = function (item) {
+          for (let i = 0, len = item.length; i < len; i++) {
+            _set(item[i], 'meta.isOpen', false);
+            if (_has(item[i], 'children') && item[i].children.length > 0) {
+              doWhileFn(item[i].children);
+            }
+          }
+        };
+        if (_has(router, 'children') && !_isEmpty(router.children)) {
+          doWhileFn(_get(router, 'children', []));
+        }
       }
       if (!_isNil(oMenu) && _has(oMenu, 'buttons')) {
         _set(router.meta, 'buttons', oMenu.buttons);
       }
     };
+    console.info(state.roleMenus.models);
     for (const value of Object.values(routes)) {
       if (_has(value, 'children') && !_isEmpty(value.children)) {
-        const menu2Children = _get(_find(state.roleMenus.models, model => model.menuCode === value.name), 'children', []);
+        const menu2Children = [];
+        /* const menu2Children = _get(
+          _find(state.roleMenus.models, model => model.menuCode === value.name),
+          'children',
+          []
+        ); */
+        let menuModels = state.roleMenus.models;
+        const router2Menus = _find(state.roleMenus.models, model => model.menuCode === value.name);
+        if (!_isNil(router2Menus)) {
+          menuModels = _get(router2Menus, 'children', []);
+        }
+        for (const elem of value.children.values()) {
+          const itemMenu = _find(menuModels, model => model.menuCode === elem.name);
+          itemMenu && menu2Children.push(itemMenu);
+        }
         checkChildren(value.children, menu2Children);
       }
     }
@@ -153,7 +190,9 @@ const actions = {
     // 载入本包中的字典
     // const p1 = Vue.prototype.$dict.import(import('../../data-dict/index.js'));
     // 载入远程字典
-    const p2 = Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
+    const p2 = Vue.prototype.$dict.import(
+      Vue.prototype.$api['dict/getDictDataByTypeList']()
+    );
     return Promise.all([p2]);
     // Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
   }
@@ -185,7 +224,12 @@ const mutations = {
     state.initedApp = false;
     setTimeout(() => {
       // 移除全部缓存
-      localStorage.removeItem(sStorageKey);
+      if (!_isNil(localStorage.getItem(sStorageKey))) {
+        localStorage.removeItem(sStorageKey);
+      }
+      if (!_isNil(sessionStorage.getItem(sStorageKey))) {
+        sessionStorage.removeItem(sStorageKey);
+      }
       // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
   }

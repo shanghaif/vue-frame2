@@ -44,6 +44,11 @@ const BaseGridTable = {
       type: Boolean,
       default: false
     },
+    // 设置index表头名称
+    indexLabel: {
+      type: String,
+      default: ''
+    },
     // 默认选择第一行
     isSelectedFirstRow: {
       type: Boolean,
@@ -458,7 +463,7 @@ const BaseGridTable = {
     indexColumn() {
       return this.isShowIndex
         ? this.$createElement('el-table-column', {
-          props: { type: 'index', width: '50px' }
+          props: { type: 'index', width: '50px', label: this.indexLabel }
         })
         : [];
     }

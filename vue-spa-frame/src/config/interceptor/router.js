@@ -21,6 +21,17 @@ import _has from 'lodash/has';
  */
 const routerBeforeEachFunc = function (to, from, next) {
   NProgress.start();
+  // 没有匹配到路由项则回退到 from 的路由
+  if (_isEmpty(to.matched)) {
+    NProgress.done();
+    next(from);
+    return;
+  }
+  if (_has(to.meta, 'isOpen') && !to.meta.isOpen) {
+    NProgress.done();
+    next('*'); // 404页面
+    return;
+  }
   if ('title' in to.meta && WINDOW_TITLE_UPDATE) {
     document.title = to.meta.title;
   }

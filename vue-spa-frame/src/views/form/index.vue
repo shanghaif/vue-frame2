@@ -59,7 +59,7 @@
         :checkboxAttributes="{ border: true }"
         ref="base-checkbox-group"
       ></base-checkbox-group>
-      {{checkedButtons}}
+      {{ checkedButtons }}
       <p>checkbox-group 按钮组-本地静态远端</p>
       <el-checkbox
         :indeterminate="isIndeterminate1"
@@ -73,7 +73,18 @@
         :checkboxAttributes="{ border: true }"
         ref="base-checkbox-group1"
       ></base-checkbox-group>
-      {{checkedButtons1}}
+      {{ checkedButtons1 }}
+      <br /><br />
+      <p>防抖节流 input 控件</p>
+      <base-defer-input
+        :class="$style.searchInput"
+        placeholder="请输入内容"
+        suffix-icon="el-icon-search"
+        v-model="queryParams.data.name"
+        @defer-reload="onDeferReload"
+        width="300px"
+      ></base-defer-input>
+      {{queryParams.data.name}}
     </div>
   </div>
 </template>
@@ -107,7 +118,10 @@ export default {
         { id: 2, name: '北京' },
         { id: 3, name: '广州' },
         { id: 4, name: '深圳' }
-      ]
+      ],
+      queryParams: {
+        data: { name: '' }
+      }
     };
   },
   mounted() {
@@ -128,7 +142,10 @@ export default {
      * @desc 全选按钮
      */
     handleCheckAllChange(val) {
-      const options = _map(this.$refs['base-checkbox-group'].getStore(), o => o.id);
+      const options = _map(
+        this.$refs['base-checkbox-group'].getStore(),
+        o => o.id
+      );
       this.checkedButtons = val ? options : [];
       this.isIndeterminate = false;
     },
@@ -136,9 +153,19 @@ export default {
       const options = _map(this.buttons, o => o.id);
       this.checkedButtons1 = val ? options : [];
       this.isIndeterminate1 = false;
+    },
+    /**
+     * @desc 延迟调用，默认 500 毫秒
+     */
+    onDeferReload(val) {
+      console.info('延迟调用，默认 500 毫秒 ', val, this.queryParams.data.name);
     }
   }
 };
 </script>
 
-<style></style>
+<style lang="less" module>
+.search-input{
+  color: red;
+}
+</style>

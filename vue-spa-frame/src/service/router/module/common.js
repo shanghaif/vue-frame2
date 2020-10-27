@@ -8,7 +8,15 @@ const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: BasicLayout
+    component: BasicLayout,
+    children: [
+      {
+        path: 'view-collapse',
+        name: 'view-collapse',
+        meta: { title: '视图-折叠面板' },
+        component: () => import(/* webpackChunkName:"views/view-collapse" */ '@views/view-collapse/index.vue')
+      }
+    ]
     // redirect: 'needs/loan'
     /* beforeEnter: (to, from, next) => {
       console.info('444444444444 ');
@@ -23,6 +31,13 @@ const commonRoutes = [
         component: () => import('../../../views/personal/index.vue')
       }
     ] */
+  },
+  {
+    path: '/zjs-province/:menuId',
+    name: 'zjs-province',
+    props: true,
+    meta: { title: '浙江省' },
+    component: BasicLayout
   },
   {
     path: `/${LOGIN_PAGE_NAME}`,

@@ -14,6 +14,10 @@ export const down = function (response, fileName = '') {
   if (!fileName) {
     // 没传文件名，就用后台的filename， 后台也没有传就。。。。
     const resHeader = response.headers['content-disposition'];
+    if (resHeader === undefined) {
+      console.error('数据为 undefined，无法导出！');
+      return;
+    }
     if (resHeader.indexOf('filename=') !== -1) {
       fileName = resHeader.split('filename=')[1];
     } else {

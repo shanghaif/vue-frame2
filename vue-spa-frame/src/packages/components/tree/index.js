@@ -65,7 +65,11 @@ const BaseTree = {
     root: {
       type: Object,
       default() {
-        return { id: 0, [this.displayField]: this.rootLabel, [this.props.children]: [] };
+        return {
+          id: 0,
+          [this.displayField]: this.rootLabel,
+          [this.props.children]: []
+        };
       }
     },
     // 是否渲染根节点
@@ -452,7 +456,11 @@ const BaseTree = {
                 this.$createElement(
                   'span',
                   { slot: 'reference', style: 'display: block' },
-                  [_get(option, 'text', '')]
+                  [
+                    _has(option, 'render')
+                      ? option.render(this.$createElement)
+                      : _get(option, 'text', '')
+                  ]
                 )
               ]
             ); // 二次确认框

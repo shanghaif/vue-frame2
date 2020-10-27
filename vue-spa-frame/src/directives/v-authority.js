@@ -25,11 +25,17 @@ export default {
           return _has(item, 'meta.buttons');
         });
         const buttons = _get(oCurRoute.matched[index], 'meta.buttons', []);
-        const buttonIndex = _findIndex(buttons, btn => btn.code === actionName);
+        const buttonIndex = _findIndex(buttons, btn => _get(btn, 'code', btn.href) === actionName);
         if (buttonIndex === -1) {
           return;
         }
-        const disabled = !_get(buttons[buttonIndex], 'status', 0);
+        let disabled = 0;
+        if (_has(buttons[buttonIndex], 'status')) {
+          disabled = !_get(buttons[buttonIndex], 'status', 0); // 1 启用 0 禁用
+        }
+        if (_has(buttons[buttonIndex], 'flag')) {
+          disabled = !_get(buttons[buttonIndex], 'flag', 0); // 1 启用 0 禁用
+        }
         if (!_isNil(el.parentNode) && disabled) {
           if (_has(binding.modifiers, 'remove')) {
             el.parentNode.removeChild(el); // 移除 remove
