@@ -7,8 +7,14 @@
     <script>
       ${require('raw-loader!@static/plugins/lib-flexible/0.3.2/flexible.js')}
     </script>
+    <% for(var i=0,len=htmlWebpackPlugin.options.outsideCss.length;i<len;i++ ){ %>
+      <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.outsideCss[i] %>">
+    <% } %>
   </head>
   <body>
     <div id="app"></div>
+    <% for(var i=0,len=htmlWebpackPlugin.options.outsideJs.length;i<len;i++ ){ %>
+      <script src="<%= htmlWebpackPlugin.options.outsideJs[i] %>"></script>
+    <% } %>
   </body>
 </html>

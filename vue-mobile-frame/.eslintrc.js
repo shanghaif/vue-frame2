@@ -1,6 +1,7 @@
 // https://eslint.org/docs/user-guide/configuring
+const frameConfig = require('./frame.config.js');
 
-module.exports = {
+const configObj = {
   root: true,
   parserOptions: {
     parser: "babel-eslint" // 定义ESLint的解析器
@@ -45,6 +46,27 @@ module.exports = {
   "globals": {
     "$": true,
     "Vue": true,
-    "jQuery": true
+    "jQuery": true,
+    "_get": true,
+    "_set": true,
+    "_map": true,
+    "_has": true,
+    "_isEmpty": true,
+    "_includes": true,
+    "_forEach": true,
+    "_findIndex": true,
+    "_assign": true,
+    "_concat": true,
+    "_isNil": true,
+    "_omit": true,
+    "_pick": true,
+    "_findLastIndex": true,
+    "_isArray": true,
+    "_split": true,
+    "_join": true,
+    "_last": true,
+    "_find": true,
+    "_keys": true
   }
-};
+}
+module.exports = configObj;

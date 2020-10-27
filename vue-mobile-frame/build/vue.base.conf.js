@@ -43,6 +43,8 @@ const pages = {
     filename: 'index.html',
     title: frameConfig.sys_app_title,
     favicon: path.join(__dirname, '../public/favicon.ico'),
+    outsideJs: frameConfig.cdnMap.outsideJs,
+    outsideCss: frameConfig.cdnMap.outsideCss,
     chunks: isDev
       ? _concat(['chunk-vendors', 'chunk-common', 'index'], _keys(webpackEntry))
       : _concat(
