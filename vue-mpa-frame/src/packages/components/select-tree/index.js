@@ -1,338 +1,443 @@
-// @ts-nocheck
 /**
- * Select 选择器
+ * @desc select-tree 选择器
  */
-import _get from 'lodash/get';
-import _isNil from 'lodash/isNil';
-import _set from 'lodash/set';
-import _isEqual from 'lodash/isEqual';
-import _isEmpty from 'lodash/isEmpty';
 import _assign from 'lodash/assign';
+import _includes from 'lodash/includes';
+import _findIndex from 'lodash/findIndex';
+import _isNil from 'lodash/isNil';
+import _toNumber from 'lodash/toNumber';
+import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 
-const BaseSelect = {
-  name: 'BaseSelect',
+const BaseSelectTree = {
+  name: 'BaseSelectTree',
   inheritAttrs: false,
   model: {
-    prop: 'value',
-    event: 'selectChange'
+    prop: 'selectTreeValue',
+    event: 'selectTreeChange'
   },
   props: {
+    // 传入默认选中值 ['',''] String 需要默认选中时请结合 'defaultCheckedKeys' 参数
+    // 值的匹配必须和 'defaultCheckedKeys'相同
     value: {
-      type: [String, Number, Array],
-      required: true
-    },
-    api: {
-      type: String,
-      default: ''
-    },
-    queryParams: {
-      type: Object,
       default() {
-        return {};
+        return [];
       }
     },
-    options: {
-      type: Array
+    // 最多只能选择几个数量
+    maxItem: {
+      type: Number,
+      default: 20
     },
+    // 输入框宽度
     width: {
-      type: String,
-      default: 'auto'
+      type: Number,
+      default: 160
     },
-    ctStyle: {
-      type: Object,
+    // tree面板宽度
+    treeWidth: {
+      type: Number,
+      default: 200
+    },
+    // Select 组件头部内容
+    prefixLabel: {
+      type: String
+    },
+    // 是否多选
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    // 默认要勾选tree的节点keys 必须是唯一值id的value
+    // 适用于数据源由外部传入，如果是远程获取必须在数据中增加'check'字段标明是否选中
+    defaultCheckedKeys: {
+      type: Array,
       default() {
-        return {};
+        return [];
       }
     },
+    // 定义外部 v-model 值，默认值 null 因为单选传入 String ，多选 array 并不确定
+    selectTreeValue: {
+      default() {
+        return null;
+      }
+    },
+    // 自定义样式名
     ctCls: {
+      type: String
+    },
+    // 外部事件扩展 只有 'change' 选中值发生改变事件
+    listeners: {
       type: Object,
       default() {
         return {};
       }
     },
-    loadFilter: {
-      type: Function,
-      default: null
-    },
+    // 显示字段
     displayField: {
       type: String,
       default: 'name'
     },
+    // 值字段
     valueField: {
       type: String,
       default: 'id'
-    },
-    slotNode: {
-      type: Object,
-      default: () => {}
-    },
-    isRender: {
-      type: Boolean,
-      default: true
-    },
-    isDisplay: {
-      type: Boolean,
-      default: true
-    },
-    listeners: {
-      type: Object,
-      default: () => {}
     }
   },
   data() {
-    this.vQueryParams = _isEmpty(this.api) ? {} : _assign({}, this.queryParams);
-    this.vValue = this.$attrs.multiple ? _assign([], this.value) : this.value;
+    this.popoverOffsetTop = 0; // 下拉面板的 offsetTop 偏差值
+    this.selectInputHeight = 0; // select 控件对应的 input 框的高度
     return {
-      vOptions: []
+      treeUserRef: `${this._uid}-selectTree`,
+      // 本地数据
+      curSelectNodeList: [],
+      curSelectLabelList: [],
+      curSelectValueList: [], // 复选
+      curSelectNode: null,
+      curSelectLabel: '', // 单选
+      curSelectValue: '',
+      curDefaultCheckedKeys: [...this.defaultCheckedKeys],
+      treeValue: [],
+      options: [] // [{ value: '', label: '' }]
     };
-  },
-  computed: {
-    elOptions() {
-      const elOptions = [];
-      if (this.options) {
-        this.vOptions = this.options;
-      }
-      if (_isNil(this.vOptions)) {
-        return;
-      }
-      for (let i = 0; i < this.vOptions.length; i++) {
-        const option = this.vOptions[i];
-        elOptions.push(
-          this.$createElement('el-option', {
-            props: {
-              key: option[this.valueField],
-              label: option[this.displayField],
-              value: option[this.valueField],
-              disabled: option.disabled
-            }
-          })
-        );
-      }
-      /* const elOptions = this.vOptions.map(option => {
-        return this.$createElement('el-option', {
-          props: {
-            key: option[this.valueField],
-            label: option[this.displayField],
-            value: option[this.valueField],
-            disabled: option.disabled
-          }
-        })
-      }) */
-      return elOptions;
-    },
-    slotElement() {
-      const nodes = [];
-      if (_has(this.$slots, 'prefix')) {
-        nodes.push(
-          this.$createElement('template', { slot: 'prefix' }, [
-            this.$slots.prefix
-          ])
-        );
-      }
-      if (_has(this.$slots, 'empty')) {
-        nodes.push(
-          this.$createElement('template', { slot: 'empty' }, [
-            this.$slots.empty
-          ])
-        );
-      }
-      // }
-      return nodes;
-    }
-  },
-  watch: {
-    value(value, oldValue) {
-      if (!_isEqual(value, oldValue) && !_isEqual(this.vValue, value)) {
-        this.vValue = value;
-        this._changeEvent(this.vValue);
-        this._selectChangeEvent(this.vValue);
-      }
-    },
-    api: {
-      handler: '_fetchList',
-      immediate: true
-    }
   },
   created() {},
   methods: {
     /**
-     * @desc 获取远程服务器数据的操作
-     * @method
+     * @desc 创建 el-popover
      */
-    _fetchList() {
-      if (_isEmpty(this.api) || _isNil(this.$api)) {
-        return;
+    createPopover() {
+      const vNode = [];
+      const h = this.$createElement;
+      vNode.push(
+        h(
+          'el-popover',
+          {
+            ref: `${this._uid}-base-select-tree-popover`,
+            props: {
+              placement: 'bottom',
+              // title: '标题',
+              width: this.treeWidth,
+              trigger: 'click'
+              // content: 'hello'
+            },
+            on: {}
+          },
+          [
+            this.createTree(),
+            h(
+              'div',
+              { slot: 'reference', style: { height: '0px' }, ref: 'bbb' },
+              // 'click 激活'
+              []
+            )
+          ]
+        )
+      );
+      return vNode;
+    },
+    /**
+     * @desc 创建 el-tree 节点
+     */
+    createSelect() {
+      const h = this.$createElement;
+      let prefixLabelVNode = h();
+      // Select 组件头部内容
+      if (this.prefixLabel) {
+        prefixLabelVNode = h(
+          'span',
+          { style: { lineHeight: '32px' }, slot: 'prefix' },
+          this.prefixLabel
+        );
       }
-      this.$api[this.api](this.vQueryParams)
-        .then(resData => {
-          if (!_isNil(this.loadFilter)) {
-            resData = this.loadFilter(resData.data);
+      const vNode = h(
+        'el-select',
+        {
+          ref: `${this._uid}-base-select-tree-ref`,
+          style: {
+            width: `${this.width}px` // 文本框控件宽度
+          },
+          attrs: {
+            id: this.$attrs.id,
+            autofocus: this.$attrs.autofocus,
+            placeholder: this.$attrs.placeholder
+          },
+          props: _assign(
+            {},
+            {
+              value: this.multiple
+                ? this.curSelectValueList
+                : this.curSelectValue,
+              clearable: true, // 有清除按钮
+              multiple: this.multiple, // 设置多选，value对应为数组
+              'collapse-tags': true // 合并多选
+            },
+            this.$attrs
+          ),
+          on: {
+            'hook:mounted': () => {
+              this.selectInputHeight = this.$refs[`${this._uid}-base-select-tree-ref`].$el.offsetHeight; // input 框的高度
+            },
+            clear: () => {
+              this.clear();
+              this.$refs[this.treeUserRef].clearChecked();
+              this.$emit('selectTreeChange', this.multiple ? [] : '');
+              this.change([]);
+              this.setSelectPanel2InputOffsetTop();
+            },
+            'remove-tag': tag => {
+              const index = _findIndex(this.curSelectValueList, value => value === tag);
+              const optionIndex = _findIndex(this.options, item => item[this.valueField] === tag);
+              if (index !== -1) {
+                this.curSelectNodeList.splice(index, 1);
+                this.curSelectLabelList.splice(index, 1);
+                this.curSelectValueList.splice(index, 1);
+              }
+              if (optionIndex !== -1) {
+                this.options.splice(optionIndex, 1);
+              }
+              this.$emit('selectTreeChange', this.curSelectValueList);
+              this.change(this.curSelectNodeList);
+              this.$refs[this.treeUserRef].setCheckedKeys(this.curSelectValueList);
+              this.setSelectPanel2InputOffsetTop();
+            }
+          },
+          nativeOn: {
+            click: event => {
+              this.$refs[`${this._uid}-base-select-tree-ref`].blur();
+              this.$refs.bbb.click(); // 如果是 el-button ，那么自动触发 click 事件 `this.$refs.bbb.$el.click();`
+              event.stopPropagation();
+              event.preventDefault();
+              return false;
+            }
           }
-          this.vOptions = resData.data;
-        })
-        .catch(error => {
-          console.error(error);
+        },
+        [
+          prefixLabelVNode,
+          this.createOptions(),
+          h('div', { class: 'base-select-tree-down-empty', slot: 'empty', style: { display: 'none' } }, [])
+        ]
+      );
+      return vNode;
+    },
+    /**
+     * @desc 创建 el-option 节点
+     */
+    createOptions() {
+      const h = this.$createElement;
+      const vNode = this.options.map((option, index) => {
+        return h('el-option', {
+          style: {
+            /* width: `${this.treeWidth}px`,
+            height: 'auto',
+            'max-height': `${this.treeHeight}px`,
+            'background-color': this.backgroundColor,
+            padding: '0px',
+            overflow: 'auto', */
+            display: 'absolute',
+            top: '0px',
+            left: '0px',
+            height: '0px',
+            'z-index': '-100'
+            // display: 'none'
+          },
+          props: {
+            key: option[this.valueField],
+            label: option[this.displayField],
+            value: option[this.valueField]
+          },
+          on: {
+            'hook:mounted': () => {}
+          }
         });
+      });
+      return vNode;
     },
     /**
-     * @desc 选中值发生变化时触发
-     * @event FastComboBox#_changeEvent
-     * @param {Array} value - 选中项
+     * @desc 创建下拉 tree 控件
      */
-    _changeEvent(value) {
-      const v = this.multiple ? _assign([], value) : value;
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'change')
-      ) {
-        this.listeners.change(v);
-        return;
-      }
-      this.$emit('change', v);
+    createTree() {
+      const h = this.$createElement;
+      const that = this;
+      return h('base-tree', {
+        style: {
+          height: '100%',
+          overflow: 'auto',
+          'font-weight': 'normal'
+        },
+        class: 'select-tree-panel',
+        ref: this.treeUserRef,
+        attrs: {
+          defaultCheckedKeys: this.curDefaultCheckedKeys,
+          checkStrictly: this.multiple, // 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 false
+          showCheckbox: this.multiple // 出现复选框
+        },
+        props: _assign(
+          {},
+          {
+            displayField: this.displayField,
+            valueField: this.valueField,
+            treeValue: this.treeValue, // v-model value 属性
+            listeners: {
+              nodeClick: (record, node, tree) => {
+                // 使 input 失去焦点，并隐藏下拉框
+                this.$refs[`${this._uid}-base-select-tree-ref`].blur();
+                const eventName = _has(this.$listeners, 'nodeClick')
+                  ? 'nodeClick'
+                  : 'node-click';
+                this.$emit(eventName, record, node, tree);
+              },
+              checkChange: (record, checked, childCheckNodes) => {
+                if (
+                  this.curSelectValueList.includes(
+                    record[this.valueField]
+                  ) &&
+                  !checked
+                ) {
+                  const index = this.curSelectValueList.findIndex(
+                    value => value === record[this.valueField]
+                  );
+                  const optionIndex = this.options.findIndex(
+                    item => item[this.valueField] === record[this.valueField]
+                  );
+                  if (index !== -1) {
+                    this.curSelectValueList.splice(index, 1);
+                    this.curSelectLabelList.splice(index, 1);
+                    this.curSelectNodeList.splice(index, 1);
+                  }
+                  if (optionIndex) {
+                    this.options.splice(optionIndex, 1);
+                  }
+                }
+              }
+            }
+          },
+          this.$attrs
+        ),
+        on: {
+          // 数据加载完成
+          afterLoadStore(data) {
+            // 默认选中
+            if (!_isNil(that.selectTreeValue)) {
+              if (that.multiple) {
+                that.curDefaultCheckedKeys.push(...that.selectTreeValue);
+              } else {
+                that.curDefaultCheckedKeys.push(that.selectTreeValue);
+              }
+              setTimeout(() => {
+                const nodes = that.$refs[that.treeUserRef].getCheckedNodes();
+                if (!_isEmpty(nodes)) {
+                  for (let i = 0, len = nodes.length; i < len; i++) {
+                    that.options.push({ [that.valueField]: nodes[i][that.valueField], [that.displayField]: nodes[i][that.displayField] });
+                    if (that.multiple) {
+                      that.curSelectValueList.push(nodes[i][that.valueField]);
+                    }
+                  }
+                  if (!that.multiple) {
+                    that.curSelectValue = nodes[0][that.valueField];
+                  }
+                }
+              }, 0);
+            }
+          },
+          check: (node, treeCheckedNode) => {
+            // 多选-点击复选框
+            this.$refs.bbb.click(); // 防止下拉树面板在点击后隐藏
+            this.setSelectPanel2InputOffsetTop();
+            if (this.multiple) {
+              const checkedKeys = this.$refs[this.treeUserRef].getTree().getCheckedKeys();
+              // 操作最大的选中数量
+              if (checkedKeys.length > this.maxItem) {
+                this.$refs[this.treeUserRef].setCheckedKeys(this.curSelectValueList);
+                return;
+              }
+              if (!_includes(checkedKeys, node[this.valueField])) {
+                return;
+              }
+              this.curSelectNodeList.push(node);
+              this.curSelectLabelList.push(node[this.displayField]);
+              this.curSelectValueList.push(node[this.valueField]);
+              this.options.push({ [this.displayField]: node[this.displayField], [this.valueField]: node[this.valueField] });
+              this.$emit('selectTreeChange', this.curSelectValueList);
+              this.change(this.curSelectNodeList);
+            }
+          },
+          // v-model input事件
+          currentChange: (record = {}) => {
+            // 单选
+            if (!this.multiple) {
+              this.options = [];
+              this.options.push({ [this.displayField]: record[this.displayField], [this.valueField]: record[this.valueField] });
+              this.curSelectValue = record[this.valueField];
+              this.curSelectLabel = record[this.displayField];
+              this.$emit('selectTreeChange', this.curSelectValue);
+              this.change({ [this.displayField]: record[this.displayField], [this.valueField]: record[this.valueField] });
+            }
+          }
+        }
+      });
     },
     /**
-     * @desc 下拉框出现/隐藏时触发
-     * @event FastComboBox#_visibleChangeEvent
-     * @param {boolean} value
+     * @desc 计算下拉面板和input框之间的高度差值
      */
-    _visibleChangeEvent(value) {
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'visible-change')
-      ) {
-        this.listeners['visible-change'](value);
-        return;
-      }
-      this.$emit('visible-change', value);
+    setSelectPanel2InputOffsetTop() {
+      setTimeout(() => {
+        const popoverEl = this.$refs[`${this._uid}-base-select-tree-popover`].$el;
+        if (!_isNil(popoverEl) && !_isNil(popoverEl.childNodes)) {
+          const selectInputHeight = this.$refs[`${this._uid}-base-select-tree-ref`].$el.clientHeight; // input 框的高度
+          // console.info('abc ', this.$refs[`${this._uid}-base-select-tree-ref`]);
+          const oldTopNum = this.$refs[this.treeUserRef].$el.parentNode.style.top.replace('px', '');
+          // console.info(this.selectInputHeight, selectInputHeight);
+          if (selectInputHeight > this.selectInputHeight) {
+            const dValue = selectInputHeight - this.selectInputHeight; // 差值
+            this.$refs[this.treeUserRef].$el.parentNode.style.top = `${_toNumber(oldTopNum) + _toNumber(dValue)}px`;
+          } else if (selectInputHeight <= this.selectInputHeight) {
+            const dValue = this.selectInputHeight - selectInputHeight;
+            // console.info('================', dValue);
+            if (dValue !== 0) {
+              this.$refs[this.treeUserRef].$el.parentNode.style.top = `${_toNumber(oldTopNum) - _toNumber(dValue)}px`;
+            }
+          }
+          this.selectInputHeight = selectInputHeight;
+        }
+      }, 100);
+      // console.info('abc ', this.$refs.bbb.offsetTop);
+      /* console.info(this.$refs[this.treeUserRef].$el.parentNode.style.top.replace('px', ''));
+        console.info('33333333 ', this.$refs[`${this._uid}-base-select-tree-popover`].$el.childNodes[0].offsetTop);
+        console.info('4444 ', this.$refs[this.treeUserRef].$el.parentNode); */
     },
     /**
-     * @desc 多选模式下移除tag时触发
-     * @event FastComboBox#_removeTag
-     * @param {*} value
+     * @desc 清空
      */
-    _removeTag(value) {
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'remove-tag')
-      ) {
-        this.listeners['remove-tag'](value);
-        return;
-      }
-      this.$emit('remove-tag', value);
+    clear: function () {
+      this.curSelectNodeList = [];
+      this.curSelectLabelList = [];
+      this.curSelectValueList = [];
+      this.curSelectNode = null;
+      this.curSelectLabel = '';
+      this.curSelectValue = '';
+      this.curDefaultCheckedKeys = [];
+      this.treeValue = [];
+      this.options = [];
     },
     /**
-     * @desc 可清空的单选模式下用户点击清空按钮时触发
-     * @event FastComboBox#_clearEvent
+     * @desc 自定义change事件
+     * @param {Array|String} val
      */
-    _clearEvent() {
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'clear')
-      ) {
-        this.listeners.clear();
-        return;
-      }
-      this.$emit('clear');
-    },
-    /**
-     * @desc 当 input 失去焦点时触发
-     * @event FastComboBox#_blurEvent
-     * @param {*} event
-     */
-    _blurEvent(event) {
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'blur')
-      ) {
-        this.listeners.blur(event);
-        return;
-      }
-      this.$emit('blur', event);
-    },
-    /**
-     * @desc 当 input 获得焦点时触发
-     * @event FastComboBox#_focusEvent
-     * @param {*} event
-     */
-    _focusEvent(event) {
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'focus')
-      ) {
-        this.listeners.focus(event);
-        return;
-      }
-      this.$emit('focus', event);
-    },
-    /**
-     * @desc 下拉选择项发生改变时
-     * @event FastInput#_selectChangeEvent
-     * @param {Array} value - 选中项
-     */
-    _selectChangeEvent(value) {
-      const v = this.multiple ? _assign([], value) : value;
-      if (
-        _isEqual(_isNil(this.listeners), false) &&
-        _has(this.listeners, 'selectChange')
-      ) {
-        this.listeners.selectChange(v);
-        return;
-      }
-      // v-model
-      this.$emit('selectChange', v);
-    },
-    /**
-     * @desc 手动执行刷新数据操作
-     * @method
-     * @param {Object} params - 查询条件
-     */
-    reload(params = {}) {
-      if (!_isEmpty(this.api)) {
-        _assign(this.vQueryParams, params);
-        this._fetchList();
-      }
+    change(val) {
+      'change' in this.listeners && this.listeners.change(val);
     }
   },
   render(h) {
-    // v-if
-    if (_isEqual(this.isRender, false)) {
-      return h();
-    }
-    const style = _assign({}, _get(this.$props, 'ctStyle', {})); // { ..._get(this.$props, 'ctStyle', {}) }
-    if (this.width !== 'auto') {
-      style.width = this.width;
-    }
-    // v-show
-    if (_isEqual(this.isDisplay, false)) {
-      _set(style, 'display', 'none');
-    }
     return h(
-      'el-select',
+      'div',
       {
-        ref: `${this._uid}-el-select-ref`,
-        class: _assign({ 'base-select': true }, _get(this.$props, 'ctCls', {})),
-        style,
-        attrs: {
-          id: this.$attrs.id
-        },
-        props: _assign({}, this.$attrs, { value: this.vValue }), // { ...this.$attrs, value: this.vValue },
-        on: {
-          change: this._changeEvent,
-          'visible-change': this._visibleChangeEvent,
-          'remove-tag': this._removeTag,
-          clear: this._clearEvent,
-          blur: this._blurEvent,
-          focus: this._focusEvent,
-          input: val => {
-            // v-model
-            this.vValue = val;
-            this._selectChangeEvent(this.vValue);
-          }
-        }
+        ref: `${this._uid}-base-select-panel`,
+        style: { width: `${this.width}px` },
+        class: { 'base-select-tree': true, [this.ctCls]: this.ctCls }
       },
-      [this.elOptions, this.slotElement]
+      [this.createSelect(), this.createPopover()]
     );
   }
 };
-export default BaseSelect;
+export default BaseSelectTree;

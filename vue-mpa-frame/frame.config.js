@@ -21,7 +21,27 @@ module.exports = {
   providePlugin: {
     $: 'jquery',
     jQuery: 'jquery',
-    Vue: 'vue'
+    Vue: 'vue',
+    _get: ['lodash', 'get'],
+    _set: ['lodash', 'set'],
+    _map: ['lodash', 'map'],
+    _has: ['lodash', 'has'],
+    _isEmpty: ['lodash', 'isEmpty'],
+    _includes: ['lodash', 'includes'],
+    _forEach: ['lodash', 'forEach'],
+    _findIndex: ['lodash', 'findIndex'],
+    _assign: ['lodash', 'assign'],
+    _concat: ['lodash', 'concat'],
+    _isNil: ['lodash', 'isNil'],
+    _omit: ['lodash', 'omit'],
+    _pick: ['lodash', 'pick'],
+    _findLastIndex: ['lodash', 'findLastIndex'],
+    _isArray: ['lodash', 'isArray'],
+    _split: ['lodash', 'split'],
+    _join: ['lodash', 'join'],
+    _last: ['lodash', 'last'],
+    _find: ['lodash', 'find'],
+    _keys: ['lodash', 'keys']
   }, // 提供全局的变量
   // 抽离库不打包到构建文件中减小构建包体积，但要通过 script 标签在外部引入（单页 html-webpack-externals-plugin,多页 html-webpack-tags-plugin）
   externals: {
@@ -62,6 +82,9 @@ module.exports = {
   ],
   // 配置某些包使用 CDN，externals 需要同步配置，版本请注意 package.json
   cdnMap: {
+    // 直接放入到 html 文件中，不用和 externals 匹配，开发和生产都会放入
+    outsideJs: [],
+    outsideCss: [],
     // 公共的一些js，会注入到所有项目的 html 页面中
     js: [
       '/static/plugins/axios/0.18.0/axios.min.js',

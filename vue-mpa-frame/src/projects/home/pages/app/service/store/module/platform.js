@@ -142,6 +142,7 @@ const mutations = {
     setTimeout(() => {
       // 移除全部缓存
       localStorage.clear();
+      sessionStorage.clear();
       // localStorage.removeItem(sStorageKey); // 移除这个项目内的缓存
       // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);

@@ -41,6 +41,9 @@
       </p>
     <![endif]-->
     <div id="app"></div>
+    <% for(var i=0,len=htmlWebpackPlugin.options.outsideJs.length;i<len;i++ ){ %>
+      <script src="<%= htmlWebpackPlugin.options.outsideJs[i] %>"></script>
+    <% } %>
     <% for(var i=0,len=htmlWebpackPlugin.options.pageCdnMap.js.length;i<len;i++ ){ %>
       <script src=<%= htmlWebpackPlugin.options.pageCdnMap.js[i] %>></script>
     <% } %>

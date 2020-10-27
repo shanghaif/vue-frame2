@@ -8,7 +8,8 @@ import _includes from 'lodash/includes';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 import store from '../../store/index.js';
-import { HOME_ROUTER_NAME, USER_API_CONFIG } from '@config/index.js';
+import { HOME_ROUTER_NAME } from '@config/index.js';
+import { USER_API_CONFIG } from '../index.js';
 
 // 请求开始发送
 const apiRequestStartHandler = function () {

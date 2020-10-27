@@ -7,6 +7,7 @@ import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
 import _set from 'lodash/set';
+// import { session } from 'good-storage';
 // import { sStorageKey } from '../../../store/index.js';
 
 const state = {
@@ -85,16 +86,31 @@ const actions = {
         const oMenu = _find(aMenusList, menu => menu.menuCode === value.name);
         if (_has(value, 'children') && !_isEmpty(value.children)) {
           setRouterMeta(value, oMenu);
-          !_isNil(oMenu) && checkChildren(value.children, oMenu.children);
+          if (_isNil(oMenu)) {
+          } else {
+            checkChildren(value.children, oMenu.children);
+          }
         } else {
           setRouterMeta(value, oMenu);
         }
       }
     };
     const setRouterMeta = function (router, oMenu) {
-      (!_isNil(oMenu) && !_has(oMenu, 'meta')) && (oMenu.meta = {});
+      !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
         _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
+        // 如果父节点是 false，那么对应的所有子节点都应该是 false
+        const doWhileFn = function (item) {
+          for (let i = 0, len = item.length; i < len; i++) {
+            _set(item[i], 'meta.isOpen', false);
+            if (_has(item[i], 'children') && item[i].children.length > 0) {
+              doWhileFn(item[i].children);
+            }
+          }
+        };
+        if (_has(router, 'children') && !_isEmpty(router.children)) {
+          doWhileFn(_get(router, 'children', []));
+        }
       }
       if (!_isNil(oMenu) && _has(oMenu, 'buttons')) {
         _set(router.meta, 'buttons', oMenu.buttons);
@@ -102,10 +118,26 @@ const actions = {
     };
     for (const value of Object.values(routes)) {
       if (_has(value, 'children') && !_isEmpty(value.children)) {
-        checkChildren(value.children, state.roleMenus.models);
+        const menu2Children = [];
+        /* const menu2Children = _get(
+          _find(state.roleMenus.models, model => model.menuCode === value.name),
+          'children',
+          []
+        ); */
+        let menuModels = state.roleMenus.models;
+        const router2Menus = _find(state.roleMenus.models, model => model.menuCode === value.name);
+        if (!_isNil(router2Menus)) {
+          menuModels = _get(router2Menus, 'children', []);
+        }
+        for (const elem of value.children.values()) {
+          const itemMenu = _find(menuModels, model => model.menuCode === elem.name);
+          itemMenu && menu2Children.push(itemMenu);
+        }
+        checkChildren(value.children, menu2Children);
       }
     }
-    // console.info('routes', routes, state.roleMenus);
+    // console.info('routes', routes, state.roleMenus.models);
+    // console.info('rootRouterRedirect', rootRouterRedirect);
   },
   // 加载远程数据字典-保证页面展示时字典数据已经获取
   getDict({ commit, state }) {
@@ -146,6 +178,7 @@ const mutations = {
       // 移除全部缓存
       // localStorage.removeItem(sStorageKey);
       localStorage.clear();
+      sessionStorage.clear();
       // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
   }

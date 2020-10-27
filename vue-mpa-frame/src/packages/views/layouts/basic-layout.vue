@@ -13,7 +13,7 @@
       <template v-slot:west>
         <base-nav-menu
           ref="menu"
-          :menus="getMenus"
+          :menus="menus"
           v-bind="menuProps"
           @select="handleSelect"
         >
@@ -26,6 +26,7 @@
               <base-bread-crumb
                 separator-class="el-icon-arrow-right"
                 :options="breadCrumbOptions"
+                @bread-click="onBreadClick"
               ></base-bread-crumb>
             </div>
           </template>
@@ -54,12 +55,25 @@ import _join from 'lodash/join';
 import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _get from 'lodash/get';
+import _has from 'lodash/has';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'BasicLayout',
+  provide() {
+    return {
+      getBaseLayout: () => {
+        return this;
+      }
+    };
+  },
   components: { TopView },
   // title 顶部栏目标题文字，iconfontUrl 图标，collapsed 侧栏收起状态
   props: {
+    // 菜单id，传递值则值显示这个值对应的菜单数据
+    menuId: {
+      type: [String, Number]
+    },
     title: {
       type: String,
       default: '项目名称'
@@ -82,6 +96,8 @@ export default {
   data() {
     this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
+      menus: [],
+      navTitle: '',
       layout: {
         northHeight: '60px',
         westWidth: 'auto',
@@ -107,21 +123,6 @@ export default {
       breadCrumbOptions: []
     };
   },
-  computed: {
-    getMenus() {
-      if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
-        const menus = _find(
-          this.$store.getters.getMenus,
-          menu => menu.menuCode === this.ROOT_PAGE_NAME
-        );
-        if (_isNil(menus)) {
-          return [];
-        }
-        return _get(menus, 'children', []);
-      }
-      return this.$store.getters.getMenus;
-    }
-  },
   watch: {
     // 监听路由改变-路由动态改变
     $route: {
@@ -132,6 +133,7 @@ export default {
             this.ROOT_PAGE_NAME = rootPageName;
           }
           this.setCheckedMenu(to, from);
+          this.navTitle = this.getNavTitle();
         }
       },
       immediate: true
@@ -144,11 +146,60 @@ export default {
     // }, 3000);
   },
   methods: {
+    getMenus(to, from) {
+      if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
+        let menus = this.$store.getters.getMenus;
+        if (!_isNil(this.menuId)) {
+          const menuList = [];
+          const doWhileFn = (children) => {
+            for (let n = 0, len1 = children.length; n < len1; n++) {
+              if (children[n].id === this.menuId || `${children[n].id}` === this.menuId) {
+                menuList.push(children[n]);
+                break;
+              }
+              if (_has(children[n], 'children') && !_isEmpty(children[n].children)) {
+                doWhileFn(children[n].children);
+              }
+            }
+          };
+          for (let i = 0, len = this.$store.getters.getMenus.length; i < len; i++) {
+            const menu = this.$store.getters.getMenus[i];
+            if (menu.id === this.menuId || `${menu.id}` === this.menuId) {
+              menuList.push(_get(menu, 'children', []));
+              break;
+            } else {
+              if (_has(menu, 'children') && !_isEmpty(menu.children)) {
+                doWhileFn(menu.children);
+                if (!_isEmpty(menuList)) {
+                  break;
+                }
+              }
+            }
+          }
+          menus = menuList[0];
+        } else {
+          const getMatchedMenu = function (menus, code) {
+            return _find(
+              menus,
+              menu => menu.menuCode === code
+            );
+          };
+          menus = getMatchedMenu(menus, this.ROOT_PAGE_NAME);
+        }
+        if (_isNil(menus)) {
+          return [];
+        }
+        this.menus = _has(menus, 'children') ? _get(menus, 'children', []) : menus;
+        return this.menus;
+      }
+      this.menus = this.$store.getters.getMenus;
+      return this.menus;
+    },
     /**
      * @desc 设置默认选中项
      */
     setCheckedMenu(to, from) {
-      let navMenus = this.getMenus;
+      let navMenus = this.getMenus(to, from);
       const aPathKeyList = [];
       for (const value of Object.values(to.matched)) {
         if (value.name !== this.ROOT_PAGE_NAME) {
@@ -196,7 +247,7 @@ export default {
       let menu = null;
       for (let i = 0, len = aKeyPathList.length; i < len; i++) {
         if (i === 0) {
-          menu = this.getMenus[aKeyPathList[i]];
+          menu = this.menus[aKeyPathList[i]];
         } else {
           menu = menu.children[aKeyPathList[i]];
         }
@@ -207,6 +258,76 @@ export default {
         menu.menuCode !== ''
       ) {
         this.$router.push({ name: menu.menuCode });
+      } else {
+        // 调用路由对应页面的 routerActivated 方法
+        const { matched } = this.$router.currentRoute;
+        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+          const that = matched[matched.length - 1].instances.default;
+          that.$options.routerActivated.call(that);
+        }
+      }
+    },
+    getNavTitle() {
+      if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
+        const menus = _find(
+          this.$store.getters.getMenus,
+          menu => menu.menuCode === this.ROOT_PAGE_NAME
+        );
+        if (_isNil(menus)) {
+          return '';
+        }
+        return menus.menuName;
+      }
+      return this.title;
+    },
+    /**
+     * @desc 设置面包屑
+     * @param {string[]} options - 面包屑参数
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    setBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = options;
+      }
+    },
+    /**
+     * @desc 追加面包屑
+     * @param {string[]} options - 面包屑参数
+     * @example
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    appendBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = _concat(this.breadCrumbOptions, options);
+      }
+    },
+    /**
+     * @desc 删除面包屑
+     * @example
+     * @param {array[]} name - 面包屑名字
+     * this.getBaseLayout().removeBreadCrumbOptions()
+     */
+    removeBreadCrumbOptions(name = []) {
+      const breadCrumbOptions = [];
+      if (name && this.breadCrumbOptions.length > 0) {
+        // _drop(this.breadCrumbOptions, this.breadCrumbOptions.length);
+        for (const item of this.breadCrumbOptions) {
+          if (!name.includes(item.text)) {
+            breadCrumbOptions.push(item);
+          }
+        }
+      }
+      this.breadCrumbOptions = _cloneDeep(breadCrumbOptions);
+    },
+    /**
+     * @desc 面包屑点击事件
+     * @event
+     */
+    onBreadClick(option, event) {
+      const { matched } = this.$router.currentRoute;
+      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+        const that = matched[matched.length - 1].instances.default;
+        _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }
     }
   }

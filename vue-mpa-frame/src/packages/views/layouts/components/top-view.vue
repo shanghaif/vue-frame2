@@ -187,7 +187,7 @@ export default {
      */
     onLoginout(event) {
       this.dialogInstance = this.$baseDialog({
-        component: this.$createElement('div', {}, ['确认要登出吗?']),
+        component: () => this.$createElement('div', {}, ['确认要登出吗?']),
         container: this.$el,
         center: true,
         width: '350px',

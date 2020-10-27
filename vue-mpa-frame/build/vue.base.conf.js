@@ -88,6 +88,8 @@ const setMPA = function () {
         js: _get(pageCdnMap, 'js', []),
         css: _get(pageCdnMap, 'css', [])
       },
+      outsideJs: frameConfig.cdnMap.outsideJs,
+      outsideCss: frameConfig.cdnMap.outsideCss,
       // 打包出的 chunks 中必须配置 filename 这个 chunk，和对象的 key 值匹配 ，否则启动页面会是空白
       chunks: isDev
         ? _concat(

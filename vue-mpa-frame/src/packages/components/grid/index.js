@@ -61,6 +61,11 @@ const BaseGrid = {
       type: Boolean,
       default: false
     },
+    // 下标行的名称
+    indexLabel: {
+      type: String,
+      default: ''
+    },
     // 默认选择第一行
     isSelectedFirstRow: {
       type: Boolean,
@@ -411,6 +416,7 @@ const BaseGrid = {
               isReloadGrid: this.isReloadGrid,
               isSelectedFirstRow: this.isSelectedFirstRow,
               isShowIndex: this.isShowIndex,
+              indexLabel: this.indexLabel,
               selectMode: this.selectMode,
               loadFilter: this.loadFilter,
               slotNode: this.tableAttributes.slotNode,

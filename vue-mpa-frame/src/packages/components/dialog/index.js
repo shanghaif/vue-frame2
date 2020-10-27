@@ -28,6 +28,7 @@ import _concat from 'lodash/concat';
  */
 
 const BaseDialog = function (options = {}) {
+  const that = this;
   const optionsKey = _keys(options);
   const VueModal = Vue.extend({
     props: optionsKey,
@@ -116,6 +117,7 @@ const BaseDialog = function (options = {}) {
       };
     },
     created() {
+      this.$store = that.$store;
       this.$nextTick(() => {
         document.body.appendChild(instance.$mount().$el);
       });

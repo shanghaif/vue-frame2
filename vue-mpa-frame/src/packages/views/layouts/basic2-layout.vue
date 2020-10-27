@@ -52,6 +52,7 @@ import _drop from 'lodash/drop';
 import _concat from 'lodash/concat';
 import _get from 'lodash/get';
 import _map from 'lodash/map';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'Basic2Layout',
@@ -159,6 +160,63 @@ export default {
           _map(menuList, menu => ({ text: menu.menuName }))
         ); // 设置面包屑
         this.$router.push({ name: menu.menuCode });
+      } else {
+        // 调用路由对应页面的 routerActivated 方法
+        const { matched } = this.$router.currentRoute;
+        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+          const that = matched[matched.length - 1].instances.default;
+          that.$options.routerActivated.call(that);
+        }
+      }
+    },
+    /**
+     * @desc 设置面包屑
+     * @param {string[]} options - 面包屑参数
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    setBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = options;
+      }
+    },
+    /**
+     * @desc 追加面包屑
+     * @param {string[]} options - 面包屑参数
+     * @example
+     * this.getBaseLayout().appendBreadCrumbOptions([{text: 'hello'},{text: 'world'}])
+     */
+    appendBreadCrumbOptions(options = []) {
+      if (_isArray(options)) {
+        this.breadCrumbOptions = _concat(this.breadCrumbOptions, options);
+      }
+    },
+    /**
+     * @desc 删除面包屑
+     * @example
+     * @param {array[]} name - 面包屑名字
+     * this.getBaseLayout().removeBreadCrumbOptions()
+     */
+    removeBreadCrumbOptions(name = []) {
+      const breadCrumbOptions = [];
+      if (name && this.breadCrumbOptions.length > 0) {
+        // _drop(this.breadCrumbOptions, this.breadCrumbOptions.length);
+        for (const item of this.breadCrumbOptions) {
+          if (!name.includes(item.text)) {
+            breadCrumbOptions.push(item);
+          }
+        }
+      }
+      this.breadCrumbOptions = _cloneDeep(breadCrumbOptions);
+    },
+    /**
+     * @desc 面包屑点击事件
+     * @event
+     */
+    onBreadClick(option, event) {
+      const { matched } = this.$router.currentRoute;
+      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+        const that = matched[matched.length - 1].instances.default;
+        _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }
     }
   }

@@ -134,15 +134,24 @@ const BaseNavMenu = {
     /**
      * @desc 通过 el-menu-item 的 index 转换面包屑路径
      * @param {String} keyPath - 路径 0-0-0
+     * @param {Boolean} isToPath=false - 是否需要返回 to 用于面包屑的路由跳转
      */
-    getKeyPath2BreadCrumbPath(keyPath) {
+    getKeyPath2BreadCrumbPath(keyPath, isToPath = false) {
       let menus = this.menus;
       const breadCrumbPath = [];
       const aKeyPathList = _split(keyPath, '-');
       for (let i = 0, len = aKeyPathList.length; i < len; i++) {
         const menu = menus[aKeyPathList[i]];
         if (menu && _has(menu, 'menuName')) {
-          breadCrumbPath.push({ text: menu.menuName });
+          const obj = {
+            text: menu.menuName,
+            menuCode: menu.menuCode,
+            menuUrl: menu.menuUrl
+          };
+          if (isToPath) {
+            obj.to = menu.menuCode;
+          }
+          breadCrumbPath.push(obj);
         }
         if (_has(menu, 'children') && menu.children.length > 0) {
           menus = menu.children;
@@ -207,7 +216,8 @@ const BaseNavMenu = {
           'div',
           { class: { 'nav-top-title': true }, style },
           [
-            !_isNil(this.navIcon) && this.$createElement('i', { class: this.navIcon }, []),
+            !_isNil(this.navIcon) &&
+              this.$createElement('i', { class: this.navIcon }, []),
             this.$createElement(
               'span',
               {
@@ -296,9 +306,13 @@ const BaseNavMenu = {
             this.firstSubMenuIndex = subMenuIndex;
           }
           // 二级
+          const style = {};
+          if (!_get(menu, 'isGroupShow', true)) {
+            style.display = 'none'; // 是否要在组内一起展示该菜单
+          }
           menuVNode = this.$createElement(
             'el-submenu',
-            { key: subMenuIndex, props: { index: subMenuIndex } },
+            { key: subMenuIndex, props: { index: subMenuIndex }, style },
             [
               this.$createElement('template', { slot: 'title' }, [
                 this.$createElement('i', {
@@ -325,9 +339,13 @@ const BaseNavMenu = {
               text: _get(menu, 'menuName', '')
             });
           }
+          const style = {};
+          if (!_get(menu, 'isGroupShow', true)) {
+            style.display = 'none'; // 是否要在组内一起展示该菜单
+          }
           menuVNode = this.$createElement(
             'el-menu-item',
-            { key: menuItemIndex, props: { index: menuItemIndex } },
+            { key: menuItemIndex, props: { index: menuItemIndex }, style },
             [
               this.$createElement('i', {
                 class: _get(menu, 'iconUrl', '')
@@ -388,10 +406,14 @@ const BaseNavMenu = {
             this.firstSubMenuIndex = subMenuIndex;
           }
           this.subMenuList.push(subMenuIndex);
+          const style = {};
+          if (!_get(children[i], 'isGroupShow', true)) {
+            style.display = 'none'; // 是否要在组内一起展示该菜单
+          }
           vNodes.push(
             this.$createElement(
               'el-submenu',
-              { key: subMenuIndex, props: { index: subMenuIndex } },
+              { key: subMenuIndex, props: { index: subMenuIndex }, style },
               [
                 this.$createElement('template', { slot: 'title' }, [
                   this.$createElement('i', {
@@ -415,10 +437,15 @@ const BaseNavMenu = {
                 ? this.grade1Index + '-' + parentIndex + '-' + i
                 : parentIndex + '-' + i;
           }
+          const style = {};
+          if (!_get(children[i], 'isGroupShow', true)) {
+            style.display = 'none'; // 是否要在组内一起展示该菜单
+          }
           vNodes.push(
             this.$createElement(
               'el-menu-item',
               {
+                style,
                 props: {
                   index:
                     this.grade1Index !== ''

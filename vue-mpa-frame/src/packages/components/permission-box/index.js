@@ -55,11 +55,16 @@ const BasePermissionBox = {
       this.code &&
       this.buttons.length > 0
     ) {
-      const index = _findIndex(this.buttons, btn => btn.code === this.code);
+      const index = _findIndex(this.buttons, btn => _get(btn, 'code', btn.href) === this.code);
       if (index === -1) {
         return h();
       }
-      this.disabled = !_get(this.buttons[index], 'status', 0);
+      if (_has(this.buttons[index], 'status')) {
+        this.disabled = !_get(this.buttons[index], 'status', 0); // 1 启用 0 禁用
+      }
+      if (_has(this.buttons[index], 'flag')) {
+        this.disabled = !_get(this.buttons[index], 'flag', 0);
+      }
     }
     return h(
       this.element,
