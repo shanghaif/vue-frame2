@@ -5,3 +5,5 @@ public
 dist
 node_modules
 vue.config.js
+iconfont.js
+iconfont-classname.js

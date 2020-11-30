@@ -41,19 +41,26 @@ const apiRequestEndHandler = function (response = {}) {
     }
   }
   if (_includes(Vue.prototype.$constant.apiServeCode.WRONG_CODE, code)) {
-    // const msg = _get(response, 'data.msg', '-100');
-    let msg = '未定义的错误msg';
-    if (_has(response, 'data.msg')) {
-      msg = _get(response, 'data.msg');
+    const result = _get(
+      response,
+      'config.request_error_callback',
+      function () {}
+    )({ status: _get(response, 'data.data'), statusText: _get(response, 'data.mesg'), data: response.data }, {}, false);
+    if (result || _isNil(result)) {
+      // const msg = _get(response, 'data.msg', '-100');
+      let msg = '未定义的错误msg';
+      if (_has(response, 'data.msg')) {
+        msg = _get(response, 'data.msg');
+      }
+      if (_has(response, 'data.message')) {
+        msg = _get(response, 'data.message');
+      }
+      Vue.prototype.$message({
+        showClose: true,
+        message: '错误：' + msg,
+        type: 'error'
+      });
     }
-    if (_has(response, 'data.message')) {
-      msg = _get(response, 'data.message');
-    }
-    Vue.prototype.$message({
-      showClose: true,
-      message: '错误：' + msg,
-      type: 'error'
-    });
   }
   // 登录接口
   if (_get(response, 'config.headers.isLogin', false)) {
@@ -79,8 +86,12 @@ const apiRequestInterceptErrorHandler = function (message) {
 // 请求出现后置拦截器错误，例如：Request failed with status code 502
 const requestErrorCallback = function (
   error = { status: 1001, statusText: '未知错误' },
-  data = {}
+  data = {},
+  state = true
 ) {
+  if (!state) {
+    return;
+  }
   let code = error.status;
   let msg = error.statusText;
   if (!_isEmpty(data) && _has(data, 'code') && (_has(data, 'message') || _has(data, 'msg'))) {

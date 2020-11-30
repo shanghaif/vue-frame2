@@ -8,6 +8,7 @@
           :iconfontUrl="iconfontUrl"
           :collapsed="collapsed"
           :titleClick="titleClick"
+          v-if="renderTopView"
         ></top-view3>
       </template>
       <template v-slot:west> </template>
@@ -63,12 +64,17 @@ export default {
     titleClick: {
       type: Function,
       default: () => {}
+    },
+    // 渲染 top-view.vue
+    renderTopView: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       layout: {
-        northHeight: '60px',
+        northHeight: this.renderTopView ? '60px' : '0px',
         westWidth: 'auto',
         eastWidth: '0px',
         southHeight: '0px',

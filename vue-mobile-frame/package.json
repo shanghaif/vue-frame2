@@ -5,9 +5,11 @@
   "scripts": {
     "dev-port": "cross-env PORT=7060 npm run dev",
     "dev": "npm run createProxySelf && npm run lint && npm run serve",
+    "dev:test": "npm run createProxySelf && npm run lint && vue-cli-service serve --mode test",
     "serve": "npm run createProxySelf && vue-cli-service serve",
     "serve:dev-preview": "npm run createProxySelf && npm run lint && vue-cli-service serve --mode preview",
     "build": "vue-cli-service build",
+    "build:test": "vue-cli-service build --mode testProd",
     "lint": "eslint --ext .js --ext .jsx --ext .vue src/",
     "lint:no-fix": "vue-cli-service lint --no-fix",
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/",

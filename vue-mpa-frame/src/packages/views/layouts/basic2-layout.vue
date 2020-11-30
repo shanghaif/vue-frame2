@@ -8,6 +8,7 @@
           :iconfontUrl="iconfontUrl"
           :collapsed="collapsed"
           :titleClick="titleClick"
+          v-if="renderTopView"
         ></top-view2>
       </template>
       <template v-slot:west>
@@ -81,6 +82,16 @@ export default {
     titleClick: {
       type: Function,
       default: () => {}
+    },
+    // 渲染 top-view.vue
+    renderTopView: {
+      type: Boolean,
+      default: true
+    },
+    // 渲染 base-nav-menu 菜单组件
+    renderNavMenu: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -88,7 +99,7 @@ export default {
       logoutLoading: false,
       isFullscreen: false,
       layout: {
-        northHeight: '60px',
+        northHeight: this.renderTopView ? '60px' : '0px',
         westWidth: 'auto',
         eastWidth: '0px',
         southHeight: '0px',
@@ -159,7 +170,24 @@ export default {
           { text: _get(this.$refs.topView2.checkedFirstMenu, 'menuName', '') },
           _map(menuList, menu => ({ text: menu.menuName }))
         ); // 设置面包屑
-        this.$router.push({ name: menu.menuCode });
+        // 外部链接
+        if (_has(menu, 'target') && menu.target === 'out') {
+          const currentRoute = this.$router.resolve({ name: menu.menuCode });
+          const target = _get(currentRoute, 'route.meta.target', '_blank');
+          if (_includes(menu.menuCode, 'http')) {
+            window.open(menu.menuCode, target);
+          } else {
+            const fullPath = _get(currentRoute, 'route.fullPath', '');
+            if (fullPath.length > 0) {
+              const routeData = this.$router.resolve({
+                path: fullPath
+              });
+              window.open(routeData.href, target);
+            }
+          }
+        } else {
+          this.$router.push({ name: menu.menuCode });
+        }
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;

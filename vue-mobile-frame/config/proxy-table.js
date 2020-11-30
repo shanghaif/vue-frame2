@@ -1,5 +1,6 @@
 'use strict';
-const config = require('./proxy-self');
+const config =
+  process.env.NODE_ENV === 'development' ? require('./proxy-self') : {};
 /**
  * @desc devServer 代理配置
  */

@@ -80,7 +80,7 @@ const setMPA = function () {
       entry: `./src/projects/${pageName}/pages/${filename}/main.js`,
       template: `./src/projects/${pageName}/pages/${filename}/index.html`,
       filename: `${filename}.html`,
-      title: frameConfig.sys_app_title,
+      title: _get(frameConfig, `pageHtmlOptions.${filename}.title`, frameConfig.sys_app_title),
       favicon: path.join(__dirname, '../public/favicon.ico'),
       isRem: isRem,
       isUsedPr2Rem: isUsedPr2Rem,

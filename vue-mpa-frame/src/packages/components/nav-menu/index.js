@@ -10,6 +10,8 @@ import _split from 'lodash/split';
 import _join from 'lodash/join';
 import _last from 'lodash/last';
 import _isNil from 'lodash/isNil';
+import _includes from 'lodash/includes';
+import _find from 'lodash/find';
 
 const BaseNavMenu = {
   name: 'BaseNavMenu',
@@ -58,6 +60,13 @@ const BaseNavMenu = {
     collapsed: {
       type: Boolean,
       default: false
+    },
+    // svg 图标集合 [{name: 'studyState', component: studyState}]
+    svgIcons: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   data() {
@@ -153,7 +162,7 @@ const BaseNavMenu = {
           }
           breadCrumbPath.push(obj);
         }
-        if (_has(menu, 'children') && menu.children.length > 0) {
+        if (!_isNil(menu.children) && _has(menu, 'children') && menu.children.length > 0) {
           menus = menu.children;
         }
       }
@@ -293,6 +302,7 @@ const BaseNavMenu = {
       for (let i = 0, len = this.menus.length; i < len; i++) {
         const menu = this.menus[i];
         let menuVNode = null;
+        const iconUrl = this.getIconNode(menu);
         if (_has(menu, 'children') && !_isEmpty(menu.children)) {
           const subMenuIndex =
             this.grade1Index !== '' ? this.grade1Index + '-' + i : i + '';
@@ -310,14 +320,16 @@ const BaseNavMenu = {
           if (!_get(menu, 'isGroupShow', true)) {
             style.display = 'none'; // 是否要在组内一起展示该菜单
           }
+
           menuVNode = this.$createElement(
             'el-submenu',
             { key: subMenuIndex, props: { index: subMenuIndex }, style },
             [
               this.$createElement('template', { slot: 'title' }, [
-                this.$createElement('i', {
+                /* this.$createElement('i', {
                   class: _get(menu, 'iconUrl', '')
-                }),
+                }), */
+                iconUrl,
                 // _get(menu, 'menuName', '')
                 this.$createElement(
                   'span',
@@ -347,9 +359,7 @@ const BaseNavMenu = {
             'el-menu-item',
             { key: menuItemIndex, props: { index: menuItemIndex }, style },
             [
-              this.$createElement('i', {
-                class: _get(menu, 'iconUrl', '')
-              }),
+              iconUrl,
               // _get(menu, 'menuName', '')
               this.$createElement(
                 'span',
@@ -370,6 +380,7 @@ const BaseNavMenu = {
       const vNodes = [];
       for (let i = 0, len = children.length; i < len; i++) {
         // 三级
+        const iconUrl = this.getIconNode(children[i]);
         if (_has(children[i], 'children') && !_isEmpty(children[i].children)) {
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
@@ -377,6 +388,7 @@ const BaseNavMenu = {
             });
           }
           const subMenuItems = _map(children[i].children, (item, key) => {
+            const iconUrl = this.getIconNode(item);
             if (key === 0) {
               this.defaultBreadCrumbPath.push({
                 text: _get(item, 'menuName', '')
@@ -393,7 +405,8 @@ const BaseNavMenu = {
               'el-menu-item',
               { props: { index: menuItemIndex } },
               [
-                this.$createElement('i', { class: _get(item, 'iconUrl', '') }),
+                // this.$createElement('i', { class: _get(item, 'iconUrl', '') }),
+                iconUrl,
                 item.menuName
               ]
             );
@@ -416,9 +429,10 @@ const BaseNavMenu = {
               { key: subMenuIndex, props: { index: subMenuIndex }, style },
               [
                 this.$createElement('template', { slot: 'title' }, [
-                  this.$createElement('i', {
+                  /* this.$createElement('i', {
                     class: _get(children[i], 'iconUrl', '')
-                  }),
+                  }), */
+                  iconUrl,
                   children[i].menuName
                 ]),
                 subMenuItems
@@ -454,9 +468,10 @@ const BaseNavMenu = {
                 }
               },
               [
-                this.$createElement('i', {
+                /* this.$createElement('i', {
                   class: _get(children[i], 'iconUrl', '')
-                }),
+                }), */
+                iconUrl,
                 _get(children[i], 'menuName', '')
               ]
             )
@@ -464,6 +479,28 @@ const BaseNavMenu = {
         }
       }
       return vNodes;
+    },
+    /**
+     * @desc 转换 menu 菜单中的 iconUrl
+     * @param {Object} item - menu 对象
+     */
+    getIconNode(item = {}) {
+      let iconUrl = _get(item, 'iconUrl', '');
+      if (_includes(iconUrl, 'svg-')) {
+        // svg图
+        const curUrl = iconUrl.replace('svg-', '');
+        const svgObj = _find(this.svgIcons, o => o.name === curUrl);
+        if (!_isNil(svgObj)) {
+          iconUrl = this.$createElement(_get(svgObj, 'component', 'span'), {
+            style: { width: '24px', height: '16px', marginRight: '5px' }
+          });
+        } else {
+          // iconUrl = this.$createElement('i', {}, []);
+        }
+      } else {
+        iconUrl = this.$createElement('i', { class: iconUrl });
+      }
+      return iconUrl;
     }
   },
   render(h) {

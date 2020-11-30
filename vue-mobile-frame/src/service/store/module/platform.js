@@ -2,7 +2,7 @@
  * @desc 这个网站的 store
  */
 import _get from 'lodash/get';
-import { sStorageKey } from '../../../store/index.js';
+import { sStorageKey, isClearCache } from '../../../store/index.js';
 
 const state = {
   data: {}, // 用户信息
@@ -34,7 +34,9 @@ const actions = {
         }
       })
         .then(resData => {
-          if (resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE) {
+          if (
+            resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+          ) {
             this.dispatch('setUserData', { data: resData.data }); // 调用外部的根 store 赋值 data
             commit('UPDATE_DATA', resData.data);
             // 设置通用请求头参数
@@ -58,15 +60,19 @@ const actions = {
       // 发送登出请求 （销毁 token api请求）
       Vue.prototype.$api['login/logout']({
         headers: { token: state.token }
-      }).then((resData) => {
-        if (resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE) {
-          this.dispatch('platform/handlerDestroy');
-        }
-        resolve();
-      }).catch(error => {
-        reject(error);
-        console.info(error);
-      });
+      })
+        .then(resData => {
+          if (
+            resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+          ) {
+            this.dispatch('platform/handlerDestroy');
+          }
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
+          console.info(error);
+        });
     });
   },
   // 销毁缓存和变量
@@ -104,10 +110,10 @@ const mutations = {
     state.isLogin = false;
     setTimeout(() => {
       // 移除全部缓存
-      if (!_isNil(localStorage.getItem(sStorageKey))) {
+      if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {
         localStorage.removeItem(sStorageKey);
       }
-      if (!_isNil(sessionStorage.getItem(sStorageKey))) {
+      if (!_isNil(sessionStorage.getItem(sStorageKey)) && isClearCache) {
         sessionStorage.removeItem(sStorageKey);
       }
       // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成

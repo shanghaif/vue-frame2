@@ -13,6 +13,7 @@ import _omit from 'lodash/omit';
 import _find from 'lodash/find';
 import _isArray from 'lodash/isArray';
 import _pick from 'lodash/pick';
+import _includes from 'lodash/includes';
 
 const BaseGridTable = {
   name: 'BaseGridTable',
@@ -76,6 +77,10 @@ const BaseGridTable = {
     // 过滤返回数据（该函数带一个参数'data'用来指向源数据）
     loadFilter: {
       type: Function
+    },
+    // 静态数据
+    options: {
+      type: Object
     }
   },
   data() {
@@ -121,6 +126,16 @@ const BaseGridTable = {
       }
       // 数据加载完成
       this.getBaseGrid.onLoadSuccess(val);
+    },
+    // 监听静态数据源
+    options: {
+      handler: function (val, oldVal) {
+        if (!_isEmpty(val)) {
+          this.loadOptions();
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -185,7 +200,7 @@ const BaseGridTable = {
       this.isReloadGrid && this.loadData();
     },
     /**
-     * @desc 加载数据
+     * @desc 加载数据-远端
      * @method
      */
     loadData() {
@@ -193,18 +208,39 @@ const BaseGridTable = {
         return;
       }
       // this.loadMask();
-      (!this.loading) && (this.loading = true);
+      !this.loading && (this.loading = true);
       const params = _assign(
         {},
         {
-          [_get(this['$base-global-options'], 'grid.pageNum', 'pageNum')]: this.getBaseGrid.currentPage,
-          [_get(this['$base-global-options'], 'grid.pageSize', 'pageSize')]: this.getBaseGrid.pageSize
+          [_get(this['$base-global-options'], 'grid.pageNum', 'pageNum')]: this
+            .getBaseGrid.currentPage,
+          [_get(
+            this['$base-global-options'],
+            'grid.pageSize',
+            'pageSize'
+          )]: this.getBaseGrid.pageSize
         },
         _omit(this.queryParams, ['data', 'headers']),
         _omit(this.curQueryParams, ['data', 'headers'])
       );
-      const data = _get(_assign({}, _pick(this.queryParams, ['data']), _pick(this.curQueryParams, ['data'])), 'data', {});
-      const headers = _get(_assign({}, _pick(this.queryParams, ['headers']), _pick(this.curQueryParams, ['headers'])), 'headers', {});
+      const data = _get(
+        _assign(
+          {},
+          _pick(this.queryParams, ['data']),
+          _pick(this.curQueryParams, ['data'])
+        ),
+        'data',
+        {}
+      );
+      const headers = _get(
+        _assign(
+          {},
+          _pick(this.queryParams, ['headers']),
+          _pick(this.curQueryParams, ['headers'])
+        ),
+        'headers',
+        {}
+      );
       this.$api[this.api]({ params, data, headers })
         .then(response => {
           this.getBaseGrid.setTotal(
@@ -231,6 +267,23 @@ const BaseGridTable = {
           // this.loading.close();
           this.loading && (this.loading = false);
         });
+    },
+    /**
+     * @desc 加载静态数据
+     */
+    loadOptions() {
+      const response = _isNil(this.loadFilter)
+        ? this.options
+        : this.loadFilter(this.options);
+      this.getBaseGrid.setTotal(
+        _get(response, _get(this['$base-global-options'], 'grid.total', ''), 0)
+      );
+      const data = _get(
+        response,
+        _get(this['$base-global-options'], 'grid.data', ''),
+        []
+      );
+      this.tableData = data;
     },
     /**
      * @desc 设置查询参数
@@ -395,33 +448,73 @@ const BaseGridTable = {
           columnKey = elem.name;
         }
         return this.$createElement('el-table-column', {
-          props: _assign(
-            {},
-            _omit(elem, ['render', 'renderHeader', 'unit']),
-            { 'filter-method': filterMethod, columnKey: columnKey }
-          ),
+          props: _assign({}, _omit(elem, ['render', 'renderHeader', 'unit']), {
+            'filter-method': filterMethod,
+            columnKey: columnKey
+          }),
           scopedSlots: {
             default: ({ row, column, $index }) => {
               // 自定义列的内容
               if (_has(elem, 'render')) {
                 let columnValue = row[column.property];
                 if (_has(elem, 'filter')) {
-                  const dict = _find(this.$dict.get(elem.filter), (item) => {
-                    return item.paramValue === row[column.property];
+                  const dict = _find(this.$dict.get(elem.filter), item => {
+                    return (
+                      item.paramValue === row[column.property] ||
+                      item.paramValue === `${row[column.property]}`
+                    );
                   });
                   if (dict) {
                     columnValue = `${dict.paramDesc}${_get(elem, 'unit', '')}`;
                   }
                 }
-                return elem.render(this.$createElement, row, column, $index, columnValue);
+                return elem.render(
+                  this.$createElement,
+                  row,
+                  column,
+                  $index,
+                  columnValue
+                );
               } else if (_has(elem, 'slotNode')) {
                 return _map(elem.slotNode, ({ render }) => {
                   return render(this.$createElement, row, column, $index);
                 });
+              } else if (_has(elem, 'buttons')) {
+                // 配置项
+                const buttonNodes = [];
+                for (let i = 0, len = elem.buttons.length; i < len; i++) {
+                  const button = elem.buttons[i];
+                  if (_has(button, 'render')) {
+                    buttonNodes.push(
+                      button.render(this.$createElement, row, column, $index)
+                    );
+                  } else {
+                    let name = _get(button, 'el', 'base-label');
+                    if (!_includes(name, 'base')) {
+                      name = `base-${name}`;
+                    }
+                    const node = this.$createElement(name, {
+                      attrs: button.props,
+                      class: button.class,
+                      style: button.style,
+                      props: button.props,
+                      on: {
+                        click: () => {
+                          button.on.click(row, column, $index);
+                        }
+                      }
+                    });
+                    buttonNodes.push(node);
+                  }
+                }
+                return buttonNodes;
               } else {
                 if (_has(elem, 'filter')) {
-                  const dict = _find(this.$dict.get(elem.filter), (item) => {
-                    return item.paramValue === row[column.property];
+                  const dict = _find(this.$dict.get(elem.filter), item => {
+                    return (
+                      item.paramValue === row[column.property] ||
+                      item.paramValue === `${row[column.property]}`
+                    );
                   });
                   if (dict) {
                     return `${dict.paramDesc}${_get(elem, 'unit', '')}`;

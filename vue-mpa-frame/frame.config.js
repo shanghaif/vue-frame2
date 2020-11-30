@@ -18,6 +18,11 @@ module.exports = {
       }
     ]
   }, // 移动端配置
+  pageHtmlOptions: {
+    bank: {
+      title: '银行端'
+    }
+  }, // 网页参数配置
   providePlugin: {
     $: 'jquery',
     jQuery: 'jquery',
@@ -83,7 +88,9 @@ module.exports = {
   // 配置某些包使用 CDN，externals 需要同步配置，版本请注意 package.json
   cdnMap: {
     // 直接放入到 html 文件中，不用和 externals 匹配，开发和生产都会放入
-    outsideJs: [],
+    outsideJs: [
+      // 'https://webapi.amap.com/maps?key=f7ac15a8687e70001f0d8f9e65007f09&v=1.4.15&plugin=Map3D,AMap.DistrictSearch,Loca,AMap.DistrictLayer,SimpleMarker,DistrictExplorer,' // 高德地图
+    ],
     outsideCss: [],
     // 公共的一些js，会注入到所有项目的 html 页面中
     js: [

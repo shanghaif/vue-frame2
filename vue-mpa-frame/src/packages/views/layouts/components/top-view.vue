@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { LOGIN_PAGE_NAME } from '@config/index.js';
+import { HOME_ROUTER_NAME } from '@config/index.js';
 import { mapActions, mapGetters } from 'vuex';
 import screenfull from 'screenfull';
 
@@ -217,7 +217,8 @@ export default {
                         .then(() => {
                           this.logoutLoading = false;
                           this.dialogInstance.close();
-                          this.$router.push({ name: LOGIN_PAGE_NAME });
+                          // this.$router.push({ name: LOGIN_PAGE_NAME });
+                          window.location.href = HOME_ROUTER_NAME;
                         })
                         .finally(() => {});
                     }

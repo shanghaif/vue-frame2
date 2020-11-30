@@ -8,6 +8,7 @@
           :iconfontUrl="iconfontUrl"
           :collapsed="collapsed"
           :titleClick="titleClick"
+          v-if="renderTopView"
         ></top-view>
       </template>
       <template v-slot:west>
@@ -16,6 +17,7 @@
           :menus="menus"
           v-bind="menuProps"
           @select="handleSelect"
+          :svgIcons="svgIcons"
         >
         </base-nav-menu>
       </template>
@@ -47,6 +49,7 @@
 <script>
 import TopView from './components/top-view.vue';
 import { ROOT_PAGE_NAME } from '@config/index.js';
+import svgIcons from '@/plugins/icons.js';
 import _last from 'lodash/last';
 import _split from 'lodash/split';
 import _isEmpty from 'lodash/isEmpty';
@@ -91,16 +94,27 @@ export default {
     titleClick: {
       type: Function,
       default: () => {}
+    },
+    // 渲染 top-view.vue
+    renderTopView: {
+      type: Boolean,
+      default: true
+    },
+    // 渲染 base-nav-menu 菜单组件
+    renderNavMenu: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
+      svgIcons: svgIcons,
       menus: [],
       navTitle: '',
       layout: {
-        northHeight: '60px',
-        westWidth: 'auto',
+        northHeight: this.renderTopView ? '60px' : '0px',
+        westWidth: this.renderNavMenu ? 'auto' : '0px',
         eastWidth: '0px',
         southHeight: '0px',
         northCls: this.$style.northCls
@@ -257,7 +271,24 @@ export default {
         !_isEmpty(menu) &&
         menu.menuCode !== ''
       ) {
-        this.$router.push({ name: menu.menuCode });
+        // 外部链接
+        if (_has(menu, 'target') && menu.target === 'out') {
+          const currentRoute = this.$router.resolve({ name: menu.menuCode });
+          const target = _get(currentRoute, 'route.meta.target', '_blank');
+          if (_includes(menu.menuCode, 'http')) {
+            window.open(menu.menuCode, target);
+          } else {
+            const fullPath = _get(currentRoute, 'route.fullPath', '');
+            if (fullPath.length > 0) {
+              const routeData = this.$router.resolve({
+                path: fullPath
+              });
+              window.open(routeData.href, target);
+            }
+          }
+        } else {
+          this.$router.push({ name: menu.menuCode });
+        }
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;

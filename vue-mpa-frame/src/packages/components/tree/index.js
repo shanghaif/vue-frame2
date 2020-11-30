@@ -11,6 +11,9 @@ import _includes from 'lodash/includes';
 import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
 import _map from 'lodash/map';
+import _find from 'lodash/find';
+import _keys from 'lodash/keys';
+import _hasIn from 'lodash/hasIn';
 
 const BaseTree = {
   name: 'BaseTree',
@@ -66,7 +69,7 @@ const BaseTree = {
       type: Object,
       default() {
         return {
-          id: 0,
+          [this.nodeKey]: 0,
           [this.displayField]: this.rootLabel,
           [this.props.children]: []
         };
@@ -127,19 +130,41 @@ const BaseTree = {
       type: Boolean,
       default: true
     },
-    // 控件右侧操作菜单栏
+    // 控件右侧操作菜单栏（注意：如果配置了 handleMenuScope 作用域插槽，那么就算传入了 `handleMenu` 也不会进行生成）
     handleMenu: {
       type: Array
+    },
+    // 控件右侧操作菜单栏 icon
+    handleIcon: {
+      type: String,
+      default: 'el-icon-more'
     }
   },
   data() {
+    this.handleMenuEnum = {
+      add: 'add', // 新增模式
+      edit: 'edit', // 编辑模式
+      delete: 'delete' // 删除模式
+    };
     this.events = {
       afterLoadStore: 'afterLoadStore' // 数据加载完成之后
     };
     this.curQueryParams = {};
+    this.editingNode = null; // 当前处于编辑状态的节点
+    this.isFirst = true; // 是否第一次加载，主要用于判断 `懒加载` 时是不是第一次请求
+    this.rootData = { [this.nodeKey]: 0 }; // 根节点 { [this.nodeKey]: 0 }
     return {
+      editingValue: '', // 正在编辑的文本域值
       curData: [] // 数据集
     };
+  },
+  created() {
+    /* this.$nextTick(() => {
+      var btn = document.getElementsByTagName('body');
+      btn.onclick = function () {
+        console.info('这是第一种点击方式');
+      };
+    }); */
   },
   mounted() {
     if (!this.lazy) {
@@ -150,6 +175,9 @@ const BaseTree = {
             this.root[this.props.children] = data;
             this.curData = [this.root];
           } else {
+            if (data.length > 0) {
+              this.rootData[this.nodeKey] = data[0][this.nodeKey];
+            }
             this.curData = data;
           }
         }
@@ -179,6 +207,7 @@ const BaseTree = {
       }
       this.loadStore(node)
         .then(data => {
+          // this.curData = data; // 懒加载的数据不一样，是分批获取的，需要添加到指定的 curData的 某个节点内的 children 属性中
           resolve(data);
           // 数据读取完成触发事件
           this.$emit(this.events.afterLoadStore, data);
@@ -211,6 +240,12 @@ const BaseTree = {
             }
             const resData = [];
             const checkedNodes = [];
+            if (this.isFirst) {
+              this.isFirst = false;
+              if (resList.data.length > 0) {
+                this.rootData[this.nodeKey] = resList.data[0][this.nodeKey];
+              }
+            }
             for (let i = 0; i < resList.data.length; i++) {
               const element = resList.data[i];
               element[this.props.label] = element[this.displayField];
@@ -243,6 +278,12 @@ const BaseTree = {
     setQueryParams(params = {}) {
       this.curQueryParams = {};
       return Object.assign(this.curQueryParams, params);
+    },
+    /**
+     * @desc 获取根节点
+     */
+    getRootData() {
+      return this.getTree().getNode(this.rootData[this.nodeKey]);
     },
     /**
      * @desc 获取 el-tree 对象
@@ -281,11 +322,11 @@ const BaseTree = {
      *
      */
     refresh() {
-      const node = this.getTree().getNode(0);
+      const node = this.getTree().getNode(this.rootData[this.nodeKey]);
       node.loading = true;
       this.loadStore(node)
         .then(resData => {
-          this.getTree().updateKeyChildren(node.data.id, resData);
+          this.getTree().updateKeyChildren(node.data[this.valueField], resData);
         })
         .catch(error => {
           throw new Error(error);
@@ -293,6 +334,53 @@ const BaseTree = {
         .finally(() => {
           node.loading = false;
         });
+    },
+    /**
+     * @desc 更新某个节点（支持懒加载和非懒加载）
+     * @example
+     * this.$refs['complicate-tree-ref'].updateNode(node, { label: value });
+     */
+    updateNode(node, params = {}) {
+      if (!_isNil(params) && _hasIn(node.data, _keys(params))) {
+        const key = _keys(params)[0];
+        _set(node, `data.${key}`, params[key]);
+      }
+    },
+    /**
+     * @desc 删除某个节点
+     * @param {Object} node - 当前选中节点
+     */
+    deleteNode(node = {}) {
+      if (!_isEmpty(node)) {
+        const parent = node.parent;
+        const children = parent.data[this.props.children] || parent.data;
+        const index = children.findIndex(d => d.id === node.data.id);
+        children.splice(index, 1);
+      }
+    },
+    /**
+     * @desc 默认展开指定的节点
+     */
+    expandedNode(node = {}) {
+      if (!_isEmpty(node) && _has(node, this.valueField)) {
+        this.$refs[`${this._uid}-el-tree-ref`].store.nodesMap[
+          node.data[this.valueField]
+        ].expanded = true; // 默认展开指定节点
+      }
+    },
+    /**
+     * @desc 新增加一个节点
+     */
+    insertNode(node, data = {}) {
+      if (!_isEmpty(node) && _has(data, this.valueField)) {
+        if (_isNil(_get(node.data, this.props.children))) {
+          this.$set(node.data, this.props.children, []);
+        }
+        node.data[this.props.children].push(data);
+        setTimeout(() => {
+          this.expandedNode(node); // 默认展开指定节点
+        }, 0);
+      }
     },
     /**
      * @desc 通过 keys 设置目前勾选的节点
@@ -449,13 +537,25 @@ const BaseTree = {
                     _has(option, 'listeners.onConfirm') &&
                       option.listeners.onConfirm({ node, data });
                   },
-                  onCancel: _get(option, 'listeners.onCancel', () => {})
+                  confirm: () => {
+                    _has(option, 'listeners.onConfirm') &&
+                      option.listeners.onConfirm({ node, data });
+                    _has(option, 'listeners.confirm') &&
+                      option.listeners.confirm({ node, data });
+                  },
+                  onCancel: () => {
+                    _get(option, 'listeners.onCancel', () => {});
+                  },
+                  cancel: () => {
+                    _get(option, 'listeners.onCancel', () => {});
+                    _get(option, 'listeners.cancel', () => {});
+                  }
                 }
               },
               [
                 this.$createElement(
                   'span',
-                  { slot: 'reference', style: 'display: block' },
+                  { slot: 'reference', style: 'display: block;' },
                   [
                     _has(option, 'render')
                       ? option.render(this.$createElement)
@@ -472,7 +572,7 @@ const BaseTree = {
                 props: _omit(option, ['text', 'listeners', 'render']),
                 nativeOn: {
                   click: event => {
-                    if (option.isClose) {
+                    if (_get(option, 'isClose', true)) {
                       this.$refs[
                         `${node[this.nodeKey]}-tree-el-dropdown`
                       ].hide();
@@ -499,6 +599,52 @@ const BaseTree = {
      */
     createHandleMenu({ node, data }) {
       const h = this.$createElement;
+      let textNode = h('span', { class: 'el-tree-node__label' }, [
+        h(
+          'div',
+          {
+            class: {
+              'base-tree-node-item': true,
+              [`item-${this._uid}-${node.data[this.valueField]}`]: true
+            }
+          },
+          [
+            h('span', {}, [node.label]),
+            this.createEditNode(h, node)
+          ]
+        )
+      ]);
+      let menuNode = _isNil(this.handleMenu)
+        ? undefined
+        : h(
+          'el-dropdown-menu',
+          { slot: 'dropdown' },
+          this.createElDropdownItem({ node, data })
+        );
+      if (_has(this.$scopedSlots, 'default')) {
+        // 默认插槽
+        textNode = h(
+          'div',
+          {
+            class: {
+              'base-tree-node-item': true,
+              [`item-${this._uid}-${node.data[this.valueField]}`]: true
+            }
+          },
+          [
+            this.$scopedSlots.default({ node, data }),
+            this.createEditNode(h, node)
+          ]
+        );
+      }
+      if (_has(this.$scopedSlots, 'handleMenuScope')) {
+        // 下拉菜单插槽
+        menuNode = this.$scopedSlots.handleMenuScope({ node, data });
+      }
+      let handleIconNode = h('i', { class: this.handleIcon }, []);
+      if (_has(this.$scopedSlots, 'handleIconScope')) {
+        handleIconNode = this.$scopedSlots.handleIconScope({ node, data });
+      }
       const vNode = h(
         'span',
         {
@@ -515,33 +661,217 @@ const BaseTree = {
           }
         },
         [
-          h('span', { class: 'el-tree-node__label' }, [node.label]),
-          h('span', {}, [
-            h(
-              'el-dropdown',
-              {
-                ref: `${node[this.nodeKey]}-tree-el-dropdown`,
-                props: {
-                  'hide-on-click': false,
-                  trigger: 'click',
-                  size: 'mini'
-                }
-              },
-              [
-                h('span', { class: 'el-dropdown-link' }, [
-                  h('i', { class: 'el-icon-more' }, [])
-                ]),
-                h(
-                  'el-dropdown-menu',
-                  { slot: 'dropdown' },
-                  this.createElDropdownItem({ node, data })
-                )
-              ]
-            )
-          ])
+          textNode,
+          !_isNil(menuNode)
+            ? h('span', { class: { 'tree-el-dropdown-box': true } }, [
+              h(
+                'el-dropdown',
+                {
+                  ref: `${node[this.nodeKey]}-tree-el-dropdown`,
+                  props: {
+                    'hide-on-click': false,
+                    trigger: 'click',
+                    size: 'mini'
+                  },
+                  on: {
+                    'visible-change': state => {
+                      if (
+                        !_isNil(this.editingNode) &&
+                          node.data[this.valueField] !==
+                            this.editingNode.data[this.valueField]
+                      ) {
+                        this.changeEditModel(false);
+                      }
+                    },
+                    command: val => {
+                      if (_isNil(val)) {
+                        return;
+                      }
+                      const aChildList = _get(
+                        this.$refs[`${node[this.nodeKey]}-tree-el-dropdown`],
+                        '$children[0].$children',
+                        []
+                      );
+                      const item = _find(
+                        aChildList,
+                        o => _get(o, '$options.propsData.command', '') === val
+                      );
+                      let isClose = _get(
+                        item,
+                        '$vnode.data.props.isClose',
+                        true
+                      );
+                      if (_has(item.$attrs, 'isClose')) {
+                        isClose = item.$attrs.isClose;
+                      }
+                      if (isClose === true) {
+                        this.$refs[
+                          `${node[this.nodeKey]}-tree-el-dropdown`
+                        ].hide();
+                        document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+                      }
+                      // 编辑模式
+                      if (val === this.handleMenuEnum.edit) {
+                        this.editingValue = node.data[this.displayField]; // 正在编辑的值
+                        this.editingNode = node; // 正在编辑的节点
+                        this.changeEditModel();
+                      }
+                      // 新增模式
+                      if (val === this.handleMenuEnum.add) {
+                        this.changeEditModel(false);
+                        if (_has(this.$listeners, 'addNodeHandle')) {
+                          this.$emit('addNodeHandle', node, node.data, val);
+                        } else {
+                          const newChild = {
+                            id: `${this._uid}-${Math.ceil(
+                              Math.random() * 1000
+                            )}`,
+                            label: '新增节点',
+                            children: []
+                          };
+                          if (!node.data.children) {
+                            this.$set(node.data, 'children', []);
+                          }
+                          node.data.children.push(newChild);
+                          setTimeout(() => {
+                            this.expandedNode(node); // 默认展开指定节点
+                          }, 0);
+                        }
+                      }
+                      // 删除模式
+                      if (val === this.handleMenuEnum.delete) {
+                        this.changeEditModel(false);
+                        this.$emit('deleteNodeHandle', node, node.data, val);
+                      }
+                    }
+                  }
+                },
+                [
+                  h('span', { class: 'el-dropdown-link' }, [handleIconNode]),
+                  menuNode
+                ]
+              )
+            ])
+            : h('span', { class: 'el-dropdown-link' }, [handleIconNode])
         ]
       );
       return vNode;
+    },
+    /**
+     * @desc 创建编辑节点 el-input
+     */
+    createEditNode(h, node) {
+      return h('div', { 'base-node-item_wrap': true }, [
+        h('el-input', {
+          class: 'base-tree-node-edit-input',
+          attrs: {
+            maxlength: '30'
+          },
+          props: {
+            value: this.editingValue,
+            'show-word-limit': true
+          }, // node.data[this.displayField]
+          on: {
+            input: val => {
+              this.editingValue = val;
+            }
+          },
+          nativeOn: {
+            click: event => {
+              event.stopPropagation();
+              event.preventDefault();
+              return false; // 静止事件冒泡，触发到 tree 的 node-click 事件
+            }
+          }
+        }),
+        h('i', {
+          attrs: { title: '提交' },
+          class: { 'el-icon-check': true, 'confirm-btn': true },
+          on: {
+            click: event => {
+              this.$emit('editNodeHandle', node, this.editingValue, event);
+              setTimeout(() => {
+                this.changeEditModel(false);
+              }, 200);
+            }
+          }
+        }),
+        h('i', {
+          attrs: { title: '取消' },
+          class: { 'el-icon-close': true, 'cancel-btn': true },
+          on: {
+            click: () => {
+              this.changeEditModel(false);
+            }
+          }
+        })
+      ]);
+    },
+    /**
+     * @desc 切换只读和编辑模式
+     */
+    changeEditModel(model = true) {
+      if (
+        !_isNil(this.editingNode) &&
+        !_isNil(
+          document.getElementsByClassName(
+            `item-${this._uid}-${this.editingNode.data[this.valueField]}`
+          )[0]
+        )
+      ) {
+        const aNodeList = document.getElementsByClassName(
+          `item-${this._uid}-${this.editingNode.data[this.valueField]}`
+        )[0].childNodes;
+        /* const aNode = document.getElementsByClassName(
+          `item-${this._uid}-${this.editingNode.data[this.valueField]}`
+        )[0];
+        aNode.style.width = 'auto'; */
+        aNodeList[0].style.display = model ? 'none' : 'inline-block';
+        aNodeList[1].style.display = model ? 'inline-block' : 'none';
+        const offsetLeft = aNodeList[1].offsetLeft; // 距离左侧容器的间距
+        // eslint-disable-next-line no-unused-vars
+        const editBoxOffsetWidth = aNodeList[1].offsetWidth; // 编辑操作容器的宽度
+        // eslint-disable-next-line no-unused-vars
+        const treeBoxOffsetWidth = this.$refs[`${this._uid}-el-tree-ref`].$el
+          .offsetWidth; // tree 面板容器的宽度
+        aNodeList[1].style.position = 'relative';
+        if (model && offsetLeft > 60) {
+          aNodeList[1].style.left = `-${offsetLeft / 2}px`;
+        }
+        if (!model) {
+          aNodeList[1].style.left = '0px';
+        }
+        if (this.$attrs['show-checkbox']) {
+          const checkBoxNode = _get(
+            aNodeList[1],
+            'parentNode.parentNode.parentNode.children'
+          );
+          if (model) {
+            // 复选框
+            if (
+              !_isNil(checkBoxNode) &&
+              checkBoxNode.length > 0 &&
+              checkBoxNode[1].className === 'el-checkbox'
+            ) {
+              checkBoxNode[1].style.display = 'none';
+            }
+          } else {
+            if (
+              !_isNil(checkBoxNode) &&
+              checkBoxNode.length > 0 &&
+              checkBoxNode[1].className === 'el-checkbox'
+            ) {
+              checkBoxNode[1].style.display = 'inline';
+            }
+          }
+        }
+        // aNodeList[1].style.marginLeft = '-20px';
+        // console.info('aNodeList[1] ', aNodeList[1].offsetWidth, this.$refs[`${this._uid}-el-tree-ref`], treeBoxOffsetWidth, editBoxOffsetWidth, offsetLeft);
+        if (!model) {
+          this.editingValue = '';
+          this.editingNode = null;
+        }
+      }
     }
   },
   render(h) {
@@ -566,55 +896,75 @@ const BaseTree = {
         defaultExpandedKeys = [0];
       }
     }
-    let scopedSlotVNode = _isEmpty(this.$scopedSlots)
-      ? undefined
-      : this.$scopedSlots;
-    if (_isEmpty(scopedSlotVNode) && !_isEmpty(this.handleMenu)) {
+    let scopedSlotVNode;
+    if (
+      !_isEmpty(this.$scopedSlots) &&
+      (_has(this.$scopedSlots, 'default') ||
+        _has(this.$scopedSlots, 'handleMenuScope'))
+    ) {
       scopedSlotVNode = {
-        default: ({ node, data }) => this.createHandleMenu({ node, data })
+        default: ({ node, data }) => {
+          return this.createHandleMenu({ node, data });
+        }
+      };
+    } else if (_isEmpty(this.$scopedSlots) && !_isNil(this.handleMenu)) {
+      scopedSlotVNode = {
+        default: ({ node, data }) => {
+          return this.createHandleMenu({ node, data });
+        }
       };
     }
     const oLoadAction = this.lazy
       ? { load: this.loadNode }
       : { data: this.curData }; // 数据加载的方式
     _assign(this.props, { label: this.displayField });
-    return h(
-      'el-tree',
-      {
-        ref: `${this._uid}-el-tree-ref`,
-        class: _assign({ 'base-tree': true }, _get(this.$props, 'ctCls', {})),
-        style,
-        scopedSlots: scopedSlotVNode, // 自定义树节点的内容，参数为 { node, data }
-        props: _assign(
-          {},
-          {
-            // load: this.loadNode,
-            // data: this.curData,
-            props: _omit(this.props, ['value']),
-            lazy: this.lazy,
-            'expand-on-click-node': false,
-            'node-key': this.nodeKey
-          },
-          oLoadAction,
-          this.$attrs,
-          { defaultExpandedKeys }
-        ),
-        on: _assign({}, this.$listeners, {
-          'node-click': (record, node, tree) => {
-            document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
-            this.nodeClick(record, node, tree);
-          }, // 节点被点击时的回调
-          'check-change': this.checkChange, // 节点选中状态发生变化时的回调
-          check: (node, treeCheckedNode) => {
-            document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
-            this.nodeBoxCheck(node, treeCheckedNode);
-          }, // 当复选框被点击的时候触发
-          'current-change': this.currentChange, // 当前选中节点变化时触发的事件 点击节点，并不是复选框
-          'node-contextmenu': this.nodeContextmenu // 当某一节点被鼠标右键点击时会触发该事件
-        })
-      },
-      []
-    );
+    return h('el-scrollbar', { style: {}, class: { 'base-tree-el-scrollbar': true } }, [
+      h(
+        'el-tree',
+        {
+          ref: `${this._uid}-el-tree-ref`,
+          class: _assign({ 'base-tree': true }, _get(this.$props, 'ctCls', {})),
+          style,
+          scopedSlots: scopedSlotVNode, // 自定义树节点的内容，参数为 { node, data }
+          props: _assign(
+            {},
+            {
+              // load: this.loadNode,
+              // data: this.curData,
+              props: _omit(this.props, ['value']),
+              lazy: this.lazy,
+              'expand-on-click-node': false,
+              'node-key': this.nodeKey
+            },
+            oLoadAction,
+            this.$attrs,
+            { defaultExpandedKeys }
+          ),
+          on: _assign({}, this.$listeners, {
+            'node-click': (record, node, tree) => {
+              document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+              this.nodeClick(record, node, tree);
+              this.changeEditModel(false);
+            }, // 节点被点击时的回调
+            'check-change': this.checkChange, // 节点选中状态发生变化时的回调
+            check: (node, treeCheckedNode) => {
+              document.body.click(); // 用于隐藏 isPopconfirm: true 时的气泡确认框
+              this.nodeBoxCheck(node, treeCheckedNode);
+            }, // 当复选框被点击的时候触发
+            'current-change': this.currentChange, // 当前选中节点变化时触发的事件 点击节点，并不是复选框
+            'node-contextmenu': this.nodeContextmenu, // 当某一节点被鼠标右键点击时会触发该事件
+            'node-expand': (data, node, component) => {
+              this.changeEditModel(false);
+              const eventName = _has(this.$listeners, 'nodeExpand')
+                ? 'nodeExpand'
+                : 'node-expand';
+              this.$emit(eventName, data, node, component);
+            }
+          })
+        },
+        []
+      )
+    ]);
   }
 };
 export default BaseTree;

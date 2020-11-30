@@ -29,6 +29,8 @@ npm run clear| 删除 node_modules 依赖并重新安装
 npm run changelog | 生成 changelog 日志文件
 npm run icon | 生成 iconfont 相关的样式图标文件 `iconfont-classname.js`
 npm run createProxySelf | 生成 dev 请求代理文件 proxy-self.js 用于代理请求的发送，proxy-self.js 是被 .gitignore 收录的过滤文件不需要传递上远端
+npm run dev:test | 开发环境服务（如果需要区分测试环境可以配置 .env.test）
+npm run build:test | 生产环境服务（如果需要区分生产环境可以配置 .env.testProd）
 
 浏览器地址：
 

@@ -77,4 +77,6 @@ requireModule.keys().forEach(filePath => {
     }
   }
 });
-export default modules.common;
+export default function () {
+  return modules.common;
+};

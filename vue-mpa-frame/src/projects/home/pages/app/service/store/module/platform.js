@@ -2,7 +2,7 @@
  * @desc 这个网站的 store
  */
 import _get from 'lodash/get';
-// import { sStorageKey } from '../../../store/index.js';
+// import { sStorageKey, isClearCache } from '../../../store/index.js';
 
 const state = {
   data: {}, // 用户信息

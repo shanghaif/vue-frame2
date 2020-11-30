@@ -49,11 +49,9 @@ const BaseDialog = function (options = {}) {
         contentNode = h(options.component);
       } else if (_has(options.component(), 'el')) {
         const detailOption = options.component();
-        contentNode = h(
-          detailOption.el,
-          _omit(detailOption, ['el']),
-          [_get(detailOption, 'text')]
-        );
+        contentNode = h(detailOption.el, _omit(detailOption, ['el']), [
+          _get(detailOption, 'text')
+        ]); // ref 对象无法获取
       } else {
         contentNode = options.component();
       }
@@ -94,6 +92,9 @@ const BaseDialog = function (options = {}) {
             closed: () => {
               if (options.isDestroy) {
                 this.$destroy();
+                if (_has(this, '$el')) {
+                  this.$el.remove();
+                }
               }
               if (_has(options, 'listeners.closed')) {
                 options.listeners.closed();
@@ -125,11 +126,22 @@ const BaseDialog = function (options = {}) {
     methods: {
       // 打开
       open(event) {
-        this.visible = true;
+        setTimeout(() => {
+          this.visible = true;
+        }, 0);
       },
       // 关闭
       close(event) {
-        this.visible = false;
+        setTimeout(() => {
+          this.visible = false;
+        }, 0);
+      },
+      // 关闭（销毁实例）
+      closeDialog() {
+        instance.$destroy();
+        if (_has(instance, '$el')) {
+          instance.$el.remove();
+        }
       },
       // Dialog 标题区的内容
       appendTitle() {
@@ -140,12 +152,30 @@ const BaseDialog = function (options = {}) {
       // Dialog 按钮操作区的内容
       appendFooter() {
         const buttonsVNode = [];
-        for (let i = 0, len = _get(options, 'buttons', []).length; i < len; i++) {
+        for (
+          let i = 0, len = _get(options, 'buttons', []).length;
+          i < len;
+          i++
+        ) {
           const option = options.buttons[i];
-          buttonsVNode.push(this.$createElement('el-button', _omit(option, ['text']), [option.text]));
+          buttonsVNode.push(
+            that.$createElement(
+              'el-button',
+              {
+                props: _get(option, 'props', function () {
+                  return {};
+                })(),
+                on: option.on
+              },
+              [option.text]
+            )
+          );
         }
         return _has(this.$props, 'slotNode.footer')
-          ? _concat([this.$props.slotNode.footer(this.$createElement)], buttonsVNode)
+          ? _concat(
+            [this.$props.slotNode.footer(this.$createElement)],
+            buttonsVNode
+          )
           : _concat([], buttonsVNode);
       }
     }

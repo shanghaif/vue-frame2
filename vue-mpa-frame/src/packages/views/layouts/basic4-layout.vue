@@ -56,7 +56,8 @@ export default {
         westWidth: 'auto', // 设置为定值时，配合 nav-menu 导航菜单收缩菜单面板之后的宽度还是定值所以这里推荐自动
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.northBox
+        northCls: this.$style.northCls,
+        centerCls: this.$style.centerCls
       }
     };
   },
@@ -69,5 +70,11 @@ export default {
 <style lang="less" module>
 @import './basic-layout.less';
 .container {
+  .center-cls {
+    > div:first-child {
+      height: 100%;
+      background-color: #fff;
+    }
+  }
 }
 </style>

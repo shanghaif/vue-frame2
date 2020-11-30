@@ -8,7 +8,7 @@ import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
 import _set from 'lodash/set';
 // import { session } from 'good-storage';
-// import { sStorageKey } from '../../../store/index.js';
+// import { sStorageKey, isClearCache } from '../../../store/index.js';
 
 const state = {
   data: {}, // 用户信息
@@ -66,12 +66,39 @@ const actions = {
   fetchMenus({ commit, state }) {
     return new Promise((resolve, reject) => {
       Vue.prototype.$api['common/getMenus']().then(resData => {
-        resData = resData.data;
+        // resData = resData.data;
+        const handlerMate = function (item) {
+          item.menuCode = _get(item, 'href', item.menuCode);
+          item.menuName = _get(item, 'name', item.menuName);
+          item.menuUrl = _get(item, 'href', item.menuUrl);
+          // item.iconUrl = `iconfont ${_get(item, 'icon', item.iconUrl)}`;
+          item.iconUrl = `${_get(item, 'icon', item.iconUrl)}`;
+          item.childMenus = _get(item, 'children', []).length;
+          item.target = _get(item, 'hrefType', 'in');
+        };
+        const handlerWhile = function (data) {
+          for (let i = 0, len = data.length; i < len; i++) {
+            handlerMate(data[i]);
+            if (_has(data[i], 'children') && !_isEmpty(data[i].children)) {
+              handlerWhile(data[i].children);
+            }
+          }
+        };
+        handlerWhile(resData.data);
+        resData.models = resData.data;
+        this.dispatch('setInitedApp');
+        this.dispatch('setStoreMenus', {
+          menus: resData
+        }); // 调用外部的根 store 赋值 menus
+        commit('GENERATE_ROLE_MENUS', resData);
+        // this.dispatch('platform/setRouter');
+        resolve();
+        /* resData = resData.data;
         this.dispatch('setInitedApp');
         this.dispatch('setStoreMenus', { menus: resData }); // 调用外部的根 store 赋值 menus
         commit('GENERATE_ROLE_MENUS', resData);
         // this.dispatch('platform/setRouter');
-        resolve();
+        resolve(); */
       });
     });
   },
