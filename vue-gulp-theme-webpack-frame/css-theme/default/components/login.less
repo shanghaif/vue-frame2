@@ -1,0 +1,113 @@
+/* 登录样式 */
+.default {
+  .login {
+    .full-y;
+    background-repeat: no-repeat;
+    background-size: cover;
+    .login-header {
+      .boxBorder;
+      .full-x;
+      .flex-start-center;
+      height: 100px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      padding: 0 42px;
+      .login-icon-box {
+        width: 40px;
+        height: 40px;
+        .border-radius(100%);
+        .overflow;
+        .t-center;
+        .flex-center;
+        .mr-18;
+        background-color: @white;
+
+        .login-icon {
+          width: 24px;
+          height: 24px;
+          .in-block;
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
+      }
+      .login-title {
+        margin: 0;
+        color: rgba(255, 255, 255, 100);
+        font-size: 22px;
+        text-align: left;
+      }
+    }
+    .login-main {
+      .full-y;
+      .boxBorder;
+      .flex-row-space-between-center;
+      align-items: flex-start;
+      height: calc(100% - 100px);
+      padding: 62px 150px 0 166px;
+
+      .login-publicity {
+        width: 637px;
+        height: 500px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: 20%;
+      }
+      .login-box {
+        .boxBorder;
+        .wdith-400;
+        height: 500px;
+        background-color: rgba(255, 255, 255, 1);
+        padding: 40px;
+        .login-tilte {
+          .c-000;
+          .f-l-18;
+          .mt-8;
+          .mb-30;
+          font-weight: bold;
+        }
+        .login-tabs {
+          .full-x;
+          .login-form {
+            .full-x;
+            .mt-20;
+            &-item {
+              .full-x;
+              height: 40px;
+              border-radius: 2px;
+              background-color: rgba(247, 246, 246, 1);
+              .login-icon{
+                .f-18;
+              }
+              .el-form-item__content {
+                .flex-start-center;
+                padding: 0 15px;
+                .login-form-input,
+                .el-input__inner {
+                  width: 100%;
+                  height: 40px;
+                  line-height: 40px;
+                  background-color: rgba(247, 246, 246, 1);
+                  border: none;
+                  .flex;
+                  flex: 1;
+                }
+              }
+            }
+          }
+          .login-form-btn {
+            .full-x;
+            height: 40px;
+            .f-18;
+          }
+          .login-form-checkbox{
+            .mt-20;
+            .mb-20;
+          }
+        }
+        .el-tabs__nav-wrap:after {
+          height: 0;
+        }
+      }
+    }
+  }
+}

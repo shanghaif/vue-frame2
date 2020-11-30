@@ -1,0 +1,362 @@
+.home-desk-container {
+  .flex-center;
+  > div {
+    width: 1208px;
+    height: 1155px;
+    .home-desk-north-cls {
+      // background-color: paleturquoise;
+      > div {
+        line-height: 52px;
+        > span:first-child {
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 18px;
+        }
+        > span:nth-child(2) {
+          margin-left: 15px;
+          .desk-time-icon {
+            width: 20px;
+            height: 16px;
+            display: inline-block;
+          }
+          .desk-time-info {
+            color: rgba(0, 0, 0, 0.65);
+            font-size: 12px;
+            position: relative;
+            top: -2px;
+            left: 2px;
+            span {
+              padding: 0px 5px;
+            }
+          }
+        }
+      }
+    }
+    .home-desk-layout-center-cls {
+      // background-color: peru;
+      display: flex;
+      flex-direction: row;
+      .desk-left {
+        width: 680px;
+        > div {
+          padding: 20px 30px 25px 24px;
+          .boxBorder;
+          overflow: hidden;
+        }
+        > div:first-child {
+          height: 223px;
+          // background-color: olive;
+          .user-detail-info {
+            height: 100px;
+            // background-color: yellowgreen;
+            padding-top: 7px;
+            box-sizing: border-box;
+            > div {
+              height: 70px;
+            }
+            .avatar {
+              width: 70px;
+              // background-color: paleturquoise;
+            }
+            .detail-info {
+              // background-color: peachpuff;
+              margin-left: 34px;
+              > div {
+                height: 50%;
+                color: rgba(0, 0, 0, 0.85);
+                font-size: 16px;
+                padding-top: 5px;
+                box-sizing: border-box;
+                .border-line {
+                  width: 1px;
+                  height: 10px;
+                  box-sizing: border-box;
+                  background-color: rgba(219, 219, 219, 1);
+                  display: inline-block;
+                  margin: 0px 11px;
+                }
+                .garden-text {
+                  color: rgba(0, 0, 0, 0.65);
+                }
+              }
+              > div:first-child {
+                // background-color: plum;
+              }
+              .role-info {
+                font-size: 12px;
+                > span:first-child {
+                  font-size: 14px;
+                }
+                > span:nth-child(2) {
+                  width: 14px;
+                  height: 14px;
+                  // background-color: purple;
+                  margin: 0px 11px 0px 3px;
+                  display: inline-block;
+                  position: relative;
+                  top: 2px;
+                  background-image: url(../../common/images/admin.png);
+                  background-size: 100% 100%;
+                  background-repeat: no-repeat;
+                }
+                > span:nth-child(3) {
+                  width: 58px;
+                  height: 20px;
+                  padding: 3px 5px;
+                  color: rgba(0, 128, 255, 100);
+                  box-sizing: border-box;
+                  border-radius: 2px;
+                  background-color: rgba(0, 128, 255, 0.1);
+                }
+              }
+            }
+          }
+          .garden-step-list {
+            height: 81px;
+            background-color: rgba(0, 128, 255, 0.05);
+            > div {
+              width: 164px;
+              // padding: 16px 60px 20px 46px;
+              // box-sizing: border-box;
+              position: relative;
+              &:not(:last-child)::after {
+                content: '|';
+                color: rgba(174, 203, 232, 1);
+                text-align: right;
+                position: absolute;
+                right: 0px;
+                top: 50%;
+                margin-top: -10px;
+              }
+              > div {
+                margin-left: 46px;
+                margin-top: 16px;
+                > span:first-child {
+                  font-size: 14px;
+                  margin-bottom: 8px;
+                }
+                > span:last-child {
+                  color: rgba(0, 128, 255, 100);
+                  font-size: 12px;
+                  .pointer;
+                }
+              }
+            }
+          }
+        }
+        > div:nth-child(2) {
+          height: 431px;
+          // background-color: orange;
+          margin: 17px 0px;
+          .thing-list {
+            height: 327px;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.85);
+            // border: 1px solid rgba(0, 0, 0, 0.1);
+            align-content: flex-start;
+            > div:nth-child(odd) {
+              border-bottom: 0px;
+            }
+            > div:nth-child(even) {
+              border-left: 0px;
+              border-bottom: 0px;
+            }
+            > div:last-child,
+            > div:nth-last-child(2) {
+              border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            > div {
+              width: 50%;
+              height: 109px;
+              background-color: #ffffff;
+              cursor: pointer;
+              transition: all 0.2s;
+              border: 1px solid rgba(0, 0, 0, 0.1);
+              .boxBorder;
+              padding: 17px 16px 12px 16px;
+              &:hover {
+                transform: scale(1.02);
+                box-shadow: 0px 2px 8px 0px rgba(208, 208, 208, 1);
+              }
+              .thing-title {
+                img {
+                  width: 16px;
+                  height: 17px;
+                  padding-right: 10px;
+                }
+                span {
+                  position: relative;
+                  top: -3px;
+                }
+              }
+              .thing-news {
+                color: rgba(0, 0, 0, 0.65);
+                padding: 8px 0px 16px 0px;
+                .text-overflow();
+              }
+              .thing-time {
+                font-size: 12px;
+                color: rgba(0, 0, 0, 0.5);
+                i {
+                  padding-right: 6px;
+                }
+                .handler {
+                  display: inline-block;
+                  float: right;
+                  color: rgba(0, 128, 255, 100);
+                  span {
+                    color: rgba(241, 57, 57, 100);
+                    padding-right: 16px;
+                  }
+                }
+              }
+            }
+          }
+        }
+        > div:nth-child(3) {
+          height: 384px;
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.85);
+          .title {
+            margin-bottom: 3px;
+          }
+          .message-list {
+            overflow-y: auto;
+            padding: 3px 0px;
+            .boxBorder;
+            > div {
+              width: 100%;
+              height: 112px;
+              // background-color: brown;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+              .boxBorder;
+              color: rgba(0, 0, 0, 0.45);
+              .pointer;
+              padding-top: 14px;
+              > div:nth-child(1) {
+                padding-top: 6px;
+                color: rgba(0, 0, 0, 0.85);
+                i {
+                  padding-right: 8px;
+                }
+              }
+              > div:nth-child(2) {
+                .text-overflow();
+                padding: 8px 0px 18px 0px;
+                color: rgba(0, 0, 0, 0.65);
+              }
+            }
+            > div:last-child {
+              border-bottom: 0px;
+              // background-color: burlywood;
+            }
+          }
+        }
+        .title {
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 16px;
+          margin-bottom: 19px;
+          position: relative;
+          em {
+            display: inline-block;
+            font-size: 12px;
+            color: rgba(42, 107, 255, 100);
+            padding: 1px 8px;
+            border-radius: 2px;
+            font-style: normal;
+            background-color: rgba(240, 243, 250, 1);
+            margin-left: 10px;
+          }
+          span {
+            position: absolute;
+            right: 10px;
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 12px;
+          }
+        }
+      }
+      .desk-right {
+        width: 510px;
+        margin-left: 17px;
+        > div {
+          padding: 20px 30px 25px 24px;
+          .boxBorder;
+          overflow: hidden;
+        }
+        > div:first-child {
+          max-height: 569px;
+          .app-list {
+            max-height: 440px;
+            justify-content: flex-start;
+            align-content: flex-start;
+            > div {
+              height: 112px;
+              width: 76px;
+              // background-color: hotpink;
+              margin-left: 34px;
+              margin-bottom: 48px;
+              color: rgba(0, 0, 0, 0.85);
+              font-size: 14px;
+              text-align: center;
+              cursor: pointer;
+              > div {
+                padding: 4px;
+                box-sizing: border-box;
+              }
+              > div:last-child {
+                padding-top: 12px;
+                box-sizing: border-box;
+              }
+              img {
+                width: 68px;
+                height: 68px;
+                transition: all 0.6s;
+                &:hover {
+                  transform: scale(1.04);
+                }
+              }
+            }
+          }
+        }
+        > div:nth-child(2) {
+          height: 486px;
+          // background-color: thistle;
+          margin-top: 17px;
+          .enter-grade-list {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            max-height: 360px;
+            .boxBorder;
+            > div {
+              height: 88px;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+              padding: 11px 33px 11px 33px;
+              box-sizing: border-box;
+              .grade {
+                > div {
+                  width: 30px;
+                  height: 30px;
+                  margin-top: 16px;
+                  background-color: rgba(233, 244, 255, 1);
+                  margin-right: 3px;
+                }
+              }
+              .fraction {
+                color: rgba(0, 0, 0, 0.85);
+                font-size: 14px;
+                margin: 23px 0px 0px 10px;
+              }
+            }
+            > div:last-child {
+              border-bottom: 0px;
+            }
+          }
+        }
+        .title {
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 16px;
+          margin-bottom: 32px;
+          position: relative;
+        }
+      }
+    }
+  }
+}

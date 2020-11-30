@@ -1,0 +1,38 @@
+.DS_Store
+node_modules
+/dist
+/.history
+/.dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# lib version files
+package-lock.json
+yarn.lock
+
+# user option files
+proxy-self.js
+
+#忽略指定目录但不包括某个文件
+/css-lib-theme/*
+!/css-lib-theme/README.md
+
+/css-lib-recycler-station/*
+!/css-lib-recycler-station/README.md
+

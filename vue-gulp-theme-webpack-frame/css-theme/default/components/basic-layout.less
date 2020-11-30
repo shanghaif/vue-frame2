@@ -1,0 +1,34 @@
+.default {
+  .basic-layout-container {
+    .full-y;
+    box-sizing: border-box;
+    .b-layout-north-cls {
+      box-shadow: @page-topBar-box-shadow;
+      background-color: @page-topBar-bgColor !important;
+      padding: @page-topBar_padding !important;
+      .z-index-10;
+    }
+    .b-layout-west-cls {
+      background-color: #fff;
+      .nav-top-title {
+        span {
+          color: #1d1f24;
+          font-size: 14px;
+          line-height: 48px;
+        }
+        /* .iconfont::before{
+          content: "\e7b2";
+        } */
+      }
+    }
+    .b-layout-inner-center-cls {
+      padding: 0px !important;
+    }
+    .b-layout-inner-north-box {
+      border: none;
+      border-left: @border-weight;
+      .bg-fff;
+      padding: @breadcrumb-padding !important;
+    }
+  }
+}
