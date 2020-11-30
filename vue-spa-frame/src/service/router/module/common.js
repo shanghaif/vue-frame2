@@ -15,6 +15,12 @@ const commonRoutes = [
         name: 'view-collapse',
         meta: { title: '视图-折叠面板' },
         component: () => import(/* webpackChunkName:"views/view-collapse" */ '@views/view-collapse/index.vue')
+      },
+      {
+        path: 'wang-editor',
+        name: 'wang-editor',
+        meta: { title: '富文本编辑器' },
+        component: () => import(/* webpackChunkName:"views/wang-editor" */ '@views/wang-editor/index.vue')
       }
     ]
     // redirect: 'needs/loan'
@@ -61,6 +67,12 @@ const commonRoutes = [
         component: () => import(/* webpackChunkName:"views/helper" */ '@views/helper/index.vue')
       }
     ]
+  },
+  {
+    path: '/open-out-view',
+    name: 'open-out-view',
+    component: () => import(/* webpackChunkName:"views/open-out-view" */ '@views/open-out-view/index.vue'),
+    meta: { title: '外部菜单', target: '_blank', approve: true }
   },
   /* {
     path: '/user',

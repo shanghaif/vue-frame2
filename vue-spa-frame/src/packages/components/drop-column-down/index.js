@@ -53,10 +53,28 @@ const BaseDropColumnDown = {
                           JSON.parse(JSON.stringify(row))
                         );
                         setTimeout(() => {
-                          if (!_isNil(this.$refs[`${this._uid}-base-drop-column-down-title`])) {
-                            this.$refs[`${this._uid}-base-drop-column-down-title`].click(); // 点击节点后隐藏面板
+                          if (
+                            !_isNil(
+                              this.$refs[
+                                `${this._uid}-base-drop-column-down-title`
+                              ]
+                            )
+                          ) {
+                            this.$refs[
+                              `${this._uid}-base-drop-column-down-title`
+                            ].click(); // 点击节点后隐藏面板
                           }
                         }, 0);
+                      }
+                      if (
+                        (this.$attrs.trigger === 'hover' ||
+                          _isNil(this.$attrs.trigger)) &&
+                        (_isNil(this.$attrs['hide-on-click']) ||
+                          this.$attrs['hide-on-click'] === true)
+                      ) {
+                        this.$refs[
+                          `${this._uid}-base-drop-column-down`
+                        ].$children[0].$el.style.display = 'none';
                       }
                     }
                   }
@@ -81,7 +99,10 @@ const BaseDropColumnDown = {
       }
       return this.$createElement(
         'div',
-        { class: 'base-drop-column-down-menu' },
+        {
+          ref: `${this._uid}-base-drop-column-down`,
+          class: 'base-drop-column-down-menu'
+        },
         vNodes
       );
     }

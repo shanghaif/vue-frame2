@@ -114,6 +114,15 @@ const BaseGrid = {
     loadFilter: {
       type: Function,
       default: data => data
+    },
+    // 静态数据（api设置为空）
+    options: {
+      type: Object
+    },
+    // 嵌套表格的内置高度
+    nestGridHeight: {
+      type: Number,
+      default: 200
     }
   },
   data() {
@@ -148,7 +157,6 @@ const BaseGrid = {
       immediate: true
     }
   },
-
   created() {},
   methods: {
     /**
@@ -357,7 +365,7 @@ const BaseGrid = {
           northHeight: 'auto',
           westWidth: '0px',
           eastWidth: '0px',
-          southHeight: '36px',
+          southHeight: this.isShowPagination ? '36px' : '0px',
           isPadding: false
         }
       },
@@ -420,7 +428,9 @@ const BaseGrid = {
               selectMode: this.selectMode,
               loadFilter: this.loadFilter,
               slotNode: this.tableAttributes.slotNode,
-              tableAttributes: this.tableAttributes
+              tableAttributes: this.tableAttributes,
+              options: this.options,
+              nestGridHeight: this.nestGridHeight
             }
           },
           []

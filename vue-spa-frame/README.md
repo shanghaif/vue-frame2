@@ -27,8 +27,13 @@ npm run lint:no-fix | eslint 代码校验 （同 npm run lint 但在没有 eslin
 npm run lint-fix | eslint 代码修复
 npm run clear| 删除 node_modules 依赖并重新安装
 npm run changelog | 生成 changelog 日志文件（新发布版本时生成日志文件推荐将版本号`version`进行修改）
+npm run dev:test | 开发环境服务（如果需要区分测试环境可以配置 .env.test）
+npm run build:test | 生产环境服务（如果需要区分生产环境可以配置 .env.testProd）
+npm run icon  | 生成 iconfont 相关的样式图标文件 `iconfont-classname.js
+npm run createProxySelf   | 生成 dev 请求代理文件 proxy-self.js 用于代理请求的发送，proxy-self.js 是被 .gitignore 收录的过滤文件不需要传递上远端
 
 获取iconfont.css文件下的class名称方法：
+（图标文件放在`css-theme/common/font/iconfont/`）
 ```
 步骤一、将iconfont包更新下
 步骤二、在build目录下执行命令 npm run icon
@@ -57,6 +62,8 @@ config webpack配置参数
  |-dev.env.js 开发环境变量
  |-index.js 开发和生产配置参数
  |-prod.env.js 生产环境变量
+ |-proxy-self.js
+ |-proxy-table.js webpackDevServer 代理配置文件
 public
  |-favicon.ico
  |-index.html

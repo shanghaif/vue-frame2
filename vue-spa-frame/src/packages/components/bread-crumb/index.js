@@ -42,7 +42,10 @@ const BaseBreadCrumb = {
               props: _omit(option, ['text']),
               nativeOn: {
                 click: (event) => {
-                  this.$emit('bread-click', option, event);
+                  const index = _findLastIndex(this.options, o => o.text === event.target.innerText);
+                  if (index !== -1 && index !== this.options.length - 1) {
+                    this.$emit('bread-click', option, event);
+                  }
                 }
               }
             }, [

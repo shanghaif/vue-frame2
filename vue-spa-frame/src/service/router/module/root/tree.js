@@ -21,6 +21,12 @@ const index = [
         path: 'base-select-tree',
         meta: { title: '下拉面板-tree' },
         component: () => import(/* webpackChunkName:"views/tree" */ '@views/tree/select-tree.vue')
+      },
+      {
+        name: 'base-roll-tree',
+        path: 'base-roll-tree',
+        meta: { title: '滚动-tree' },
+        component: () => import(/* webpackChunkName:"views/tree" */ '@views/tree/roll-tree.vue')
       }
     ]
   }

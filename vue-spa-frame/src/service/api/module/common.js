@@ -52,6 +52,13 @@ export default [
     mockPath: '/mock/index/menu'
   },
   {
+    name: 'complicateTree',
+    method: 'GET',
+    desc: '获取菜单列表-复杂',
+    path: '',
+    mockPath: '/mock/complicate-tree/index'
+  },
+  {
     name: 'getTree',
     method: 'GET',
     desc: '获取 tree 树',

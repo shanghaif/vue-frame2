@@ -14,7 +14,7 @@ Vue.use(Router);
 // 初始化 router 实例
 const instance = new Router({
   ...ROUTER_DEFAULT_CONFIG,
-  routes
+  routes: routes()
 });
 // 设置拦截器
 instance.onReady(routerOnReady);
@@ -39,7 +39,7 @@ Router.prototype.push = function push(location) {
  */
 instance._getRouterOption = (path = []) => {
   let option;
-  let routeList = routes;
+  let routeList = instance.options.routes;
   const getRoute = function (routeList, name) {
     return _find(routeList, o => o.name === name);
   };

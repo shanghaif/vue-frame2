@@ -291,7 +291,20 @@ export default {
         !_isEmpty(menu) &&
         menu.menuCode !== ''
       ) {
-        this.$router.push({ name: menu.menuCode });
+        // 外部链接
+        if (_has(menu, 'target') && menu.target === 'out') {
+          const currentRoute = this.$router.resolve({ name: menu.menuCode });
+          const target = _get(currentRoute, 'route.meta.target', '_blank');
+          const fullPath = _get(currentRoute, 'route.fullPath', '');
+          if (fullPath.length > 0) {
+            const routeData = this.$router.resolve({
+              path: fullPath
+            });
+            window.open(routeData.href, target);
+          }
+        } else {
+          this.$router.push({ name: menu.menuCode });
+        }
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;

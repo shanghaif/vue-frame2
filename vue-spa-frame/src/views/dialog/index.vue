@@ -25,7 +25,8 @@ export default {
     this.dialogInstance1 = null;
     this.dialogInstance2 = null;
     return {
-      appleList: []
+      appleList: [],
+      loading: false
     };
   },
   created() {
@@ -39,8 +40,9 @@ export default {
       this.dialogInstance = this.$baseDialog({
         component: Detail,
         container: this.$el,
-        center: true,
+        // center: true,
         title: '添加',
+        closeOnClickModal: false, // dialog 原有属性，必须是 小驼峰 形式，连字符`-`形式无法接收
         buttons: [
           {
             on: {
@@ -51,7 +53,15 @@ export default {
             text: '取消'
           },
           {
-            props: { type: 'primary' },
+            props: () => ({ type: 'primary', loading: this.loading }),
+            on: {
+              click: () => {
+                this.loading = true;
+                setTimeout(() => {
+                  this.loading = false;
+                }, 3000);
+              }
+            },
             text: '确定'
           }
         ],
@@ -88,7 +98,7 @@ export default {
         // component: () => this.$createElement(Detail2, { props: { appleList: this.appleList } }), // 写法1
         component: () => ({
           el: Detail2,
-          appleList: this.appleList // props 属性
+          props: { appleList: this.appleList } // props 属性
           // on: {
           //   click: () => {}
           // }

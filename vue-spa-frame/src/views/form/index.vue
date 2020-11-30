@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 60px;">
     <div>
       <p>select 选择器-远端数据-插槽</p>
       <div>
@@ -44,8 +44,8 @@
         :loadFilter="loadFilter"
       ></base-select-input>
       {{ value3 }}
-      <p>icon 图标选择器</p>
-      <base-icon-picker width="200px"></base-icon-picker>
+      <p>icon 图标选择器（黄色图标为 svg 图）</p>
+      <base-icon-picker ref="myIconPicker" width="200px"></base-icon-picker>
       <p>checkbox-group 按钮组-远端数据</p>
       <el-checkbox
         :indeterminate="isIndeterminate"
@@ -85,12 +85,18 @@
         width="300px"
       ></base-defer-input>
       {{queryParams.data.name}}
+      <p>密码强弱控件</p>
+      <el-input v-model="password" placeholder="请输入密码" style="width: 400px;"></el-input>
+      <base-password-check :password="password"></base-password-check>
+      <br><br>
+      <p>{{password}}</p>
     </div>
   </div>
 </template>
 
 <script>
 import _map from 'lodash/map';
+import icons from '@/plugins/icons.js';
 
 export default {
   data() {
@@ -121,7 +127,8 @@ export default {
       ],
       queryParams: {
         data: { name: '' }
-      }
+      },
+      password: 'hello-world'
     };
   },
   mounted() {
@@ -131,6 +138,9 @@ export default {
       console.info(this.tableData);
     }); */
     console.info(this.$dict);
+    this.$nextTick(() => {
+      this.$refs.myIconPicker.addSvg(icons);
+    });
   },
   methods: {
     // 过滤数据

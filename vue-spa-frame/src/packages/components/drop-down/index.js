@@ -31,6 +31,10 @@ const BaseDropDown = {
     // 子项的样式 `el-dropdown-item`
     itemCtCls: {
       type: String
+    },
+    // 点击生成的悬浮面板样式名称
+    dropdownMenuCls: {
+      type: String
     }
   },
   methods: {
@@ -112,7 +116,13 @@ const BaseDropDown = {
           ),
           h(
             'el-dropdown-menu',
-            { slot: 'dropdown' },
+            {
+              slot: 'dropdown',
+              class: {
+                'base-dropdown-menu': true,
+                [this.dropdownMenuCls]: this.dropdownMenuCls
+              }
+            },
             this.createElDropdownItem()
           )
         ]

@@ -8,10 +8,21 @@ import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 import router from '../../../router/index.js';
-import { sStorageKey } from '../../../store/index.js';
+import { sStorageKey, isClearCache } from '../../../store/index.js';
 
 const state = {
+  // 登录信息
+  loginCacheUserInfo: {
+    username: '',
+    password: '',
+    remember: ''
+  },
   data: {}, // 用户信息
+  userDetailData: {
+    headerImg: '',
+    username: '',
+    departmentText: ''
+  }, // 用户详细信息
   // 是否已登陆
   isLogin: false,
   /**
@@ -39,11 +50,19 @@ const getters = {
   // 获取全部菜单
   getMenus: state => {
     return state.roleMenus;
+  },
+  // 获取用户详情信息
+  getUserMsg: state => {
+    return state.userDetailData;
+  },
+  // 登录用户和密码
+  getLoginCacheUserInfo: state => {
+    return state.loginCacheUserInfo;
   }
 };
 const actions = {
   // 登录
-  handleLogin({ dispatch, commit, state }, { userName, password }) {
+  handleLogin({ dispatch, commit, state }, { userName, password, remember = false }) {
     console.info(userName, password);
     return new Promise((resolve, reject) => {
       // 根据具体请求结果返回 解决（或拒绝）
@@ -52,6 +71,18 @@ const actions = {
         data: { userName, password },
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        }
+      },
+      {
+        // 自定义错误拦截，此处只是示例真实项目可以注释掉
+        request_error_callback: function ({ status, statusText, data }) {
+          // 某个请求的特定异常提示
+          if (!_isNil(data)) {
+            Vue.prototype.$errorMsg(data.data);
+          } else {
+            Vue.prototype.$errorMsg(`${status}：${statusText}`);
+          }
+          return false;
         }
       })
         .then(resData => {
@@ -63,6 +94,12 @@ const actions = {
             // 设置通用请求头参数
             this.dispatch('platform/setApiHeaderParams', {
               token: _get(resData, 'data.token')
+            });
+            // 保存登录名和密码
+            this.dispatch('platform/setLoginInfo', {
+              username: userName,
+              password,
+              remember
             });
             resolve(resData);
           } else {
@@ -109,12 +146,39 @@ const actions = {
   fetchMenus({ commit, state }) {
     return new Promise((resolve, reject) => {
       Vue.prototype.$api['common/getMenus']().then(resData => {
-        resData = resData.data;
+        // resData = resData.data;
+        const handlerMate = function (item) {
+          item.menuCode = _get(item, 'href', item.menuCode);
+          item.menuName = _get(item, 'name', item.menuName);
+          item.menuUrl = _get(item, 'href', item.menuUrl);
+          // item.iconUrl = `iconfont ${_get(item, 'icon', item.iconUrl)}`;
+          item.iconUrl = `${_get(item, 'icon', item.iconUrl)}`;
+          item.childMenus = _get(item, 'children', []).length;
+          item.target = _get(item, 'hrefType', 'in');
+        };
+        const handlerWhile = function (data) {
+          for (let i = 0, len = data.length; i < len; i++) {
+            handlerMate(data[i]);
+            if (_has(data[i], 'children') && !_isEmpty(data[i].children)) {
+              handlerWhile(data[i].children);
+            }
+          }
+        };
+        handlerWhile(resData.data);
+        resData.models = resData.data;
+        this.dispatch('setInitedApp');
+        this.dispatch('setStoreMenus', {
+          menus: resData
+        }); // 调用外部的根 store 赋值 menus
+        commit('GENERATE_ROLE_MENUS', resData);
+        // this.dispatch('platform/setRouter');
+        resolve();
+        /* resData = resData.data;
         this.dispatch('setInitedApp');
         this.dispatch('setStoreMenus', { menus: resData }); // 调用外部的根 store 赋值 menus
         commit('GENERATE_ROLE_MENUS', resData);
         // this.dispatch('platform/setRouter');
-        resolve();
+        resolve(); */
       });
     });
   },
@@ -141,7 +205,10 @@ const actions = {
     };
     const setRouterMeta = function (router, oMenu) {
       !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
-      // console.info(router, oMenu);
+      if (_has(router, 'meta.isOpen')) {
+        // 重置 isOpen
+        delete router.meta.isOpen;
+      }
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
         _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
         // 如果父节点是 false，那么对应的所有子节点都应该是 false
@@ -195,12 +262,18 @@ const actions = {
     );
     return Promise.all([p2]);
     // Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
+  },
+  // 设置登录用户名和密码
+  setLoginInfo({ commit, state }, { username, password, remember }) {
+    commit('UPDATE_LOGIN_INFO', { username, password, remember });
   }
 };
 const GENERATE_ROUTES = 'GENERATE_ROUTES';
 const GENERATE_ROLE_MENUS = 'GENERATE_ROLE_MENUS';
 const UPDATE_DATA = 'UPDATE_DATA';
+const GET_USER_DATA = 'GET_USER_DATA';
 const HANDLE_EXIT = 'HANDLE_EXIT';
+const UPDATE_LOGIN_INFO = 'UPDATE_LOGIN_INFO';
 const mutations = {
   [GENERATE_ROUTES](state, roleRouter) {
     state.roleRoutes.push(roleRouter);
@@ -216,22 +289,35 @@ const mutations = {
     }
     state.isLogin = true;
   },
+  [GET_USER_DATA](state, data) {
+    state.userDetailData = data;
+  },
   [HANDLE_EXIT](state) {
     state.data = null;
     state.roleMenus = null;
     state.token = null;
     state.isLogin = false;
     state.initedApp = false;
+    state.userDetailData = {};
     setTimeout(() => {
       // 移除全部缓存
-      if (!_isNil(localStorage.getItem(sStorageKey))) {
+      if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {
         localStorage.removeItem(sStorageKey);
       }
-      if (!_isNil(sessionStorage.getItem(sStorageKey))) {
+      if (!_isNil(sessionStorage.getItem(sStorageKey)) && isClearCache) {
         sessionStorage.removeItem(sStorageKey);
       }
       // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
     }, 0);
+  },
+  [UPDATE_LOGIN_INFO](state, { username, password, remember }) {
+    state.loginCacheUserInfo.remember = remember;
+    state.loginCacheUserInfo.username = username;
+    if (remember) {
+      state.loginCacheUserInfo.password = password;
+    } else {
+      state.loginCacheUserInfo.password = '';
+    }
   }
 };
 export default {

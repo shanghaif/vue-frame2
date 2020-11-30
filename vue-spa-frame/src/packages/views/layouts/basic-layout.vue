@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <base-border-layout v-bind="layout">
       <template v-slot:north>
-        <top-view ref="topView" :title="title"></top-view>
+        <top-view ref="topView" :title="title" v-if="renderTopView"></top-view>
       </template>
       <template v-slot:west>
         <base-nav-menu
@@ -10,6 +10,7 @@
           :menus="menus"
           v-bind="menuProps"
           @select="handleSelect"
+          :svgIcons="svgIcons"
         >
         </base-nav-menu>
       </template>
@@ -40,10 +41,8 @@
 
 <script>
 import TopView from './components/top-view.vue';
-import {
-  ROOT_PAGE_NAME,
-  DEFAULT_SETTINGS
-} from '@config/index.js';
+import { ROOT_PAGE_NAME, DEFAULT_SETTINGS } from '@config/index.js';
+import svgIcons from '@/plugins/icons.js';
 import _last from 'lodash/last';
 import _split from 'lodash/split';
 import _isEmpty from 'lodash/isEmpty';
@@ -76,16 +75,27 @@ export default {
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 渲染 top-view.vue
+    renderTopView: {
+      type: Boolean,
+      default: true
+    },
+    // 渲染 base-nav-menu 菜单组件
+    renderNavMenu: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
+      svgIcons: svgIcons,
       menus: [],
       navTitle: '',
       layout: {
-        northHeight: '60px',
-        westWidth: 'auto',
+        northHeight: this.renderTopView ? '64px' : '0px',
+        westWidth: this.renderNavMenu ? 'auto' : '0px', // 设置为定值时，配合 nav-menu 导航菜单收缩菜单面板之后的宽度还是定值所以这里推荐自动
         eastWidth: '0px',
         southHeight: '0px',
         northCls: this.$style.northCls
@@ -136,18 +146,28 @@ export default {
         let menus = this.$store.getters.getMenus;
         if (!_isNil(this.menuId)) {
           const menuList = [];
-          const doWhileFn = (children) => {
+          const doWhileFn = children => {
             for (let n = 0, len1 = children.length; n < len1; n++) {
-              if (children[n].id === this.menuId || `${children[n].id}` === this.menuId) {
+              if (
+                children[n].id === this.menuId ||
+                `${children[n].id}` === this.menuId
+              ) {
                 menuList.push(children[n]);
                 break;
               }
-              if (_has(children[n], 'children') && !_isEmpty(children[n].children)) {
+              if (
+                _has(children[n], 'children') &&
+                !_isEmpty(children[n].children)
+              ) {
                 doWhileFn(children[n].children);
               }
             }
           };
-          for (let i = 0, len = this.$store.getters.getMenus.length; i < len; i++) {
+          for (
+            let i = 0, len = this.$store.getters.getMenus.length;
+            i < len;
+            i++
+          ) {
             const menu = this.$store.getters.getMenus[i];
             if (menu.id === this.menuId || `${menu.id}` === this.menuId) {
               menuList.push(_get(menu, 'children', []));
@@ -164,17 +184,16 @@ export default {
           menus = menuList[0];
         } else {
           const getMatchedMenu = function (menus, code) {
-            return _find(
-              menus,
-              menu => menu.menuCode === code
-            );
+            return _find(menus, menu => menu.menuCode === code);
           };
           menus = getMatchedMenu(menus, this.ROOT_PAGE_NAME);
         }
         if (_isNil(menus)) {
           return [];
         }
-        this.menus = _has(menus, 'children') ? _get(menus, 'children', []) : menus;
+        this.menus = _has(menus, 'children')
+          ? _get(menus, 'children', [])
+          : menus;
         return this.menus;
       }
       this.menus = this.$store.getters.getMenus;
@@ -242,11 +261,34 @@ export default {
         !_isEmpty(menu) &&
         menu.menuCode !== ''
       ) {
-        this.$router.push({ name: menu.menuCode });
+        // 外部链接
+        if (_has(menu, 'target') && menu.target === 'out') {
+          const currentRoute = this.$router.resolve({ name: menu.menuCode });
+          const target = _get(currentRoute, 'route.meta.target', '_blank');
+          if (_includes(menu.menuCode, 'http')) {
+            window.open(menu.menuCode, target);
+          } else {
+            const fullPath = _get(currentRoute, 'route.fullPath', '');
+            if (fullPath.length > 0) {
+              const routeData = this.$router.resolve({
+                path: fullPath
+              });
+              window.open(routeData.href, target);
+            }
+          }
+        } else {
+          this.$router.push({ name: menu.menuCode });
+        }
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;
-        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+        if (
+          !_isEmpty(matched) &&
+          !_isNil(
+            matched[matched.length - 1].instances.default.$options
+              .routerActivated
+          )
+        ) {
           const that = matched[matched.length - 1].instances.default;
           that.$options.routerActivated.call(that);
         }
@@ -310,7 +352,10 @@ export default {
      */
     onBreadClick(option, event) {
       const { matched } = this.$router.currentRoute;
-      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+      if (
+        !_isEmpty(matched) &&
+        !_isNil(matched[matched.length - 1].instances.default)
+      ) {
         const that = matched[matched.length - 1].instances.default;
         _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }

@@ -116,6 +116,57 @@ export default {
             }
           }
         ]
+      },
+      {
+        label: 'Admin-操作',
+        buttons: [
+          {
+            el: 'label',
+            props: { text: '增加分期' },
+            on: {
+              click: this.onAddinstalment
+            }
+          },
+          {
+            el: 'label',
+            props: { text: '编辑' },
+            on: {
+              click: this.onEdit
+            }
+          },
+          {
+            el: 'label',
+            props: { text: '重置密码', size: 'mini', type: 'success' },
+            on: {
+              click: this.onResetting
+            }
+          },
+          {
+            render: (h, row, column, index) => {
+              return h(
+                'el-popconfirm',
+                {
+                  props: {
+                    title: '确定删除吗？',
+                    placement: 'left',
+                    iconColor: 'red'
+                  },
+                  on: {
+                    confirm: () => {
+                      this.onConfirm(row, column, index);
+                    },
+                    cancel: () => {}
+                  }
+                },
+                [
+                  h('span', { slot: 'reference', style: { color: 'red' } }, [
+                    '删除'
+                  ])
+                ]
+              );
+            }
+          }
+        ]
       }
     ];
     this.tableAttributes = {
@@ -180,6 +231,30 @@ export default {
     // 表头点击
     onHeaderClick(column, event) {
       console.info('header-click', column);
+    },
+    /**
+     * @desc 增加分期
+     */
+    onAddinstalment(row, column, index) {
+      console.info('增加分期', this.api, row, column, index);
+    },
+    /**
+     * @desc 编辑
+     */
+    onEdit(row, column, index) {
+      console.info('编辑', this.api, row, column, index);
+    },
+    /**
+     * @desc 重置密码
+     */
+    onResetting(row, column, index) {
+      console.info('重置密码', this.api, row, column, index);
+    },
+    /**
+     * @desc 确定删除
+     */
+    onConfirm(row, column, index) {
+      console.info('确定删除', this.api, row, column, index);
     }
   }
 };

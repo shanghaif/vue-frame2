@@ -15,7 +15,8 @@ export default [
       getApplyTimeEnd: '',
       nodeStatus: '',
       key: '',
-      productType: ''
+      productType: '',
+      name: ''
     },
     headers: {
       // 测试 token 过期

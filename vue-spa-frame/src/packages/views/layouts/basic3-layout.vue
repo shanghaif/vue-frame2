@@ -2,7 +2,7 @@
   <div :class="[$style.container, 'basic3-layout']">
     <base-border-layout v-bind="layout">
       <template v-slot:north>
-        <top-view3 :title="title"></top-view3>
+        <top-view3 :title="title" v-if="renderTopView"></top-view3>
       </template>
       <template v-slot:west> </template>
       <template v-slot:center>
@@ -50,15 +50,21 @@ export default {
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 渲染 top-view.vue
+    renderTopView: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       layout: {
-        northHeight: '60px',
+        northHeight: this.renderTopView ? '60px' : '0px',
         westWidth: 'auto',
         eastWidth: '0px',
-        southHeight: '0px'
+        southHeight: '0px',
+        northCls: this.$style.northCls
       },
       innerLayout: {
         northHeight: '30px',

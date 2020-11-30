@@ -20,7 +20,10 @@ export const DEFAULT_SETTINGS = {
   collapsed: false, // 侧边菜单栏是否收缩
   titleClick(event) {
     // 顶部栏目标题文字-点击事件
-    this.$router.push({ name: ROOT_PAGE_NAME });
+    const { path } = this.$route;
+    if (path !== '/') {
+      this.$router.push({ name: ROOT_PAGE_NAME });
+    }
   }
 };
 // 路由白名单

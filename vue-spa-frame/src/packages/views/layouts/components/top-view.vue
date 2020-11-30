@@ -22,7 +22,8 @@
             size="mini"
             title="当前应用名称"
             :options="dropColumnDownOptions"
-            trigger="click"
+            trigger="hover"
+            :hide-on-click="true"
             @click="onDropColumnDownClick"
           ></base-drop-column-down>
         </div>

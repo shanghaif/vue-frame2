@@ -48,6 +48,7 @@ window.vm = new Vue({
     // this.$dict.import(this.$api['dict/getDictDataByTypeList']());
     // 模块常量
     console.info(this.$constant);
+    console.info('测试环境：', process.env.VUE_APP_TEST, process.env.VUE_APP_ENV);
   },
   render: h => h(App)
 }).$mount('#app');

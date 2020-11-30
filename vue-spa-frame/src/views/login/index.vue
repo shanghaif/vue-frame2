@@ -10,7 +10,11 @@
             v-model="form.pswd"
             type="password"
             placeholder="admin or super"
+            v-on:keyup.enter.native="onSubmit"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-checkbox v-model="form.remember">记住密码</el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="onSubmit"
@@ -23,23 +27,34 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import md5 from 'js-md5';
 import { ROOT_PAGE_NAME } from '@config/index.js';
 
 export default {
+  computed: {
+    ...mapGetters(['platform/getLoginCacheUserInfo'])
+  },
   data() {
     return {
       loading: false,
       form: {
         name: 'admin',
-        pswd: 'admin'
+        pswd: 'admin',
+        remember: false
       },
       rules: {
         name: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         pswd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       }
     };
+  },
+  created() {
+    this.$nextTick(() => {
+      this.form.name = this['platform/getLoginCacheUserInfo'].username;
+      this.form.pswd = this['platform/getLoginCacheUserInfo'].password;
+      this.form.remember = this['platform/getLoginCacheUserInfo'].remember;
+    });
   },
   methods: {
     ...mapActions(['platform/handleLogin']),
@@ -49,7 +64,12 @@ export default {
           this.loading = true;
           this['platform/handleLogin']({
             userName: this.form.name,
-            password: md5(this.form.pswd)
+            password:
+            // 判断传入的密码是否进行过md5加密，若加密过则不加密
+            this['platform/getLoginCacheUserInfo'].password === this.form.pswd
+              ? this.form.pswd
+              : md5(this.form.pswd),
+            remember: this.form.remember
           })
             .then(resData => {
               this.$router.push({ name: ROOT_PAGE_NAME });

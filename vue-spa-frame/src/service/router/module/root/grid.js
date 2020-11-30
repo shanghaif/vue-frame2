@@ -21,6 +21,30 @@ const index = [
         path: 'roll-grid',
         meta: { title: '滚动-grid' },
         component: () => import(/* webpackChunkName:"views/grid" */ '@views/grid/roll-grid/index.vue')
+      },
+      {
+        name: 'expand-grid',
+        path: 'expand-grid',
+        meta: { title: '展开-grid' },
+        component: () => import(/* webpackChunkName:"views/grid" */ '@views/grid/expand-grid/index.vue')
+      },
+      {
+        name: 'options-grid',
+        path: 'options-grid',
+        meta: { title: '静态数据-grid' },
+        component: () => import(/* webpackChunkName:"views/grid" */ '@views/grid/options-grid/index.vue')
+      },
+      {
+        name: 'select-grid',
+        path: 'select-grid',
+        meta: { title: '下拉-grid' },
+        component: () => import(/* webpackChunkName:"views/grid" */ '@views/grid/select-grid/index.vue')
+      },
+      {
+        name: 'nesting-grid',
+        path: 'nesting-grid',
+        meta: { title: '嵌套-grid' },
+        component: () => import(/* webpackChunkName:"views/grid" */ '@views/grid/nesting-grid/index.vue')
       }
     ]
   }

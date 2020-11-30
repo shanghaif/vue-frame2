@@ -4,8 +4,13 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  flex-wrap: wrap;
   align-items: center;
+  align-content: flex-start;
   padding: 0px 10px;
+  > div{
+    margin-bottom: 10px;
+  }
   & :hover {
     // color: #4989F4;
   }
@@ -20,6 +25,7 @@
     // background-color: pink;
     padding: 0px 10px;
     // border: 1px solid #cccccc;
+    box-sizing: border-box;
     i {
       padding: 0px 3px;
     }

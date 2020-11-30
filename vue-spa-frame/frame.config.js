@@ -54,7 +54,8 @@ module.exports = {
     '@views': 'src/views',
     '@packages': 'src/packages',
     '@mock': 'src/mock',
-    '@service': 'src/service'
+    '@service': 'src/service',
+    '@constant': 'src/common/constant'
   },
   // 指定的依赖库不会被 splitChunks 分割到 otherDependencies 缓存组内
   removeOtherDependenciesCacheGroupsLibs: [
@@ -70,8 +71,13 @@ module.exports = {
   // 配置某些包使用 CDN，externals 需要同步配置，版本请注意 package.json
   cdnMap: {
     // 直接放入到 html 文件中，不用和 externals 匹配，开发和生产都会放入
-    outsideJs: [],
-    outsideCss: [],
+    outsideJs: [
+      // 'https://webapi.amap.com/maps?key=f7ac15a8687e70001f0d8f9e65007f09&v=1.4.15&plugin=Map3D,AMap.DistrictSearch,Loca,AMap.DistrictLayer,SimpleMarker,DistrictExplorer,' // 高德地图
+      '/static/plugins/wangEditor/3.1.1/wangEditor.min.js' // 富文本编辑器插件
+    ],
+    outsideCss: [
+      '/static/plugins/wangEditor/3.1.1/wangEditor.min.css' // 富文本编辑器插件
+    ],
     // 公共的一些js，会注入到 html 页面中
     js: [
       '/static/plugins/axios/0.18.0/axios.min.js',
