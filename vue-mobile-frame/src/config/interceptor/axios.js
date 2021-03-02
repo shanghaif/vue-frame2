@@ -113,7 +113,7 @@ export function responseSuccessFunc(response) {
     // 虽然请求的 status 是 200，但是返回 response 不符合要求
     // 比如：{"errCode":404,"errMsg":"不存在的api, 当前请求path为 /login， 请求方法为 GET ，请确认是否定义此请求。","data":null}
     const callBack = _spread(
-      _get(window, 'apiRequestInterceptErrorHandler', function () {})
+      _get(window, 'apiRequestInterceptErrorHandler', function() {})
     );
     callBack([_get(response, 'data.errMsg', '请求异常')]);
     return Promise.reject(new Error(_get(response, 'data.errMsg', '请求异常')));
@@ -127,7 +127,7 @@ export function responseSuccessFunc(response) {
     return data;
   } else {
     const callBack = _spread(
-      _get(window, 'apiRequestInterceptErrorHandler', function () {})
+      _get(window, 'apiRequestInterceptErrorHandler', function() {})
     );
     callBack(['返回 response 的 status 值不是 200']);
     return Promise.reject(new Error('返回 response 的 status 值不是 200'));
@@ -139,7 +139,7 @@ export function responseSuccessFunc(response) {
  * @param {{}} responseError
  * @returns {Promise}
  */
-export function responseErrorFunc(responseError) {
+export function responseErrorFunc(responseError, instance) {
   if (_isFunction(_get(window, 'apiRequestEndHandler', null))) {
     // 通知函数定义处-请求结束
     _spread(_get(window, 'apiRequestEndHandler'))([responseError]);
@@ -167,14 +167,20 @@ export function responseErrorFunc(responseError) {
         _get(response, `config.statusMessage.${status}`)
       );
     }
+    const error = _pick(_get(responseError, 'response', null), [
+      'status',
+      'statusText',
+      'config'
+    ]);
+    error.instance = instance;
     callBack([
-      _pick(_get(responseError, 'response', null), ['status', 'statusText']),
+      error,
       _get(_pick(_get(responseError, 'response', null), ['data']), 'data', {})
     ]);
   }
   if (!response) {
     const callBack = _spread(
-      _get(window, 'apiRequestInterceptErrorHandler', function () {})
+      _get(window, 'apiRequestInterceptErrorHandler', function() {})
     );
     callBack([_get(responseError, 'message', '')]);
   }

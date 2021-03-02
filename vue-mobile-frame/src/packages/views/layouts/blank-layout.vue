@@ -7,5 +7,3 @@ export default {
   name: 'BlankLayout'
 };
 </script>
-
-<style></style>

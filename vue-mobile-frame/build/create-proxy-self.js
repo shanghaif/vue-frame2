@@ -5,7 +5,7 @@ const path = require('path');
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
 }
-const createProxySelfFile = function () {
+const createProxySelfFile = function() {
   const filePath = resolve('./config/proxy-self.js');
   try {
     fs.statSync(filePath);
@@ -17,7 +17,8 @@ module.exports = {
     '/api': {
       target: 'http://10.1.1.123:8110',
       secure: false,
-      changeOrigin: true
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' }
     }
   }
 };

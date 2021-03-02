@@ -31,7 +31,7 @@ instance.afterEach(routerAfterEachFunc);
 instance._getRouterOption = (path = []) => {
   let option;
   let routeList = routes;
-  const getRoute = function (routeList, name) {
+  const getRoute = function(routeList, name) {
     return _find(routeList, o => o.name === name);
   };
   for (let i = 0, len = path.length; i < len; i++) {
@@ -41,7 +41,7 @@ instance._getRouterOption = (path = []) => {
     }
     const name2Route = getRoute(routeList, name);
     routeList = _get(name2Route, 'children', []);
-    (i === (len - 1)) && (option = name2Route);
+    i === len - 1 && (option = name2Route);
   }
   return option;
 };

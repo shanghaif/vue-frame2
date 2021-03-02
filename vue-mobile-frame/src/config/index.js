@@ -16,7 +16,9 @@ export const CONST_DEFAULT_CONFIG = {
 // basic-layout.vue 配置
 export const DEFAULT_SETTINGS = {
   title: 'Vue 移动端-单页面框架', // 顶部栏目标题文字
-  iconfontUrl: () => { return require('@assets/images/logo.png'); } // 顶部栏目图标
+  iconfontUrl: () => {
+    return require('@assets/images/logo.png');
+  } // 顶部栏目图标
 };
 // 路由白名单
 export const ROUTER_WHITE_LIST = ['404'];

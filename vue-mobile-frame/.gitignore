@@ -22,5 +22,11 @@ yarn-error.log*
 *.sln
 *.sw?
 
-package-lock.json
+# package-lock.json
+# yarn.lock
+
+# user option files
 proxy-self.js
+
+# cache files
+.stylelintcache

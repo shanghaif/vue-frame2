@@ -23,10 +23,18 @@
     <div class="vw-rem">
       <img src="../../assets/images/1234.png" alt="" />
       <img src="../../assets/images/wx.jpg" alt="" />
-      <img src="/static/images/123.jpg" alt="" /><!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
+      <img
+        src="/static/images/123.jpg"
+        alt=""
+      /><!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
     </div>
     <div style="margin-top: 160px;">
-      <van-picker title="标题" show-toolbar :columns="columns" @confirm="onConfirm" />
+      <van-picker
+        title="标题"
+        show-toolbar
+        :columns="columns"
+        @confirm="onConfirm"
+      />
     </div>
   </div>
 </template>
@@ -87,7 +95,7 @@ export default {
       });
     },
     onAdd() {
-      this.$vBus.on('b', function (p) {
+      this.$vBus.on('b', function(p) {
         console.info('添加事件', p);
       });
     },

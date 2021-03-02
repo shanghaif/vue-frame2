@@ -7,7 +7,3 @@ export default {
   name: 'BasePersonal'
 };
 </script>
-
-<style>
-
-</style>

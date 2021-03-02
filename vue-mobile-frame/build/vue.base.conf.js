@@ -19,7 +19,7 @@ function resolve(dir) {
 let webpackEntry = {};
 // 设置 alias 别名
 const alias = {};
-const setAlias = function () {
+const setAlias = function() {
   for (const name in frameConfig.useAlias) {
     alias[name] = resolve(frameConfig.useAlias[name]);
   }
@@ -48,17 +48,17 @@ const pages = {
     chunks: isDev
       ? _concat(['chunk-vendors', 'chunk-common', 'index'], _keys(webpackEntry))
       : _concat(
-        [
-          'vueBase',
-          'vantUi',
-          'chunk-default',
-          'otherDependencies',
-          'styles',
-          'chunk-components',
-          'index'
-        ],
-        _keys(webpackEntry)
-      )
+          [
+            'vueBase',
+            'vantUi',
+            'chunk-default',
+            'otherDependencies',
+            'styles',
+            'chunk-components',
+            'index'
+          ],
+          _keys(webpackEntry)
+        )
   }
 };
 

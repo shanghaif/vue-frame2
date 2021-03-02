@@ -5,3 +5,4 @@ public
 dist
 node_modules
 vue.config.js
+flexible.js

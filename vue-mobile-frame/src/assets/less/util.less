@@ -2,16 +2,16 @@
 
 .textOverflow() {
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
   word-break: break-all;
+  white-space: nowrap;
 }
 
 .textOverflowMulti(@line: 3, @bg: #fff) {
   position: relative;
   max-height: @line * 1.5em;
-  margin-right: -1em;
   padding-right: 1em;
+  margin-right: -1em;
   overflow: hidden;
   line-height: 1.5em;
   text-align: justify;
@@ -20,8 +20,8 @@
     right: 14px;
     bottom: 0;
     padding: 0 1px;
-    background: @bg;
     content: '...';
+    background: @bg;
   }
   &::after {
     position: absolute;
@@ -29,8 +29,8 @@
     width: 1em;
     height: 1em;
     margin-top: 0.2em;
-    background: white;
     content: '';
+    background: white;
   }
 }
 
@@ -44,8 +44,8 @@
     content: ' ';
   }
   &::after {
-    clear: both;
     height: 0;
+    clear: both;
     font-size: 0;
     visibility: hidden;
   }

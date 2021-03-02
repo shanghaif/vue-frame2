@@ -1,5 +1,5 @@
 /**
- * @desc 生成环境
+ * @desc 生产环境
  */
 'use strict';
 module.exports = {

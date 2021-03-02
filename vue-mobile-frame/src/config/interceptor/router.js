@@ -16,7 +16,7 @@ import _isEmpty from 'lodash/isEmpty';
  * @param {*} from
  * @param {*} next
  */
-const routerBeforeEachFunc = function (to, from, next) {
+const routerBeforeEachFunc = function(to, from, next) {
   NProgress.start();
   // 没有匹配到路由项则回退到 from 的路由
   if (_isEmpty(to.matched)) {
@@ -77,7 +77,7 @@ const routerBeforeEachFunc = function (to, from, next) {
  * @param {*} from
  * @example window滚动条返回顶部、路由加载完成控制全局进度条
  */
-const routerAfterEachFunc = function (to, from) {
+const routerAfterEachFunc = function(to, from) {
   NProgress.done();
   // 进入新路由后，重置滚动条到顶部
   // 如果路由基本配置中已配置 'scrollBehavior' 则可以隐藏下面的代码
@@ -90,7 +90,7 @@ const routerAfterEachFunc = function (to, from) {
  * @desc 浏览器刷新
  * @example 在刷新时会执行到 router.onReady 可以处理把数据放入 localStorage 或 cookie 中的操作
  */
-const routerOnReady = function (to) {
+const routerOnReady = function(to) {
   // 判断 token 是否有效，无效直接打开登录页
   // 载入字典数据
   /* if (store.getters['platform/getLoginStatus']) {

@@ -9,7 +9,9 @@ const state = {
   // 是否已登陆
   isLogin: false,
   // 系统用户访问令牌
-  token: ''
+  token: '',
+  // 刷新 token
+  refreshToken: ''
 };
 const getters = {
   getData: state => {
@@ -20,6 +22,9 @@ const getters = {
   },
   getToken: state => {
     return state.token;
+  },
+  getRefreshToken: state => {
+    return state.refreshToken;
   }
 };
 const actions = {
@@ -75,6 +80,10 @@ const actions = {
         });
     });
   },
+  // 更新用户信息
+  updateData({ commit, state }, resData) {
+    commit('UPDATE_DATA', resData.data);
+  },
   // 销毁缓存和变量
   handlerDestroy({ commit, state }) {
     this.dispatch('platform/setApiHeaderParams', { token: null });
@@ -102,12 +111,16 @@ const mutations = {
     if ('token' in data) {
       state.token = data.token;
     }
+    if ('refresh_token' in data) {
+      state.refreshToken = data.refresh_token;
+    }
     state.isLogin = true;
   },
   [HANDLE_EXIT](state) {
     state.data = {};
     state.token = '';
     state.isLogin = false;
+    state.refreshToken = null;
     setTimeout(() => {
       // 移除全部缓存
       if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {

@@ -5,9 +5,7 @@ import BaseRouteView from './route-view.vue';
 import BasePersonal from './common-view/personal.vue';
 import BlankLayout from './layouts/blank-layout.vue';
 
-export {
-  BlankLayout
-};
+export { BlankLayout };
 
 export default {
   BaseRouteView,

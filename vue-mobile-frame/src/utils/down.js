@@ -7,7 +7,7 @@
  * const fileName = '用户列表.xlsx'
  * down(response, fileName)
  */
-export const down = function (response, fileName = '') {
+export const down = function(response, fileName = '') {
   const blob = response.data;
   const aEle = document.createElement('a');
   aEle.href = window.URL.createObjectURL(blob);
@@ -31,7 +31,7 @@ export const down = function (response, fileName = '') {
 };
 
 // 根据url地址下载
-export const download = (url) => {
+export const download = url => {
   var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
   var isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1;
   if (isChrome || isSafari) {

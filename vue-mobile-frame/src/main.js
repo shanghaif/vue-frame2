@@ -19,14 +19,24 @@ import './mock/index.js';
 // 自定义指令
 import VFocus from './directives/v-focus.js';
 import VAuthority from './directives/v-authority.js';
+import VEmoji from './directives/v-emoji.js';
+import VDebounce from './directives/v-debounce.js';
+import VLazyLoad from './directives/v-LazyLoad.js';
+import VfRef from './directives/v-f-ref.js';
 // iconfont
 import '@/assets/font/iconfont/iconfont.css';
 
 // ios延迟关闭 300ms延迟
 // fastClick.attach(document.body);
-fastClick.prototype.focus = function (targetElement) {
+fastClick.prototype.focus = function(targetElement) {
   let length;
-  if (targetElement.setSelectionRange && targetElement.type.indexOf('date') !== 0 && targetElement.type !== 'time' && targetElement.type !== 'month' && targetElement.type !== 'email') {
+  if (
+    targetElement.setSelectionRange &&
+    targetElement.type.indexOf('date') !== 0 &&
+    targetElement.type !== 'time' &&
+    targetElement.type !== 'month' &&
+    targetElement.type !== 'email'
+  ) {
     length = targetElement.value.length;
     targetElement.focus();
     targetElement.setSelectionRange(length, length);
@@ -49,6 +59,10 @@ Vue.use(unicom);
 Vue.use(VueTemplateConst);
 Vue.use(VFocus);
 Vue.use(VAuthority);
+Vue.use(VEmoji);
+Vue.use(VDebounce);
+Vue.use(VLazyLoad);
+Vue.use(VfRef);
 Vue.config.ignoredElements = []; // 忽略在 Vue 之外的自定义元素
 Vue.config.keyCodes = {}; // 给 v-on 自定义键位别名
 Vue.config.productionTip = false;

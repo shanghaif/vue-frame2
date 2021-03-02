@@ -7,7 +7,10 @@ const routes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: () => import(/* webpackChunkName:"views/platform" */ '../../views/platform/index.vue')
+    component: () =>
+      import(
+        /* webpackChunkName:"views/platform" */ '../../views/platform/index.vue'
+      )
     /* beforeEnter: (to, from, next) => {
       console.info('444444444444 ');
       next()
@@ -25,13 +28,19 @@ const routes = [
   {
     path: `/${LOGIN_PAGE_NAME}`,
     name: LOGIN_PAGE_NAME,
-    component: () => import(/* webpackChunkName:"views/login" */ '../../views/login/index.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/login" */ '../../views/login/index.vue'
+      ),
     meta: { title: '登录' }
   },
   {
     path: '/helper',
     name: 'helper',
-    component: () => import(/* webpackChunkName:"views/helper" */ '../../views/helper/index.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/helper" */ '../../views/helper/index.vue'
+      ),
     meta: { title: '帮助中心' }
   },
   {
@@ -48,7 +57,10 @@ const routes = [
   {
     path: '/404',
     name: '404',
-    component: () => import(/* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'
+      ),
     meta: { title: '404' }
   },
   {

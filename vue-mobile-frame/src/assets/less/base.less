@@ -1,19 +1,4 @@
-// 公共字体
-@font-size-large-x: 22px;
-@font-size-large: 18px;
-@font-size-medium: 14px;
-@font-size-medium-x: 16px;
-@font-size-small-s: 10px;
-@font-size-small: 12px;
-// 浅色
-@fill-1: #fff;
-@text: #3c3c3c;
-@text-1: #757575;
-@text-2: #222;
-// 背景和边框色
-@base: #fd9b57;
-@bg: #f5f5f5;
-@border: #ccc;
+/* 基础less */
 .c-base {
   color: @base;
 }
@@ -28,40 +13,35 @@ a:active,
 a:visited,
 a:link,
 a:focus {
-  webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-  -moz-tap-highlight-color: rgba(255, 255, 255, 0);
-  -ms-tap-highlight-color: rgba(255, 255, 255, 0);
-  -o-tap-highlight-color: rgba(255, 255, 255, 0);
-  tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
+/* 禁止在页面上复制内容，设置不可复制 */
+
 * {
-  webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-  -moz-tap-highlight-color: rgba(255, 255, 255, 0);
-  -ms-tap-highlight-color: rgba(255, 255, 255, 0);
-  -o-tap-highlight-color: rgba(255, 255, 255, 0);
-  tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  // user-select: none;
 }
 
 body,
-html,
-#app,
-#root {
+html {
   width: 100%;
   height: 100%;
   margin: 0 auto !important;
+  font-family: @font-family-style;
+  font-size: @font-normal-size;
 }
 
 canvas {
   display: block;
 }
 
-label {
-  font-weight: 700;
-}
+// label {
+//   font-weight: 700;
+// }
 
 .no-padding {
-  padding: 0px !important;
+  padding: 0 !important;
 }
 
 .padding-content {
@@ -70,18 +50,20 @@ label {
 
 /* 单行文字溢出加省略号 */
 .text-overflow() {
+  overflow: hidden;
   text-overflow: ellipsis; // 文本溢出添加省略号
   white-space: nowrap; // 碰到有边界不要折行
-  overflow: hidden;
 }
+
 /* 多行文字溢出加省略号 */
-.more-text-overflow(){
-  word-break: break-all;
-  text-overflow: ellipsis;
+.more-text-overflow(@line: 2) {
+  display: box;
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: @line;
+  /* stylelint-disable property-no-unknown */
+  box-orient: vertical;
 }
 
 /* css 滤镜 */
@@ -94,13 +76,13 @@ label {
 }
 
 .max750 {
-  max-width: 750px;
   width: 100%;
+  max-width: 750px;
 }
 
 body {
-  margin: 0 auto;
   position: relative;
+  margin: 0 auto;
   background-color: @bg;
 }
 
@@ -110,30 +92,28 @@ body {
 
 .border-radius (@radius) {
   border-radius: @radius;
-  -moz-border-radius: @radius;
-  -webkit-border-radius: @radius;
 }
 
 .border-bottom {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid rgb(204, 204, 204);
 }
 
-/*下边框函数*/
+/* 下边框函数 */
 .border-bottom-fn(@border_width:1px,@border_type:solid,@border_color:#ECECEC) {
   border-bottom: @border_width @border_type @border_color;
 }
 
 .border-left {
-  border-left: 1px solid #ccc;
+  border-left: 1px solid rgb(204, 204, 204);
 }
 
 .b-bottom-dashed {
-  border-bottom: 1px dashed #ccc;
+  border-bottom: 1px dashed rgb(204, 204, 204);
 }
 
 .auto {
-  margin-left: auto;
   margin-right: auto;
+  margin-left: auto;
 }
 
 .hide {
@@ -148,25 +128,25 @@ body {
   display: block;
 }
 
-/*上下居中布局*/
+/* 上下居中布局 */
 .vam {
-  vertical-align: middle;
   line-height: 0;
   text-align: center;
+  vertical-align: middle;
 
   &::after {
-    content: '';
     display: inline-block;
-    vertical-align: middle;
-    height: 100%;
     width: 0;
+    height: 100%;
+    vertical-align: middle;
+    content: '';
   }
 
-  >* {
-    text-align: left;
+  > * {
     display: inline-block;
-    vertical-align: middle;
     line-height: 1.5;
+    text-align: left;
+    vertical-align: middle;
   }
 }
 
@@ -175,25 +155,56 @@ body {
 .flex {
   display: flex;
 }
-
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 .flex-center {
   display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.flex-start-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .flex-column-center {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.flex-column-top-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: top;
+}
+
+.flex-row-space-between-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .flex-end {
   display: flex;
   justify-content: flex-end;
 }
+
+.flex-end-center {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .flex-start {
   display: flex;
   justify-content: flex-start;
@@ -201,18 +212,13 @@ body {
 
 .flex-between {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 .flex-around {
   display: flex;
+  align-items: center;
   justify-content: space-around;
-  align-items: center;
-}
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .in-block {
@@ -239,12 +245,24 @@ body {
   text-align: center;
 }
 
+.f-12 {
+  font-size: @f-12;
+}
+
+.f-14 {
+  font-size: @f-14;
+}
+
+.f-16 {
+  font-size: @f-16;
+}
+
 .f-18 {
-  font-size: 18px;
+  font-size: @f-18;
 }
 
 .f-20 {
-  font-size: 20px;
+  font-size: @f-20;
 }
 
 .f-22 {
@@ -252,7 +270,7 @@ body {
 }
 
 .f-24 {
-  font-size: 24px;
+  font-size: @f-24;
 }
 
 .f-26 {
@@ -268,7 +286,7 @@ body {
 }
 
 .f-32 {
-  font-size: 32px;
+  font-size: @f-32;
 }
 
 .f-34 {
@@ -281,6 +299,10 @@ body {
 
 .f-38 {
   font-size: 38px;
+}
+
+.f-42 {
+  font-size: @f-42;
 }
 
 .f-48 {
@@ -303,6 +325,21 @@ body {
   font-size: 72px;
 }
 
+.lh-22 {
+  line-height: @lh-22;
+}
+.lh-24 {
+  line-height: @lh-24;
+}
+.lh-26 {
+  line-height: @lh-26;
+}
+.lh-28 {
+  line-height: @lh-28;
+}
+.lh-32 {
+  line-height: @lh-32;
+}
 .lh-34 {
   line-height: 34px;
 }
@@ -310,7 +347,9 @@ body {
 .lh-36 {
   line-height: 36px;
 }
-
+.lh-38 {
+  line-height: @lh-38;
+}
 .lh-40 {
   line-height: 40px;
 }
@@ -319,12 +358,15 @@ body {
   line-height: 46px;
 }
 
+.lh-52 {
+  line-height: @lh-52;
+}
 .lh-54 {
   line-height: 54px;
 }
 
 .lh-56 {
-  line-height: 0.56px;
+  line-height: 56px;
 }
 
 .lh-58 {
@@ -333,6 +375,10 @@ body {
 
 .lh-60 {
   line-height: 60px;
+}
+
+.lh-68 {
+  line-height: @lh-68;
 }
 
 .lh-80 {
@@ -351,6 +397,10 @@ body {
   line-height: 200px;
 }
 
+.h-0 {
+  height: 0;
+}
+
 .h-100 {
   height: 100px;
 }
@@ -359,16 +409,55 @@ body {
   height: 200px;
 }
 
+.c-000 {
+  color: rgb(0, 0, 0, 1);
+}
+
+/** font-size line-height START **/
+.f-l-12 {
+  .f-12;
+  .lh-22;
+}
+.f-l-14 {
+  .f-14;
+  .lh-24;
+}
+.f-l-16 {
+  .f-16;
+  .lh-26;
+}
+.f-l-18 {
+  .f-18;
+  .lh-28;
+}
+.f-l-20 {
+  .f-20;
+  .lh-32;
+}
+.f-l-24 {
+  .f-24;
+  .lh-38;
+}
+.f-l-32 {
+  .f-32;
+  .lh-52;
+}
+.f-l-42 {
+  .f-42;
+  .lh-68;
+}
+
+/**********  font-size line-height END  *************/
 .c-ccc {
-  color: #ccc;
+  color: rgb(204, 204, 204);
 }
 
 .c-fff {
-  color: #fff;
+  color: rgba(255, 255, 255);
 }
 
 .bg-fff {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255);
 }
 
 .relative {
@@ -380,15 +469,15 @@ body {
 }
 
 .c-333 {
-  color: #333;
+  color: rgb(51, 51, 51);
 }
 
 .c-666 {
-  color: #666;
+  color: rgb(102, 102, 102);
 }
 
 .c-999 {
-  color: #999;
+  color: rgb(153, 153, 153);
 }
 
 .pb-30 {
@@ -398,6 +487,10 @@ body {
 .center {
   text-align: center;
   .auto;
+}
+
+.mt-0 {
+  margin: 0;
 }
 
 .mt-8 {
@@ -507,6 +600,10 @@ body {
   padding-left: 20px;
 }
 
+.pr-10 {
+  padding-right: 10px;
+}
+
 .pr-20 {
   padding-right: 20px;
 }
@@ -520,7 +617,7 @@ body {
 }
 
 .pt-20 {
-  padding-top: 0.2px;
+  padding-top: 20px;
 }
 
 .pb-20 {
@@ -544,66 +641,83 @@ body {
 }
 
 //常用width
-.wdith-48 {
+.width-48 {
   width: 48%;
 }
 
-.wdith-65 {
+.width-65 {
   width: 65px !important;
 }
 
-.wdith-80 {
+.width-80 {
   width: 80px;
 }
 
-.wdith-100 {
+.width-100 {
   width: 100px !important;
 }
 
-.wdith-120 {
+.width-120 {
   width: 120px !important;
 }
 
-.wdith-130 {
+.width-130 {
   width: 130px !important;
 }
 
-.wdith-200 {
+.width-200 {
   width: 200px !important;
 }
 
-.wdith-150 {
+.width-150 {
   width: 150px !important;
 }
 
-.wdith-240 {
+.width-240 {
   width: 240px !important;
 }
 
-.wdith-300 {
+.width-300 {
   width: 300px !important;
 }
 
-.wdith-360 {
+.width-360 {
   width: 360px !important;
 }
 
-.wdith-400 {
+.width-400 {
   width: 400px !important;
 }
 
-.wdith-480 {
+.width-480 {
   width: 480px !important;
 }
 
-.wdith-500 {
-  width: 500px
+.width-500 {
+  width: 500px;
 }
 
-.wdith-600 {
-  width: 600px
+.width-600 {
+  width: 600px;
 }
 
-.wdith-800 {
+.width-800 {
   width: 800px !important;
+}
+
+// 层级
+.z-index-10 {
+  z-index: 10;
+}
+
+.z-index-100 {
+  z-index: 100;
+}
+
+.z-index-1000 {
+  z-index: 1000;
+}
+
+.z-index-2000 {
+  z-index: 2000;
 }

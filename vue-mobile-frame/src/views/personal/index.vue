@@ -2,9 +2,7 @@
   <div>
     <p class="aaa">个人中心</p>
     <van-button size="small" @click="onOpenUserPage">路由跳转</van-button>
-    <div>
-      {{NAME_OF_CONSTANT[0].name}}&nbsp;{{OTHER}}
-    </div>
+    <div>{{ NAME_OF_CONSTANT[0].name }}&nbsp;{{ OTHER }}</div>
   </div>
 </template>
 
@@ -32,8 +30,8 @@ export default {
 </script>
 
 <style>
-.aaa{
-  color: red;
+.aaa {
   font-size: 14px;
+  color: red;
 }
 </style>

@@ -22,7 +22,13 @@ import _union from 'lodash/union';
 let unicomIdName = '';
 let unicomGroupName = '';
 // vm容器、分组、事件、命名 唯一、推迟触发的事件
-const [vmMap, groupForVm, events, idForVm, sendDefer] = [new Map(), {}, {}, {}, []];
+const [vmMap, groupForVm, events, idForVm, sendDefer] = [
+  new Map(),
+  {},
+  {},
+  {},
+  []
+];
 /**
  * @desc 触发执行事件
  * @param {string} method - 指令的名称
@@ -30,7 +36,7 @@ const [vmMap, groupForVm, events, idForVm, sendDefer] = [new Map(), {}, {}, {}, 
  * @param {string} aim - 标识 （#）
  * @param {Array} args - 参数
  */
-const emitEvent = function (method, toKey, aim, args) {
+const emitEvent = function(method, toKey, aim, args) {
   const evs = _get(events, method, []);
   let evLen = 0;
   const len = evs.length;
@@ -62,18 +68,18 @@ const emitEvent = function (method, toKey, aim, args) {
  * @param {string} query - 指令名称 （~instruct1#id1）
  * @param  {...any} args - 可变参数
  */
-const unicomQuery = function (query, ...args) {
+const unicomQuery = function(query, ...args) {
   let [toKey, aim, defer, eventIndex] = ['', '', false, -1];
   // query=instruct1#id1
   const method = query
-    .replace(/^([`~])/, function (s0, s1) {
+    .replace(/^([`~])/, function(s0, s1) {
       // query=~instruct1#id1
       if (_isEqual(s1, '~')) {
         defer = true;
       }
       return '';
     })
-    .replace(/([@#])([^@#]*)$/, function (s0, s1, s2) {
+    .replace(/([@#])([^@#]*)$/, function(s0, s1, s2) {
       // query=instruct1@child-a
       // s0=@child-a s1=@ s2=child-a
       toKey = s2;
@@ -91,10 +97,10 @@ const unicomQuery = function (query, ...args) {
   }
   // 获取目标 vm
   switch (aim) {
-  case '#':
-    return _get(idForVm, toKey, null);
-  case '@':
-    return _get(groupForVm, toKey, []);
+    case '#':
+      return _get(idForVm, toKey, null);
+    case '@':
+      return _get(groupForVm, toKey, []);
   }
   return eventIndex;
 };
@@ -104,13 +110,13 @@ const unicomQuery = function (query, ...args) {
  * @param {string[]} nv - 指令 unicom-group 传入的组数据 （新）
  * @param {string[]} [ov] - 指令 unicom-group 传入的组数据 （旧）
  */
-const updateName = function (scope, nv, ov) {
+const updateName = function(scope, nv, ov) {
   // 实例上设置分组
   const vmData = vmMap.get(scope) || {};
   const group = _get(vmData, 'group', []);
   // 删除旧的 vm
   if (_isEqual(_isUndefined(ov), false)) {
-    _uniq(_flattenDeep(_flatMap(ov))).forEach(function (key) {
+    _uniq(_flattenDeep(_flatMap(ov))).forEach(function(key) {
       if (_includes(group, key)) {
         const vms = _get(groupForVm, key, []);
         _isEqual(_isEmpty(vms), false) && vms.splice(vms.indexOf(scope), 1);
@@ -123,7 +129,7 @@ const updateName = function (scope, nv, ov) {
   }
   // 增加新的
   if (_isEqual(_isUndefined(nv), false)) {
-    _uniq(_flattenDeep(_flatMap(nv))).forEach(function (key) {
+    _uniq(_flattenDeep(_flatMap(nv))).forEach(function(key) {
       const vms = _get(groupForVm, key, []);
       if (_isEmpty(vms)) {
         _set(groupForVm, key, vms);
@@ -144,17 +150,26 @@ const updateName = function (scope, nv, ov) {
  * @param {string} newValue - 指令 unicom-id 传入的id数据 （新）
  * @param {string} [oldValue] - 指令 unicom-id 传入的id数据 （旧）
  */
-const updateId = function (scope, newValue, oldValue) {
+const updateId = function(scope, newValue, oldValue) {
   if (_isEqual(newValue, oldValue)) {
     return;
   }
-  if (_isEqual(_isUndefined(oldValue), false) && _isEqual(_get(idForVm, oldValue), scope)) {
+  if (
+    _isEqual(_isUndefined(oldValue), false) &&
+    _isEqual(_get(idForVm, oldValue), scope)
+  ) {
     // watch 监测值修改需要删除，组件销毁时需要删除
     Reflect.deleteProperty(idForVm, oldValue);
   }
-  if (_isEqual(_isUndefined(newValue), false) && _isEqual(_has(idForVm, newValue), false)) {
+  if (
+    _isEqual(_isUndefined(newValue), false) &&
+    _isEqual(_has(idForVm, newValue), false)
+  ) {
     _set(idForVm, newValue, scope);
-  } else if (_isEqual(_isUndefined(newValue), false) && _has(idForVm, newValue)) {
+  } else if (
+    _isEqual(_isUndefined(newValue), false) &&
+    _has(idForVm, newValue)
+  ) {
     console.warn(`${unicomIdName}='${newValue}'的组件已经定义并存在。`);
   }
 };
@@ -164,7 +179,7 @@ const updateId = function (scope, newValue, oldValue) {
  * @param {function} fn - 指令名称对应的函数
  * @param {Object} scope - 指令名称对应函数所运行的作用域
  */
-const appendEvent = function (method, fn, scope) {
+const appendEvent = function(method, fn, scope) {
   if (_isEqual(_has(events, method), false)) {
     events[method] = [];
   }
@@ -177,7 +192,7 @@ const appendEvent = function (method, fn, scope) {
  * @param {string} method - 指令的名称
  * @param {Object} scope - 指令名称对应函数所运行的作用域
  */
-const removeEvent = function (method, scope) {
+const removeEvent = function(method, scope) {
   const evs = _get(events, method, []);
   if (_isEqual(_isEmpty(evs), false)) {
     for (let i = 0; i < evs.length; i++) {
@@ -188,7 +203,10 @@ const removeEvent = function (method, scope) {
   }
 };
 export default {
-  install(Vue, { name = 'unicom', idName = `${name}Id`, groupName = `${name}Group` } = {}) {
+  install(
+    Vue,
+    { name = 'unicom', idName = `${name}Id`, groupName = `${name}Group` } = {}
+  ) {
     // 添加原型方法 （unicomQuery 函数放在 install 外部不然无法获取调用函数的 this 对象）
     Vue.prototype['$' + name] = unicomQuery;
     // unicom-id
@@ -254,7 +272,10 @@ export default {
             groupForVm[key].push(this);
           });
         }
-        if (_isEqual(_isEmpty(group), false) || _isEqual(_isEmpty(uni), false)) {
+        if (
+          _isEqual(_isEmpty(group), false) ||
+          _isEqual(_isEmpty(uni), false)
+        ) {
           vmMap.set(this, vmData);
         }
       },
@@ -317,7 +338,10 @@ export default {
         // 移除 命名分组、实例命名
         const uGroupName = _get(this, groupName, []);
         const optGroupName = _get(this.$options, groupName, []);
-        if (_isEqual(_isEmpty(uGroupName), false) || _isEqual(_isEmpty(optGroupName), false)) {
+        if (
+          _isEqual(_isEmpty(uGroupName), false) ||
+          _isEqual(_isEmpty(optGroupName), false)
+        ) {
           updateName(this, undefined, _union(uGroupName, optGroupName));
         }
 
@@ -334,7 +358,7 @@ export default {
         }
         // 分组，一对多， 单个vm可以多个分组名称 组件命名
         const group = _get(vmData, 'group', []);
-        _forEach(group, function (name) {
+        _forEach(group, function(name) {
           const gs = groupForVm[name];
           if (_isEqual(_isUndefined(gs), false)) {
             const index = gs.indexOf(this);
@@ -347,7 +371,7 @@ export default {
           }
         });
         // 监控销毁 method为空
-        for (let i = 0; i < sendDefer.length;) {
+        for (let i = 0; i < sendDefer.length; ) {
           const pms = sendDefer[i];
           if (_isEqual(pms[0], '') && _isEqual(pms[4], this)) {
             sendDefer.splice(i, 1);
@@ -360,7 +384,7 @@ export default {
     // 自定义属性合并策略
     // 混入（mixins）时不是简单的覆盖而是追加
     const merge = _get(Vue, 'config.optionMergeStrategies', {});
-    merge[name] = merge[unicomGroupName] = function (parentVal, childVal) {
+    merge[name] = merge[unicomGroupName] = function(parentVal, childVal) {
       const p = parentVal || [];
       if (_isEqual(_isUndefined(childVal), false)) {
         p.push(childVal);

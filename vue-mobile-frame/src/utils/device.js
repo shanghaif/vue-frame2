@@ -12,7 +12,9 @@ export const isQQBrowser = () => {
 
 // 是否是爬虫
 export const isSpider = () => {
-  return /adsbot|googlebot|bingbot|msnbot|yandexbot|baidubot|robot|careerbot|seznambot|bot|baiduspider|jikespider|symantecspider|scannerlwebcrawler|crawler|360spider|sosospider|sogou web sprider|sogou orion spider/.test(ua);
+  return /adsbot|googlebot|bingbot|msnbot|yandexbot|baidubot|robot|careerbot|seznambot|bot|baiduspider|jikespider|symantecspider|scannerlwebcrawler|crawler|360spider|sosospider|sogou web sprider|sogou orion spider/.test(
+    ua
+  );
 };
 
 // 是否是微信浏览器
@@ -22,13 +24,17 @@ export const isWeiXin = () => {
 // 是否ios
 export const isIos = () => {
   var u = navigator.userAgent;
-  if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) { // 安卓手机
+  if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+    // 安卓手机
     return false;
-  } else if (u.indexOf('iPhone') > -1) { // 苹果手机
+  } else if (u.indexOf('iPhone') > -1) {
+    // 苹果手机
     return true;
-  } else if (u.indexOf('iPad') > -1) { // iPad
+  } else if (u.indexOf('iPad') > -1) {
+    // iPad
     return false;
-  } else if (u.indexOf('Windows Phone') > -1) { // winphone手机
+  } else if (u.indexOf('Windows Phone') > -1) {
+    // winphone手机
     return false;
   } else {
     return false;
@@ -38,9 +44,14 @@ export const isIos = () => {
 // 是否为PC端
 export const isPC = () => {
   var userAgentInfo = navigator.userAgent;
-  var Agents = ['Android', 'iPhone',
-    'SymbianOS', 'Windows Phone',
-    'iPad', 'iPod'];
+  var Agents = [
+    'Android',
+    'iPhone',
+    'SymbianOS',
+    'Windows Phone',
+    'iPad',
+    'iPod'
+  ];
   var flag = true;
   for (var v = 0; v < Agents.length; v++) {
     if (userAgentInfo.indexOf(Agents[v]) > 0) {
@@ -77,7 +88,7 @@ export const isAppleMobileDevice = () => {
 // 判断 isIE 浏览器
 export function isIE() {
   const bw = window.navigator.userAgent;
-  const compare = (s) => bw.indexOf(s) >= 0;
+  const compare = s => bw.indexOf(s) >= 0;
   const ie11 = (() => 'ActiveXObject' in window)();
   return compare('MSIE') || ie11;
 }
