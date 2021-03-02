@@ -7,7 +7,8 @@ const index = [
     path: '/map',
     name: 'map',
     meta: { title: '地图' },
-    component: () => import(/* webpackChunkName:"views/map" */ '@views/map/index.vue')
+    component: () =>
+      import(/* webpackChunkName:"views/map" */ '@views/map/index.vue')
   }
 ];
 

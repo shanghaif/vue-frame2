@@ -1,16 +1,10 @@
 <template>
   <div :class="[$style.box, $style.fullY]">
-    基金募集管理
-    <div :class="$style.test">
-      <span>文字颜色</span>
-    </div>
-    <el-button
-      :class="$style.myButton"
-      size="small"
-      type="primary"
-      @click="onClick"
-      >修改文字颜色</el-button
-    >
+    <p>多色图标-展示</p>
+    <svg class="icon" aria-hidden="true">
+      <use xlink:href="#iconjiaosezhanghao"></use>
+    </svg>
+    <base-svg-icon iconname="iconjiaosezhanghao" size="36px"></base-svg-icon>
   </div>
 </template>
 
@@ -27,6 +21,16 @@ export default {
 };
 </script>
 
+<style>
+.el-dropdown-link {
+  color: rgba(64, 158, 255);
+  cursor: pointer;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
+</style>
+
 <style lang="less" module>
 .box {
   .my-button {
@@ -35,13 +39,13 @@ export default {
   }
 }
 .test {
+  position: relative;
+  top: 10px;
   color: aqua;
-  position: relative;
-  top: 10px;
 }
-.test1{
-  color: red;
+.test1 {
   position: relative;
   top: 10px;
+  color: red;
 }
 </style>

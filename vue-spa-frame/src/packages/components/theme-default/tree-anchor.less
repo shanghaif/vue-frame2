@@ -1,0 +1,73 @@
+.tree-anchor {
+  max-width: 200px;
+  overflow: auto;
+
+  ul {
+    padding-inline-start: 12px;
+  }
+
+  .tree-anchor-title {
+    height: 40px !important;
+    padding-left: 19px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 40px;
+    background-color: rgba(255, 255, 255);
+    border-bottom: 1px solid rgb(231, 235, 240);
+  }
+
+  .tree-anchor-list {
+    .bg-fff;
+    .flex;
+
+    height: auto;
+    // min-height: 400px;
+    max-height: calc(100% - 140px);
+    padding: 10px 19px;
+    overflow-y: auto;
+
+    &-plan {
+      position: relative;
+      width: 1px;
+      background: rgb(229, 229, 229);
+
+      .active-content {
+        position: absolute;
+        left: 0;
+        width: 3px;
+        height: 16px;
+        background: rgb(66, 147, 244);
+      }
+    }
+
+    &-root {
+      padding-left: 19px;
+      margin: 0;
+
+      li {
+        font-size: @f-12;
+        line-height: 30px;
+        cursor: pointer;
+
+        .section-link {
+          margin: 0;
+          color: rgba(130, 136, 141, 1);
+          text-decoration: none;
+        }
+
+        .first-selection-link {
+          font-size: 14px;
+          color: rgba(9, 9, 9, 100);
+        }
+
+        .section-link-active {
+          color: rgb(66, 147, 244);
+        }
+      }
+
+      .tree-list-sub {
+        padding-left: 10px;
+      }
+    }
+  }
+}

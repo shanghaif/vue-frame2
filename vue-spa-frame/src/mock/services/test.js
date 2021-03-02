@@ -5,9 +5,25 @@ const rollGridList = options => {
   const parameters = getQueryParameters(options);
   console.info('mock: parameters', parameters);
   const result = [];
-  for (let i = 1; i < 12; i++) {
+  for (let i = 1; i < 8; i++) {
     result.push({
       id: i,
+      state: i,
+      date: Mock.mock('@datetime()'),
+      name: Mock.mock('@cname()') + '-' + i,
+      address: Mock.mock('@county(true)')
+    });
+  }
+  return builder({ results: result });
+};
+const nestingGridList = options => {
+  const parameters = getQueryParameters(options);
+  console.info('mock: parameters', parameters);
+  const result = [];
+  for (let i = 1; i < 5; i++) {
+    result.push({
+      id: i,
+      state: i,
       date: Mock.mock('@datetime()'),
       name: Mock.mock('@cname()') + '-' + i,
       address: Mock.mock('@county(true)')
@@ -27,4 +43,5 @@ const menuButtons = options => {
   return builder(result);
 };
 Mock.mock(/\/mock\/roll\/grid/, 'get', rollGridList); // 贷款需求管理列表
+Mock.mock(/\/mock\/nesting\/grid/, 'get', nestingGridList); // 贷款需求管理列表
 Mock.mock(/\/mock\/role\/buttons/, 'get', menuButtons); // 功能权限按钮-checkbox-group

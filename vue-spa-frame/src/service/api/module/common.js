@@ -17,7 +17,7 @@ export default [
     desc: '获取用户信息',
     path: '/organization/loadOrganizationAccount',
     mockPath: '/mock/organization/loadOrganizationAccount',
-    params: { },
+    params: {},
     headers: {
       // 测试 token 过期
       // token: 'eyJhbGciOiJIUzI1NiJ9.eyJMT0dJTl9VU0VSX0tFWSI6IjhmYThjZTM1LWRjNzItNDFiYy05N2JkLTk5MDRmYzljMTRkZCJ9.wunHvfjW1mQ-TqvaZut50nImdCF-gM1a-VpgQmkCif4'
@@ -29,8 +29,8 @@ export default [
     desc: '获取机构端菜单',
     path: '/role/findRolePermissionByUserId',
     mockPath: '',
-    params: { },
-    headers: { }
+    params: {},
+    headers: {}
   },
   {
     name: 'bbb',
@@ -41,7 +41,8 @@ export default [
     baseURL: '/api1/api',
     params: { type: 2, userName: '', status: '' },
     headers: {
-      token: 'eyJhbGciOiJIUzI1NiJ9.eyJMT0dJTl9VU0VSX0tFWSI6ImRlMmM4MDc1LTA0MDUtNGJkMC05MDY4LTVmZWRkYTQwZDYwNSJ9.VtBwGPyRSoMmozpC5kbUa7Rwoqe-8qRaEVr_j6C1d0k'
+      token:
+        'eyJhbGciOiJIUzI1NiJ9.eyJMT0dJTl9VU0VSX0tFWSI6ImRlMmM4MDc1LTA0MDUtNGJkMC05MDY4LTVmZWRkYTQwZDYwNSJ9.VtBwGPyRSoMmozpC5kbUa7Rwoqe-8qRaEVr_j6C1d0k'
     }
   },
   {
@@ -71,5 +72,19 @@ export default [
     desc: '获取 checkbox-group 按钮组',
     path: '',
     mockPath: '/mock/role/buttons'
+  },
+  {
+    name: 'getCountyTree',
+    method: 'GET',
+    desc: '获取区县 tree 树',
+    path: '',
+    mockPath: '/mock/county-tree/index'
+  },
+  {
+    name: 'getIndustryTree',
+    method: 'GET',
+    desc: '获取所属行业 tree',
+    path: '',
+    mockPath: '/mock/industry-tree/index'
   }
 ];

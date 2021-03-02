@@ -1,83 +1,68 @@
-/* eslint-disable no-unused-vars */
 /**
  * @desc Select 下拉 grid 选择器
  */
 import _assign from 'lodash/assign';
 import _includes from 'lodash/includes';
+import _toNumber from 'lodash/toNumber';
+import _has from 'lodash/has';
+import _find from 'lodash/find';
+import _get from 'lodash/get';
+import _isNil from 'lodash/isNil';
+import _isEmpty from 'lodash/isEmpty';
 
 const BaseSelectGrid = {
   name: 'BaseSelectGrid',
   inheritAttrs: false,
   model: {
-    prop: 'value',
+    prop: 'selectGridValue',
     event: 'selectGridChange'
   },
   props: {
+    // 最多只能选择几个数量
+    maxItem: {
+      type: Number,
+      default: 20
+    },
     // 输入框宽度
     width: {
-      type: String,
-      default: '160px'
+      type: Number,
+      default: 160
     },
     // grid 面板宽度
     gridWidth: {
-      type: String,
-      default: '470px'
+      type: Number,
+      default: 490
     },
-    emptyText: {
-      type: String,
-      default: '请选择'
-    },
-    api: {
-      type: String,
-      default: ''
-    },
-    queryParams: {
-      type: Object,
-      default() {
-        return {};
-      }
-    },
-    columns: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    value: {
+    // 传入默认选中值 ['',''] 需要默认选中时请结合 'defaultCheckedRows' 参数
+    // 值的匹配必须和 'defaultCheckedRows'相同
+    selectGridValue: {
       type: [String, Array],
       default() {
         return [];
       }
     },
-    // 数据过滤函数
-    loadFilter: {
-      type: Function
+    // 默认要勾选 grid 的节点 keys 必须是唯一值 id 的 value
+    // [{name: '', id: ''}] name 和 id 对应 displayField 和 valueField
+    defaultCheckedRows: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    // 搜索栏字段，如：searchField="name"
+    searchField: {
+      type: String
+    },
+    // Select 组件头部内容
+    prefixLabel: {
+      type: String
     },
     // 是否多选
     multiple: {
       type: Boolean,
       default: false
     },
-    // 默认要勾选tree的节点keys 必须是唯一值id的value
-    // 适用于数据源由外部传入，如果是远程获取必须在数据中增加'check'字段标明是否选中
-    defaultCheckedKeys: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    size: {
-      type: String,
-      default: 'medium'
-    },
-    // 多选时将选项合并为一段文字
-    collapseTags: {
-      type: Boolean,
-      default: true
-    },
-    // Select 组件头部内容
-    prefixLabel: String,
-    // 显示字段 可通过props修改
+    // 显示字段
     displayField: {
       type: String,
       default: 'name'
@@ -94,49 +79,61 @@ const BaseSelectGrid = {
         return {};
       }
     },
-    ctStyle: {
-      type: Object
-    },
+    // 自定义样式名
     ctCls: {
       type: Object
     },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
+    // 是否显示
     isDisplay: {
       type: Boolean,
       default: true
     },
+    // 是否渲染
     isRender: {
       type: Boolean,
       default: true
     }
   },
+  watch: {
+    selectGridValue(val, oldVal) {
+      if (!_isNil(val) && val.length === 0) {
+        this.clear();
+      } else {
+        // 单选
+        this.setSingleNode();
+      }
+    }
+  },
   data() {
-    this.popoverOffsetTop = 0; // 下拉面板的 offsetTop 偏差值
-    this.selectInputHeight = 0; // select 控件对应的 input 框的高度
     return {
       gridUserRef: `${this._uid}-selectGrid`,
       elSelectRef: `${this._uid}-base-select-grid-ref`,
       popoverVisible: false,
       // 本地数据
-      curSelectNodeList: [],
+      curSelectRowList: [],
       curSelectLabelList: [],
       curSelectValueList: [], // 复选
-      curSelectNode: null,
+      curSelectRow: null,
       curSelectLabel: '', // 单选
       curSelectValue: '',
-      curDefaultCheckedKeys: [...this.defaultCheckedKeys],
-      treeValue: [],
-      options: [] // [{ value: '', label: '' }]
+      // curDefaultCheckedRows: [...this.defaultCheckedRows],
+      gridValue: [],
+      options: [], // [{ value: '', label: '' }]
+      searchInput: ''
     };
   },
+  created() {},
   methods: {
     /**
-     * @desc 手动打开tree下拉面板
+     * @desc 获取 grid 对象
      */
-    handOpenTree() {
+    getGrid() {
+      return this.$refs[this.gridUserRef];
+    },
+    /**
+     * @desc 手动打开 grid 下拉面板
+     */
+    handOpenGrid() {
       setTimeout(() => {
         this.popoverVisible = true;
       }, 0);
@@ -151,10 +148,10 @@ const BaseSelectGrid = {
         h(
           'el-popover',
           {
-            ref: `${this._uid}-base-select-tree-popover`,
+            ref: `${this._uid}-base-select-grid-popover`,
             props: {
-              popperClass: 'base-el-popover',
-              placement: 'bottom',
+              popperClass: 'base-select-grid-el-popover',
+              placement: 'bottom-start',
               // title: '标题',
               width: this.gridWidth,
               trigger: 'click',
@@ -181,7 +178,7 @@ const BaseSelectGrid = {
       return vNode;
     },
     /**
-     * @desc 创建 el-tree 节点
+     * @desc 创建 el-select 节点
      */
     createSelect() {
       const h = this.$createElement;
@@ -220,16 +217,19 @@ const BaseSelectGrid = {
           ),
           on: {
             'hook:mounted': () => {
-              this.selectInputHeight = this.$refs[this.elSelectRef].$el.offsetHeight; // input 框的高度
+              this.selectInputHeight = this.$refs[
+                this.elSelectRef
+              ].$el.offsetHeight; // input 框的高度
             },
             clear: () => {
               this.clear();
-              this.$refs[this.gridUserRef].clearChecked();
               this.$emit('selectGridChange', this.multiple ? [] : '');
               this.change([]);
               this.$emit('clear', this.multiple ? [] : '');
+              this.setSelectPanel2InputOffsetTop();
             },
             'remove-tag': tag => {
+              console.info('tag', tag);
               const index = _findIndex(
                 this.curSelectValueList,
                 value => value === tag
@@ -239,7 +239,7 @@ const BaseSelectGrid = {
                 item => item[this.valueField] === tag
               );
               if (index !== -1) {
-                this.curSelectNodeList.splice(index, 1);
+                this.curSelectRowList.splice(index, 1);
                 this.curSelectLabelList.splice(index, 1);
                 this.curSelectValueList.splice(index, 1);
               }
@@ -247,11 +247,12 @@ const BaseSelectGrid = {
                 this.options.splice(optionIndex, 1);
               }
               this.$emit('selectGridChange', this.curSelectValueList);
-              this.change(this.curSelectNodeList);
-              this.$refs[this.gridUserRef].setCheckedKeys(
-                this.curSelectValueList
-              );
+              this.change(this.curSelectRowList);
               this.$emit('remove-tag', this.multiple ? [] : '');
+              this.setSelectPanel2InputOffsetTop();
+              this.$refs[this.gridUserRef].selectRows([
+                { field: this.valueField, value: tag }
+              ]);
             }
           },
           nativeOn: {
@@ -272,11 +273,11 @@ const BaseSelectGrid = {
         },
         [
           prefixLabelVNode,
-          // this.createOptions(),
+          this.createOptions(),
           h(
             'div',
             {
-              class: 'base-select-tree-down-empty',
+              class: 'base-select-grid-down-empty',
               slot: 'empty',
               style: { display: 'none' }
             },
@@ -291,48 +292,182 @@ const BaseSelectGrid = {
      */
     createGrid() {
       const h = this.$createElement;
-      const that = this;
-      return h('base-grid', {
-        class: 'base-grid-panel-content-cls',
-        ref: this.gridUserRef,
-        attrs: {},
-        props: {
-          api: this.api,
-          // 初始化查询参数
-          queryParams: this.queryParams,
-          columns: this.columns,
-          selectMode: !!this.multiple,
-          isReloadGrid: true,
-          isSelectedFirstRow: false,
-          loadFilter: this.loadFilter,
-          tableAttributes: {
-            size: 'mini',
-            border: true
-          },
-          paginationAttributes: {
-            layout: 'prev, pager, next, ->, total',
-            pageSize: 8,
-            pageSizes: [8, 10, 15, 20]
+      let searchNode = h();
+      if (!_isNil(this.searchField) && !_has(this.$slots, 'search')) {
+        searchNode = this.createSearchBar();
+      }
+      if (_has(this.$slots, 'search')) {
+        searchNode = this.$slots.search;
+      }
+      return h(
+        'base-grid',
+        {
+          class: 'base-grid-panel-content-cls',
+          ref: this.gridUserRef,
+          attrs: {},
+          props: _assign(
+            {
+              api: this.$attrs.api,
+              // 初始化查询参数
+              queryParams: this.$attrs.queryParams,
+              columns: this.$attrs.columns,
+              selectMode: this.multiple,
+              isReloadGrid: true,
+              isSelectedFirstRow: false,
+              loadFilter: this.$attrs.loadFilter,
+              tableAttributes: {
+                size: 'mini',
+                border: true
+              },
+              paginationAttributes: {
+                layout: 'prev, pager, next, slot, ->, total',
+                pageSize: 10,
+                pageSizes: [5, 10, 15, 20]
+              }
+            },
+            this.$attrs
+          ),
+          on: {
+            'row-click': (row, column, event) => {
+              // 单选，没有复选框
+              if (!this.multiple) {
+                this.curSelectLabel = row[this.displayField];
+                this.curSelectValue = row[this.valueField];
+                this.curSelectRow = row;
+                this.options = [
+                  {
+                    [this.displayField]: row[this.displayField],
+                    [this.valueField]: row[this.valueField]
+                  }
+                ];
+                this.$emit('selectGridChange', row[this.valueField]);
+              }
+              event.stopPropagation(); // js 阻止事件冒泡
+            },
+            select: (selection, row) => {
+              // 当用户手动勾选数据行的 Checkbox 时触发的事件
+              const values = _assign([], this.selectGridValue);
+              const displayLabels = _assign([], this.curSelectLabelList);
+              for (let i = 0, length = selection.length; i < length; i++) {
+                if (!_includes(values, selection[i][this.valueField])) {
+                  values.push(selection[i][this.valueField]);
+                  displayLabels.push(selection[i][this.displayField]);
+                }
+              }
+              if (_includes(this.selectGridValue, row[this.valueField])) {
+                // 取消选中
+                const index = this.selectGridValue.findIndex(
+                  val => val === row[this.valueField]
+                );
+                if (index !== -1) {
+                  values.splice(index, 1);
+                  displayLabels.splice(index, 1);
+                }
+              }
+              const selectRow = _find(this.curSelectRowList, o => {
+                return _get(o, this.valueField) === row[this.valueField];
+              });
+              if (_isNil(selectRow)) {
+                this.curSelectRowList.push(row);
+              }
+              this.curSelectLabelList = displayLabels;
+              this.curSelectValueList = values;
+              const option = _find(this.options, o => {
+                return _get(o, this.valueField) === row[this.valueField];
+              });
+              if (_isNil(option)) {
+                this.options.push({
+                  [this.displayField]: row[this.displayField],
+                  [this.valueField]: row[this.valueField]
+                });
+              }
+              this.$emit('selectGridChange', values);
+              this.setSelectPanel2InputOffsetTop();
+            },
+            'select-all': selection => {
+              // 当用户手动勾选全选 Checkbox 时触发的事件
+              const values = [];
+              const displayLabels = [];
+              for (let i = 0, length = selection.length; i < length; i++) {
+                values.push(selection[i][this.valueField]);
+                displayLabels.push(selection[i][this.displayField]);
+                const option = _find(this.options, o => {
+                  return (
+                    _get(o, this.valueField) === selection[i][this.valueField]
+                  );
+                });
+                const selectRow = _find(this.curSelectRowList, o => {
+                  return (
+                    _get(o, this.valueField) === selection[i][this.valueField]
+                  );
+                });
+                if (_isNil(option)) {
+                  this.options.push({
+                    [this.displayField]: selection[i][this.displayField],
+                    [this.valueField]: selection[i][this.valueField]
+                  });
+                }
+                if (_isNil(selectRow)) {
+                  this.curSelectRowList.push(selection[i]);
+                }
+              }
+              this.curSelectLabelList = displayLabels;
+              this.curSelectValueList = values;
+              this.$emit('selectGridChange', values);
+              this.setSelectPanel2InputOffsetTop();
+            },
+            onLoadSuccess: this.afterDataLoadHandler
           }
         },
-        on: {
-          'row-click': (row, column, event) => {
-            // 单选，没有复选框
-            if (!this.multiple) {
-              this.curSelectValue = row[this.displayField];
-              this.$emit('comboGridChange', row[this.valueField]);
-            }
-            event.stopPropagation(); // js 阻止事件冒泡
-          },
-          select: (selection, row) => {
-
-          },
-          'select-all': selection => {
-
-          },
-          onLoadSuccess: this.afterDataLoadHandler
-        }
-      }, []);
+        [h('template', { slot: 'search' }, [searchNode])]
+      );
+    },
+    /**
+     * @desc 创建搜索栏
+     */
+    createSearchBar() {
+      const h = this.$createElement;
+      const VNode = this.$createElement(
+        'div',
+        { class: 'base-select-grid__search-box' },
+        [
+          h(
+            'el-input',
+            {
+              attrs: { placeholder: '请输入内容', maxlength: '40' },
+              props: {
+                value: this.searchInput,
+                'show-word-limit': true,
+                clearable: true
+              },
+              on: {
+                input: val => {
+                  this.searchInput = val;
+                }
+              }
+            },
+            []
+          ),
+          h(
+            'el-button',
+            {
+              props: { type: 'primary' },
+              on: {
+                click: event => {
+                  let params = { [this.searchField]: '' };
+                  if (this.searchInput.length > 0) {
+                    params = { [this.searchField]: this.searchInput };
+                  }
+                  this.getGrid().setQueryParams(params);
+                  this.getGrid().reloadGrid();
+                }
+              }
+            },
+            ['搜索']
+          )
+        ]
+      );
+      return VNode;
     },
     /**
      * @desc 创建 el-option 节点
@@ -342,9 +477,9 @@ const BaseSelectGrid = {
       const vNode = this.options.map((option, index) => {
         return h('el-option', {
           style: {
-            /* width: `${this.treeWidth}px`,
+            /* width: `${this.gridWidth}px`,
             height: 'auto',
-            'max-height': `${this.treeHeight}px`,
+            'max-height': `${this.gridHeight}px`,
             'background-color': this.backgroundColor,
             padding: '0px',
             overflow: 'auto', */
@@ -367,34 +502,126 @@ const BaseSelectGrid = {
       });
       return vNode;
     },
-    afterDataLoadHandler() {
+    /**
+     * @desc 设置单选-选中效果
+     */
+    setSingleNode() {},
+    afterDataLoadHandler(data) {
       // 翻页时如果当前页有要选中的行那么设置选中效果
       setTimeout(() => {
         const selectRows = [];
-        for (let i = 0, length = this.value.length; i < length; i++) {
-          selectRows.push({ field: this.valueField, value: this.value[i] });
+        for (let i = 0, length = this.selectGridValue.length; i < length; i++) {
+          selectRows.push({
+            field: this.valueField,
+            value: this.selectGridValue[i]
+          });
+          const defaultCheckedRow = _find(
+            this.defaultCheckedRows,
+            o => _get(o, this.valueField) === this.selectGridValue[i]
+          );
+          if (this.multiple) {
+            if (
+              _isNil(
+                _find(
+                  this.curSelectValueList,
+                  o => o === this.selectGridValue[i]
+                )
+              )
+            ) {
+              this.curSelectValueList.push(this.selectGridValue[i]);
+              this.curSelectLabelList = _get(
+                defaultCheckedRow,
+                this.displayField
+              );
+            }
+          } else {
+            // 单选
+            this.curSelectLabel = _get(defaultCheckedRow, this.displayField);
+            this.curSelectValue = this.selectGridValue[i];
+          }
+          if (!_isNil(defaultCheckedRow)) {
+            if (_isEmpty(this.options)) {
+              this.options.push({
+                [this.displayField]: _get(defaultCheckedRow, this.displayField),
+                [this.valueField]: _get(defaultCheckedRow, this.valueField)
+              });
+            } else {
+              const option = _find(this.options, o => {
+                return (
+                  _get(o, this.valueField) ===
+                  _get(defaultCheckedRow, this.valueField)
+                );
+              });
+              if (_isNil(option)) {
+                this.options.push({
+                  [this.displayField]: _get(
+                    defaultCheckedRow,
+                    this.displayField
+                  ),
+                  [this.valueField]: _get(defaultCheckedRow, this.valueField)
+                });
+              }
+            }
+          }
         }
         this.$refs[this.gridUserRef].selectRows(selectRows);
       }, 0);
     },
     /**
-     * @desc 获取 grid 对象
+     * @desc 计算下拉面板和 input 框之间的高度差值
      */
-    getGrid() {
-      return this.$refs[this.gridUserRef];
+    setSelectPanel2InputOffsetTop() {
+      setTimeout(() => {
+        const popoverEl = this.$refs[`${this._uid}-base-select-grid-popover`]
+          .$el;
+        if (!_isNil(popoverEl) && !_isNil(popoverEl.childNodes)) {
+          const selectInputHeight = this.$refs[this.elSelectRef].$el
+            .clientHeight; // input 框的高度
+          const oldTopNum = this.$refs[
+            this.gridUserRef
+          ].$el.parentNode.style.top.replace('px', '');
+          if (selectInputHeight > this.selectInputHeight) {
+            const dValue = selectInputHeight - this.selectInputHeight; // 差值
+            this.$refs[
+              this.gridUserRef
+            ].$el.parentNode.style.top = `${_toNumber(oldTopNum) +
+              _toNumber(dValue)}px`;
+          } else if (selectInputHeight <= this.selectInputHeight) {
+            const dValue = this.selectInputHeight - selectInputHeight;
+            if (dValue !== 0) {
+              this.$refs[
+                this.gridUserRef
+              ].$el.parentNode.style.top = `${_toNumber(oldTopNum) -
+                _toNumber(dValue)}px`;
+            }
+          }
+          this.selectInputHeight = selectInputHeight;
+        }
+      }, 100);
     },
     /**
      * @desc 清空
      */
-    clear: function () {
-      this.curSelectNodeList = [];
+    clear: function() {
+      if (this.multiple) {
+        // 取消选中的行
+        for (let i = 0, len = this.curSelectValueList.length; i < len; i++) {
+          this.$refs[this.gridUserRef].selectRows([
+            { field: this.valueField, value: this.curSelectValueList[i] }
+          ]);
+        }
+      } else {
+        // 单选-取消选中的行
+        this.$refs[this.gridUserRef].selectRow(this.curSelectRow);
+      }
+      this.curSelectRowList = [];
       this.curSelectLabelList = [];
       this.curSelectValueList = [];
-      this.curSelectNode = null;
+      this.curSelectRow = null;
       this.curSelectLabel = '';
       this.curSelectValue = '';
-      this.curDefaultCheckedKeys = [];
-      this.treeValue = [];
+      // this.curDefaultCheckedRows = [];
+      this.gridValue = [];
       this.options = [];
     },
     /**
@@ -413,7 +640,7 @@ const BaseSelectGrid = {
         style: { width: `${this.width}px` },
         class: { 'base-select-grid': true, [this.ctCls]: this.ctCls }
       },
-      [] // this.createSelect(), this.createPopover()
+      [this.createSelect(), this.createPopover()]
     );
   }
 };

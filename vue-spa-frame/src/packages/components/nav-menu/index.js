@@ -17,10 +17,17 @@ const BaseNavMenu = {
   name: 'BaseNavMenu',
   inheritAttrs: false,
   props: {
-    // 面板宽度
-    width: {
-      type: String,
-      default: '240px'
+    props: {
+      type: Object,
+      default() {
+        return {
+          menuCode: 'menuCode',
+          menuName: 'menuName',
+          menuUrl: 'menuUrl',
+          iconUrl: 'iconUrl',
+          children: 'children'
+        };
+      }
     },
     // 导航菜单顶部标题栏文字
     navTitle: {
@@ -56,10 +63,20 @@ const BaseNavMenu = {
         return {};
       }
     },
+    // 是否渲染 收起导航 的节点
+    isRenderCollapsed: {
+      type: Boolean,
+      default: true
+    },
     // 侧栏收起状态
     collapsed: {
       type: Boolean,
       default: false
+    },
+    // 图标的尺寸
+    svgSize: {
+      type: String,
+      default: '16px'
     },
     // svg 图标集合 [{name: 'studyState', component: studyState}]
     svgIcons: {
@@ -67,6 +84,21 @@ const BaseNavMenu = {
       default() {
         return [];
       }
+    },
+    // 菜单内容区上面和下面两块区间的高度
+    titleBlockHeight: {
+      type: String,
+      default: '40px'
+    },
+    // 顶部边距
+    paddingTop: {
+      type: String,
+      default: '0'
+    },
+    // el-submenu__title 的标题文字颜色
+    menuTitleTextColor: {
+      type: String,
+      default: 'rgb(191, 203, 217)'
     }
   },
   data() {
@@ -102,7 +134,7 @@ const BaseNavMenu = {
     }, 3000); */
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       // DOM 现在更新了
       // `this` 绑定到当前实例
       this.collapsePanelWidth = `${this.$parent.$el.clientWidth}px`;
@@ -151,19 +183,23 @@ const BaseNavMenu = {
       const aKeyPathList = _split(keyPath, '-');
       for (let i = 0, len = aKeyPathList.length; i < len; i++) {
         const menu = menus[aKeyPathList[i]];
-        if (menu && _has(menu, 'menuName')) {
+        if (menu && _has(menu, this.props.menuName)) {
           const obj = {
-            text: menu.menuName,
-            menuCode: menu.menuCode,
-            menuUrl: menu.menuUrl
+            text: _get(menu, this.props.menuName),
+            menuCode: _get(menu, this.props.menuCode),
+            menuUrl: _get(menu, this.props.menuUrl)
           };
           if (isToPath) {
-            obj.to = menu.menuCode;
+            obj.to = _get(menu, this.props.menuCode);
           }
           breadCrumbPath.push(obj);
         }
-        if (!_isNil(menu.children) && _has(menu, 'children') && menu.children.length > 0) {
-          menus = menu.children;
+        if (
+          !_isNil(_get(menu, this.props.children)) &&
+          _has(menu, this.props.children) &&
+          _get(menu, this.props.children, []).length > 0
+        ) {
+          menus = _get(menu, this.props.children);
         }
       }
       return breadCrumbPath;
@@ -178,8 +214,8 @@ const BaseNavMenu = {
       for (const value of Object.values(_split(index, '-'))) {
         const menu = menus[value];
         if (menu) {
-          menus = menu.children;
-          sRouterPath.push(menu.menuCode);
+          menus = _get(menu, this.props.children);
+          sRouterPath.push(_get(menu, this.props.menuCode));
         }
       }
       return _join(sRouterPath, '/');
@@ -194,7 +230,7 @@ const BaseNavMenu = {
       for (const value of Object.values(_split(index, '-'))) {
         const menu = menus[value];
         if (menu) {
-          menus = menu.children;
+          menus = _get(menu, this.props.children);
           sRouterPath.push(menu);
         }
       }
@@ -219,7 +255,17 @@ const BaseNavMenu = {
      */
     createNavTitle() {
       const vNode = [];
-      const style = {};
+      if (_isNil(this.navTitle)) {
+        return vNode;
+      }
+      const style = {
+        'background-color': this.$attrs.backgroundColor,
+        height: this.titleBlockHeight,
+        'line-height': this.titleBlockHeight
+      };
+      if (this.collapsePosition === 'top') {
+        _assign(style, { position: 'absolute', bottom: '0px' });
+      }
       vNode.push(
         this.$createElement(
           'div',
@@ -249,7 +295,8 @@ const BaseNavMenu = {
         (_has(this.$attrs, 'mode') && this.$attrs.mode !== 'horizontal')
       ) {
         const style = {
-          'background-color': this.$attrs.backgroundColor
+          'background-color': this.$attrs.backgroundColor,
+          height: this.titleBlockHeight
         };
         if (this.collapsePosition === 'bottom') {
           _assign(style, { position: 'absolute', bottom: '0px' });
@@ -303,13 +350,19 @@ const BaseNavMenu = {
         const menu = this.menus[i];
         let menuVNode = null;
         const iconUrl = this.getIconNode(menu);
-        if (_has(menu, 'children') && !_isEmpty(menu.children)) {
+        if (_has(menu, 'hide') && menu.hide === true) {
+          continue;
+        }
+        if (
+          _has(menu, this.props.children) &&
+          !_isEmpty(_get(menu, this.props.children, []))
+        ) {
           const subMenuIndex =
             this.grade1Index !== '' ? this.grade1Index + '-' + i : i + '';
           this.subMenuList.push(subMenuIndex);
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
-              text: _get(menu, 'menuName', '')
+              text: _get(menu, this.props.menuName, '')
             });
           }
           if (i === 0) {
@@ -330,14 +383,14 @@ const BaseNavMenu = {
                   class: _get(menu, 'iconUrl', '')
                 }), */
                 iconUrl,
-                // _get(menu, 'menuName', '')
+                // _get(menu, this.props.menuName, '')
                 this.$createElement(
                   'span',
-                  { slot: 'title' },
-                  _get(menu, 'menuName', '')
+                  { slot: 'title', style: { color: this.menuTitleTextColor } },
+                  _get(menu, this.props.menuName, '')
                 )
               ]),
-              this.createElMenuItemGroup(i, menu.children)
+              this.createElMenuItemGroup(i, _get(menu, this.props.children))
             ]
           );
         } else {
@@ -348,7 +401,7 @@ const BaseNavMenu = {
           }
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
-              text: _get(menu, 'menuName', '')
+              text: _get(menu, this.props.menuName, '')
             });
           }
           const style = {};
@@ -360,11 +413,11 @@ const BaseNavMenu = {
             { key: menuItemIndex, props: { index: menuItemIndex }, style },
             [
               iconUrl,
-              // _get(menu, 'menuName', '')
+              // _get(menu, this.props.menuName, '')
               this.$createElement(
                 'span',
                 { slot: 'title' },
-                _get(menu, 'menuName', '')
+                _get(menu, this.props.menuName, '')
               )
             ]
           );
@@ -381,36 +434,42 @@ const BaseNavMenu = {
       for (let i = 0, len = children.length; i < len; i++) {
         // 三级
         const iconUrl = this.getIconNode(children[i]);
-        if (_has(children[i], 'children') && !_isEmpty(children[i].children)) {
+        if (
+          _has(children[i], this.props.children) &&
+          !_isEmpty(_get(children[i], this.props.children))
+        ) {
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
-              text: _get(children[i], 'menuName', '')
+              text: _get(children[i], this.props.menuName, '')
             });
           }
-          const subMenuItems = _map(children[i].children, (item, key) => {
-            const iconUrl = this.getIconNode(item);
-            if (key === 0) {
-              this.defaultBreadCrumbPath.push({
-                text: _get(item, 'menuName', '')
-              });
+          const subMenuItems = _map(
+            _get(children[i], this.props.children),
+            (item, key) => {
+              const iconUrl = this.getIconNode(item);
+              if (key === 0) {
+                this.defaultBreadCrumbPath.push({
+                  text: _get(item, this.props.menuName, '')
+                });
+              }
+              const menuItemIndex =
+                this.grade1Index !== ''
+                  ? this.grade1Index + '-' + parentIndex + '-' + i + '-' + key
+                  : parentIndex + '-' + i + '-' + key;
+              if (this.firstElMenuItem === '') {
+                this.firstElMenuItem = menuItemIndex;
+              }
+              return this.$createElement(
+                'el-menu-item',
+                { props: { index: menuItemIndex } },
+                [
+                  // this.$createElement('i', { class: _get(item, 'iconUrl', '') }),
+                  iconUrl,
+                  _get(item, this.props.menuName)
+                ]
+              );
             }
-            const menuItemIndex =
-              this.grade1Index !== ''
-                ? this.grade1Index + '-' + parentIndex + '-' + i + '-' + key
-                : parentIndex + '-' + i + '-' + key;
-            if (this.firstElMenuItem === '') {
-              this.firstElMenuItem = menuItemIndex;
-            }
-            return this.$createElement(
-              'el-menu-item',
-              { props: { index: menuItemIndex } },
-              [
-                // this.$createElement('i', { class: _get(item, 'iconUrl', '') }),
-                iconUrl,
-                item.menuName
-              ]
-            );
-          });
+          );
           const subMenuIndex =
             this.grade1Index !== ''
               ? this.grade1Index + '-' + parentIndex + '-' + i
@@ -433,7 +492,7 @@ const BaseNavMenu = {
                     class: _get(children[i], 'iconUrl', '')
                   }), */
                   iconUrl,
-                  children[i].menuName
+                  _get(children[i], this.props.menuName)
                 ]),
                 subMenuItems
               ]
@@ -442,7 +501,7 @@ const BaseNavMenu = {
         } else {
           if (i === 0) {
             this.defaultBreadCrumbPath.push({
-              text: _get(children[i], 'menuName', '')
+              text: _get(children[i], this.props.menuName, '')
             });
           }
           if (this.firstElMenuItem === '') {
@@ -472,7 +531,7 @@ const BaseNavMenu = {
                   class: _get(children[i], 'iconUrl', '')
                 }), */
                 iconUrl,
-                _get(children[i], 'menuName', '')
+                _get(children[i], this.props.menuName, '')
               ]
             )
           );
@@ -485,18 +544,41 @@ const BaseNavMenu = {
      * @param {Object} item - menu 对象
      */
     getIconNode(item = {}) {
-      let iconUrl = _get(item, 'iconUrl', '');
+      let iconUrl = _get(item, this.props.iconUrl, '');
       if (_includes(iconUrl, 'svg-')) {
         // svg图
         const curUrl = iconUrl.replace('svg-', '');
         const svgObj = _find(this.svgIcons, o => o.name === curUrl);
         if (!_isNil(svgObj)) {
           iconUrl = this.$createElement(_get(svgObj, 'component', 'span'), {
-            style: { width: '24px', height: '16px', marginRight: '5px' }
+            style: {
+              width: this.svgSize,
+              height: this.svgSize,
+              marginRight: '5px'
+            }
           });
         } else {
           // iconUrl = this.$createElement('i', {}, []);
         }
+      } else if (/\.(gif|png|jpg|jpeg|webp|svg|psd|bmp|tif)$/.test(iconUrl)) {
+        // 静态资源图
+        iconUrl = this.$createElement('img', {
+          style: { marginRight: '5px' },
+          attrs: { src: iconUrl, width: this.svgSize, height: this.svgSize }
+        });
+      } else if (iconUrl.indexOf('symbol-') !== -1) {
+        // symbol 图
+        iconUrl = this.$createElement(
+          'base-svg-icon',
+          {
+            style: { marginRight: '5px' },
+            props: {
+              size: this.svgSize,
+              iconname: iconUrl.replace('symbol-', '')
+            }
+          },
+          []
+        );
       } else {
         iconUrl = this.$createElement('i', { class: iconUrl });
       }
@@ -504,7 +586,12 @@ const BaseNavMenu = {
     }
   },
   render(h) {
-    const style = { height: '100%' };
+    const style = {
+      height: '100%',
+      paddingBottom: _isNil(this.navTitle)
+        ? this.titleBlockHeight
+        : `${parseInt(this.titleBlockHeight) * 2}px`
+    };
     if (_has(this.$attrs, 'mode') && this.$attrs.mode === 'horizontal') {
       style.width = '100%';
     }
@@ -519,8 +606,11 @@ const BaseNavMenu = {
         class: { 'base-nav-menu-box': true }
       },
       [
-        this.collapsePosition === 'top' && this.createContractBlock(),
-        this.navTitle && this.createNavTitle(),
+        this.collapsePosition === 'top'
+          ? this.isRenderCollapsed
+            ? this.createContractBlock()
+            : h()
+          : this.createNavTitle(),
         h(
           'el-menu',
           {
@@ -538,7 +628,11 @@ const BaseNavMenu = {
           },
           [this.createSubMenu()]
         ),
-        this.collapsePosition === 'bottom' && this.createContractBlock()
+        this.collapsePosition === 'bottom'
+          ? this.isRenderCollapsed
+            ? this.createContractBlock()
+            : h()
+          : this.createNavTitle()
       ]
     );
     /* return h(

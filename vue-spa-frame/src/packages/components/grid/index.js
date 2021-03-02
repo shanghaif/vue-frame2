@@ -10,6 +10,7 @@ import _has from 'lodash/has';
 import _omit from 'lodash/omit';
 import _set from 'lodash/set';
 import _assign from 'lodash/assign';
+import _isNil from 'lodash/isNil';
 
 const BaseGrid = {
   name: 'BaseGrid',
@@ -64,12 +65,12 @@ const BaseGrid = {
     // 下标行的名称
     indexLabel: {
       type: String,
-      default: ''
+      default: '序号'
     },
     // 默认选择第一行
     isSelectedFirstRow: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 第一次载入时是否自动刷新列表数据
     isReloadGrid: {
@@ -119,10 +120,39 @@ const BaseGrid = {
     options: {
       type: Object
     },
-    // 嵌套表格的内置高度
-    nestGridHeight: {
-      type: Number,
-      default: 200
+    // 静态数据是否需要进行分页操作
+    isOptionsPage: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义当前分页参数 {page: 'page',size: 'size',total: 'data.total',data: 'data.records',pageNum: 'current',pageSize: 'size'}
+    pagingParams: {
+      type: Object
+    },
+    // 是否冻结下标列
+    isFixedIndex: {
+      type: Boolean,
+      default: false
+    },
+    // 是否冻结多选框列
+    isFixedSelection: {
+      type: Boolean,
+      default: false
+    },
+    // 插槽操作列配置
+    columnTool: {
+      type: Object,
+      default() {
+        return {
+          label: '操作'
+          // fixed: 'right'
+        };
+      }
+    },
+    // 序号是否连续性
+    isContinuityIndex: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -139,8 +169,24 @@ const BaseGrid = {
       currentRow: {}, // 当前选中行
       contextMenuRow: {}, // 右键点击行
       contextMenuColumn: {}, // 右键点击列
-      currentPage: _get(this.paginationAttributes, 'currentPage', 1), // 当前页数
-      pageSize: _get(this.paginationAttributes, 'pageSize', 30), // 每页显示条目个数
+      currentPage: _get(
+        this.paginationAttributes,
+        'currentPage',
+        _get(
+          this['$base-global-options'],
+          'grid.paginationAttributes.currentPage',
+          ''
+        )
+      ), // 当前页数
+      pageSize: _get(
+        this.paginationAttributes,
+        'pageSize',
+        _get(
+          this['$base-global-options'],
+          'grid.paginationAttributes.pageSize',
+          ''
+        )
+      ), // 每页显示条目个数
       total: 0 // 总条目数
     };
   },
@@ -157,7 +203,33 @@ const BaseGrid = {
       immediate: true
     }
   },
-  created() {},
+  created() {
+    if (_isNil(this.currentPage)) {
+      this.currentPage = 1;
+    }
+    if (_isNil(this.pageSize)) {
+      this.pageSize = 30;
+    }
+    if (
+      !_isEmpty(this.paginationAttributes) &&
+      _has(this.paginationAttributes, 'current-page')
+    ) {
+      // 不是第一页
+      this.currentPage = _get(this.paginationAttributes, 'current-page');
+    }
+    const pageSizeField = _get(
+      this['$base-global-options'],
+      'grid.pageSize',
+      'pageSize'
+    );
+    if (
+      !_isNil(this.options) &&
+      !_isNil(this.options.data) &&
+      _has(this.options.data, pageSizeField)
+    ) {
+      this.pageSize = _get(this.options.data, pageSizeField); // 设置静态数据一页加载的数据量
+    }
+  },
   methods: {
     /**
      * @desc 设置表格的总数量
@@ -238,7 +310,7 @@ const BaseGrid = {
       return this.getTable().getSelectedRows();
     },
     /**
-     * @desc 选中一行
+     * @desc 选中一行-单选
      * @method
      */
     selectRow(row = {}) {
@@ -270,14 +342,22 @@ const BaseGrid = {
      */
     reloadGrid() {
       this.currentPage = 1;
-      this.getTable().loadData();
+      if (!_isNil(this.options)) {
+        this.getTable().loadOptions();
+      } else {
+        this.getTable().loadData();
+      }
     },
     /**
      * @desc 刷新 table 组件，保留在当前页
      * @method
      */
     loadGrid() {
-      this.getTable().loadData();
+      if (!_isNil(this.options)) {
+        this.getTable().loadOptions();
+      } else {
+        this.getTable().loadData();
+      }
     },
     /** Pagination 分页组件 */
     /**
@@ -287,6 +367,14 @@ const BaseGrid = {
      */
     setPaginationEl(paginationInstance) {
       this.paginationInstance = paginationInstance;
+    },
+    /**
+     * @desc 获取 BaseGridPagination 组件实例
+     * @method
+     * @returns {Object} BaseGridPagination 组件的实例对象 this
+     */
+    getPagination() {
+      return this.paginationInstance;
     },
     /**
      * @desc pageSize 改变时会触发
@@ -299,6 +387,7 @@ const BaseGrid = {
         this.loadGrid();
       } else {
         this.currentPage = 1;
+        this.loadGrid();
       }
     },
     /**
@@ -343,6 +432,16 @@ const BaseGrid = {
     updateContextMenuSelectedRecord(row = {}, column = {}) {
       this.contextMenuRow = row;
       this.contextMenuColumn = column;
+    },
+    /**
+     * @description 强制刷新表格ui
+     */
+    refreshTable() {
+      this.$nextTick(() => {
+        this.getTable()
+          .getEl()
+          .doLayout();
+      });
     }
   },
   render(h) {
@@ -430,7 +529,12 @@ const BaseGrid = {
               slotNode: this.tableAttributes.slotNode,
               tableAttributes: this.tableAttributes,
               options: this.options,
-              nestGridHeight: this.nestGridHeight
+              pagingParams: this.pagingParams,
+              isFixedIndex: this.isFixedIndex,
+              isFixedSelection: this.isFixedSelection,
+              columnTool: this.columnTool,
+              isContinuityIndex: this.isContinuityIndex,
+              isOptionsPage: this.isOptionsPage
             }
           },
           []
@@ -450,7 +554,9 @@ const BaseGrid = {
                 'pagingItems'
               ]),
               total: this.total,
-              isShowPagination: this.isShowPagination
+              isShowPagination: this.isOptionsPage
+                ? this.isShowPagination
+                : false
             }
           },
           []

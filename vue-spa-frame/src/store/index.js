@@ -1,10 +1,6 @@
 /**
  * vuex 状态管理插件
  */
-import _get from 'lodash/get';
-import _find from 'lodash/find';
-import _omit from 'lodash/omit';
-import _has from 'lodash/has';
 import Vuex from 'vuex';
 // 动态载入 module 模块
 import modules from '../service/store/index.js';

@@ -47,6 +47,17 @@ import sysGovernment from '@assets/icons/sys-government.svg?inline';
 import sysPermissionSetting from '@assets/icons/sys-permission-setting.svg?inline';
 import starState from '@assets/icons/star-state.svg?inline';
 import chartLine from '@assets/icons/chart-line.svg?inline';
+import typescript from '@assets/icons/typescript.svg?inline';
+import tableTransfer from '@assets/icons/table-transfer.svg?inline';
+import nestingGrid from '@assets/icons/nesting-grid.svg?inline';
+import updateLog from '@assets/icons/update-log.svg?inline';
+import html2pdf from '@assets/icons/html2pdf.svg?inline';
+import relevanceGrid from '@assets/icons/relevance-grid.svg?inline';
+import baseTree from '@assets/icons/base-tree.svg?inline';
+import move from '@assets/icons/move.svg?inline';
+import downSelect from '@assets/icons/down-select.svg?inline';
+import moreCondition from '@assets/icons/more-condition.svg?inline';
+import dialog from '@assets/icons/dialog.svg?inline';
 
 export {
   bxAnalyse,
@@ -66,7 +77,18 @@ export {
   sysPermissionSetting,
   enterState,
   notice,
-  chartLine
+  chartLine,
+  typescript,
+  tableTransfer,
+  nestingGrid,
+  updateLog,
+  html2pdf,
+  relevanceGrid,
+  baseTree,
+  move,
+  downSelect,
+  moreCondition,
+  dialog
 };
 export default [
   { name: 'bx-analyse', component: bxAnalyse },
@@ -87,5 +109,16 @@ export default [
   { name: 'enter-state', component: enterState },
   { name: 'notice', component: notice },
   { name: 'star-state', component: starState },
-  { name: 'chart-line', component: chartLine }
+  { name: 'chart-line', component: chartLine },
+  { name: 'typescript', component: typescript },
+  { name: 'table-transfer', component: tableTransfer },
+  { name: 'nesting-grid', component: nestingGrid },
+  { name: 'update-log', component: updateLog },
+  { name: 'html2pdf', component: html2pdf },
+  { name: 'relevanceGrid', component: relevanceGrid },
+  { name: 'base-tree', component: baseTree },
+  { name: 'move', component: move },
+  { name: 'down-select', component: downSelect },
+  { name: 'more-condition', component: moreCondition },
+  { name: 'dialog', component: dialog }
 ];

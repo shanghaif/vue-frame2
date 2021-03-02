@@ -128,6 +128,9 @@ const Loader = class Api {
   deconstructApiConfigModule(userApiConfigModuleList = {}) {
     for (const moduleFileHierarchyNameKey in userApiConfigModuleList) {
       const apiItem = userApiConfigModuleList[moduleFileHierarchyNameKey];
+      if (_isNil(apiItem)) {
+        continue;
+      }
       for (let i = 0; i < apiItem.length; i++) {
         this.buildInstance(moduleFileHierarchyNameKey, apiItem[i]);
       }
@@ -185,7 +188,8 @@ const Loader = class Api {
       proxy,
       isWhite = false,
       isLogin = false,
-      isAbandonCheckedParams = false
+      isAbandonCheckedParams = false,
+      timeout
     }
   ) {
     // eslint-disable-next-line
@@ -280,7 +284,13 @@ const Loader = class Api {
           );
           if (isAbandonCheckedParams) {
             // 放弃校验请求参数
-            dataParams = _assign({}, data, _get(outParams, 'data', {}));
+            if (_isString(_get(outParams, 'data', {}))) {
+              // this.$api['system/authority/add']({ data: JSON.stringify([1, 2, 3, 4, 5]) })
+              // headers: { 'content-type': 'aplication/json;charset=UTF-8' }
+              dataParams = _get(outParams, 'data', {});
+            } else {
+              dataParams = _assign({}, data, _get(outParams, 'data', {}));
+            }
           }
           pickData = Loader.transformStringPostData(
             Loader.removeInvalidChar(dataParams, removeInvalidChar),
@@ -348,7 +358,7 @@ const Loader = class Api {
         isWhite && this.whiteFilter(pickHeaders);
         // 是否登录接口
         isLogin && (pickHeaders.isLogin = true);
-        const axiosParams = _assign({}, requestOptions, pickOptions, {
+        /* const axiosParams = _assign({}, requestOptions, pickOptions, {
           method: method.toUpperCase(),
           url,
           headers: pickHeaders,
@@ -356,7 +366,75 @@ const Loader = class Api {
           data: pickData,
           restful
         });
-        return axios(axiosParams);
+        return axios(axiosParams); */
+        const AxiosProxyFunc = function() {
+          this.params = outParams;
+          this.outOptions = outOptions;
+          this.init();
+          return this;
+        };
+
+        AxiosProxyFunc.prototype = {
+          params: {},
+          outOptions: {},
+          axiosInstance: null,
+          thenHandle: null,
+          catchHandle: null,
+          finallyHandle: null,
+          then: function(thenFunc) {
+            if (thenFunc) {
+              this.thenHandle = thenFunc;
+            }
+            return this;
+          },
+          catch: function(catchFunc) {
+            if (catchFunc) {
+              this.catchHandle = catchFunc;
+            }
+            return this;
+          },
+          finally: function(finallyFunc) {
+            if (finallyFunc) {
+              this.finallyHandle = finallyFunc;
+            }
+            return this;
+          },
+          init: function() {
+            const axiosParams = _assign({}, requestOptions, pickOptions, {
+              method: method.toUpperCase(),
+              url,
+              headers: pickHeaders,
+              params: pickParams,
+              data: pickData,
+              restful,
+              // timeout,
+              apiInstance: function() {
+                return {
+                  thenHandle: this.thenHandle,
+                  catchHandle: this.catchHandle,
+                  finallyHandle: this.finallyHandle
+                };
+              }.bind(this)
+            });
+            if (!_isNil(timeout)) {
+              _set(axiosParams, 'timeout', timeout); // 单独设置超时时间
+            }
+            this.axiosInstance = axios(axiosParams);
+            this.axiosInstance
+              .then(resData => {
+                this.thenHandle !== null && this.thenHandle(resData);
+              })
+              .catch(error => {
+                this.catchHandle !== null && this.catchHandle(error);
+              })
+              .finally(() => {
+                this.finallyHandle !== null && this.finallyHandle();
+              });
+          }
+        };
+        const instance = new AxiosProxyFunc();
+        // return axios(axiosParams);
+        return instance;
       }
     });
   }
@@ -422,7 +500,7 @@ const Loader = class Api {
    * @param {boolean} removeInvalidChar=true - 是否需要过滤特殊字符
    */
   static removeInvalidChar(requestData = {}, removeInvalidChar = true) {
-    if (!removeInvalidChar) return requestData;
+    if (!removeInvalidChar || _isString(requestData)) return requestData;
     // 全局替换正则
     const reg = new RegExp(_get(this, 'apiParamsConfig.invalidChar'), 'g');
     for (const key in requestData) {

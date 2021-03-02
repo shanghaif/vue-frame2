@@ -14,13 +14,19 @@ const index = [
         path: 'index',
         name: 'index',
         meta: { title: 'dialog' },
-        component: () => import(/* webpackChunkName:"views/dialog" */ '@views/dialog/index.vue')
+        component: () =>
+          import(
+            /* webpackChunkName:"views/dialog" */ '@views/dialog/index.vue'
+          )
       },
       {
-        path: 'drawer',
-        name: 'drawer',
-        meta: { title: 'drawer' },
-        component: () => import(/* webpackChunkName:"views/dialog" */ '@views/dialog/drawer.vue')
+        path: 'drag-dialog',
+        name: 'drag-dialog',
+        meta: { title: '拖拽-dialog' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/dialog" */ '@views/dialog/drag/index.vue'
+          )
       }
     ]
   }

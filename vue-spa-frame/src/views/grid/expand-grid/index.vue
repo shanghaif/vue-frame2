@@ -26,7 +26,9 @@ export default {
         slotNode: [
           {
             render: (h, row, cloumn) => {
-              return h('div', { style: { height: '100px' } }, [`展开行-${row.name}`]);
+              return h('div', { style: { height: '100px' } }, [
+                `展开行-${row.name}`
+              ]);
             }
           }
         ]

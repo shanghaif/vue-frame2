@@ -8,9 +8,13 @@
  *   initComponent: function(){ console.info(this.name) }
  * }
  */
-(function () {
-  window.namespace = function () {
-    var a = arguments; var o = null; var i; var j; var d;
+(function() {
+  window.namespace = function() {
+    var a = arguments;
+    var o = null;
+    var i;
+    var j;
+    var d;
     for (i = 0; i < a.length; i = i + 1) {
       d = a[i].split('.');
       o = window;

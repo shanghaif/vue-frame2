@@ -7,14 +7,17 @@ import _keys from 'lodash/keys';
 import _has from 'lodash/has';
 import _isNil from 'lodash/isNil';
 
-const BaseDrawer = function (options = {}) {
+const BaseDrawer = function(options = {}) {
+  const that = this;
   const optionsKey = _keys(options);
   const VueModal = Vue.extend({
-    provide: function () {
+    provide: function() {
       return {
         getDrawer: this
       };
     },
+    router: that.$router,
+    store: that.$store,
     props: optionsKey,
     render(h) {
       return h(
@@ -22,8 +25,13 @@ const BaseDrawer = function (options = {}) {
         {
           class: { 'base-drawer': true, [options.ctCls]: options.ctCls },
           props: _assign(
-            { destroyOnClose: true, visible: this.visible },
-            _omit(this.$props, ['listeners']),
+            {
+              destroyOnClose: true,
+              visible: this.visible,
+              direction: 'rtl',
+              title: this.curTitle
+            },
+            _omit(this.$props, ['listeners', 'title']),
             {}
           ),
           ref: `${this._uid}-base-drawer`,
@@ -48,6 +56,12 @@ const BaseDrawer = function (options = {}) {
               if (_has(options, 'listeners.closed')) {
                 options.listeners.closed();
               }
+              if (!_isNil(this.isDestroy) && this.isDestroy) {
+                this.$destroy();
+                if (_has(this, '$el')) {
+                  this.$el.remove();
+                }
+              }
             }
           }
         },
@@ -64,18 +78,35 @@ const BaseDrawer = function (options = {}) {
     propsData: options,
     data() {
       return {
-        visible: false
+        visible: false,
+        curTitle: _get(options, 'title', '详情')
       };
     },
+    created() {
+      this.$nextTick(() => {
+        document.body.appendChild(instance.$mount().$el);
+      });
+    },
     methods: {
+      /**
+       * @desc 设置标题
+       * @param {String} title - 标题
+       */
+      setTitle(title) {
+        this.curTitle = title;
+      },
       // 打开
       open(event) {
-        this.visible = true;
+        setTimeout(() => {
+          this.visible = true;
+        }, 0);
       },
       // 关闭（隐藏-未销毁实例）
       close(event) {
         // this.visible = false;
-        this.closeDrawer();
+        setTimeout(() => {
+          this.closeDrawer();
+        }, 0);
       },
       // 关闭（销毁实例）
       closeDrawer() {
@@ -89,9 +120,9 @@ const BaseDrawer = function (options = {}) {
       }
     }
   });
-  if (_has(options, 'container') && !_isNil(options.container)) {
+  /* if (_has(options, 'container') && !_isNil(options.container)) {
     options.container.appendChild(instance.$mount().$el);
-  }
+  } */
   return instance;
 };
 export default BaseDrawer;

@@ -21,5 +21,17 @@ export default [
     mockPath: '/mock/index/getDictDataByTypeList',
     params: { ids: '9' },
     isWhite: true // 白名单
+  },
+  {
+    name: 'getSelectSearchList',
+    method: 'GET',
+    desc: '企业英文名称',
+    path: '',
+    mockPath: '/mock/index/getSelectSearchList',
+    params: {
+      name: '',
+      current: 1, // 分页参数
+      size: 10
+    }
   }
 ];

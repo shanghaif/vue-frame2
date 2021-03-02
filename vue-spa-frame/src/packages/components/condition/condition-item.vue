@@ -1,5 +1,5 @@
 <template>
-  <div class="condtionItem layout_row">
+  <div class="base-condtion-item layout_row">
     <template v-if="filterConfig.hasEdit">
       <div class="layout_row-expand">
         <el-select v-model="filterConfig.fieldId" @change="handleChangeField">
@@ -72,7 +72,7 @@
         <template
           v-if="
             field.type === FIELD_SETTING_TYPE.Date &&
-            !emptyFilterOperatorMap[filterConfig.filterOperator]
+              !emptyFilterOperatorMap[filterConfig.filterOperator]
           "
         >
           <el-date-picker
@@ -129,7 +129,7 @@ import {
   LOGICOPERATOR,
   // eslint-disable-next-line no-unused-vars
   VALUETYPE
-} from '@constant/constant.js';
+} from './constant.js';
 import ListInput from './list-input.vue';
 
 const numberOperator = {
@@ -180,7 +180,7 @@ export default {
     };
   },
   computed: {
-    filterOperatorMap: function () {
+    filterOperatorMap: function() {
       if (this.field.type === FIELD_SETTING_TYPE.Num) {
         return numberOperator;
       }
@@ -192,9 +192,9 @@ export default {
       }
       return emptyFilterOperatorMap;
     },
-    field: function () {
+    field: function() {
       return (
-        this.fieldList.find((v) => v.id === this.filterConfig.fieldId) || {
+        this.fieldList.find(v => v.id === this.filterConfig.fieldId) || {
           fieldId: 0,
           name: '',
           fieldCode: '',
@@ -236,45 +236,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-@primaryColor: #3E7EFF;
-@deepBlueColor: #1B68FD;
-@gray: #f3f5f7;
-
-@gray-border:1px solid rgba(220, 223, 230, 1);
-@tab-border: 2px solid #e4e7ed;
-@paddingWidth: 21px;
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.condtionItem {
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: @gray-border;
-  border-top: none;
-  padding: 5px 10px 5px 5px;
-}
-.el-input {
-  width: 140px;
-}
-.el-date-editor {
-  width: 200px;
-}
-.el-button--text {
-  padding: 0;
-}
-.el-tag + .el-tag {
-  margin-left: 10px;
-}
-
-.formula_input {
-  display: inline-block;
-}
-</style>

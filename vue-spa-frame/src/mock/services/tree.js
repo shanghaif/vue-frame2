@@ -24,6 +24,7 @@ const treeList = options => {
         {
           id: 4,
           label: '二级 1-1',
+          disabled: false,
           children: [
             {
               id: 9,
@@ -89,6 +90,7 @@ const treeList = options => {
   return builder(result);
 };
 const complicateTreeList = options => {
+  console.log('complicateTreeList 搜索', options);
   const aMenuList = [
     // models: [
     {
@@ -128,6 +130,7 @@ const complicateTreeList = options => {
         },
         {
           id: 8,
+          disabled: false,
           menuCode: 'fund-collect',
           menuName: '基金募集管理',
           menuUrl: '/fund-collect',
@@ -371,7 +374,7 @@ const complicateTreeList = options => {
       iconUrl: 'el-icon-s-data',
       children: [
         {
-          id: 17,
+          id: 49,
           menuCode: 'condition',
           menuName: '示例',
           menuUrl: '/condition',
@@ -381,9 +384,1156 @@ const complicateTreeList = options => {
       ]
     }
     // ]
-  ]
-  ;
+  ];
   return builder(aMenuList);
+};
+const countyList = options => {
+  const parameters = getQueryParameters(options);
+  console.info('mock: parameters', parameters);
+  let result = [];
+  result = [
+    {
+      id: 1,
+      label: '杭州市',
+      children: [
+        {
+          id: 2,
+          label: '江干区'
+        },
+        {
+          id: 3,
+          label: '西湖区'
+        },
+        {
+          id: 4,
+          label: '上城区'
+        },
+        {
+          id: 5,
+          label: '下城区'
+        },
+        {
+          id: 6,
+          label: '拱墅区'
+        },
+        {
+          id: 7,
+          label: '江干区'
+        },
+        {
+          id: 8,
+          label: '滨江区'
+        },
+        {
+          id: 9,
+          label: '萧山区'
+        }
+      ]
+    }
+  ];
+  return builder(result);
+};
+const industryList = options => {
+  const parameters = getQueryParameters(options);
+  console.info('mock: parameters', parameters);
+  const result = [
+    {
+      id: 1952,
+      year: '2017',
+      code: 'A',
+      industryname: '农、林、牧、渔业 ',
+      description: null,
+      industrycode: 'A',
+      levels: 0,
+      children: [
+        {
+          id: 1,
+          year: '2017',
+          code: '01',
+          industryname: '农业',
+          description: null,
+          industrycode: 'A',
+          levels: 1
+        },
+        {
+          id: 2,
+          year: '2017',
+          code: '02',
+          industryname: '林业',
+          description: null,
+          industrycode: 'A',
+          levels: 1
+        },
+        {
+          id: 3,
+          year: '2017',
+          code: '03',
+          industryname: '畜牧业',
+          description: null,
+          industrycode: 'A',
+          levels: 1
+        },
+        {
+          id: 4,
+          year: '2017',
+          code: '04',
+          industryname: '渔业',
+          description: null,
+          industrycode: 'A',
+          levels: 1
+        },
+        {
+          id: 5,
+          year: '2017',
+          code: '05',
+          industryname: '农、林、牧、渔专业及辅助性活动',
+          description: null,
+          industrycode: 'A',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1953,
+      year: '2017',
+      code: 'B',
+      industryname: '采矿业',
+      description: null,
+      industrycode: 'B',
+      levels: 0,
+      children: [
+        {
+          id: 6,
+          year: '2017',
+          code: '06',
+          industryname: '煤炭开采和洗选业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 7,
+          year: '2017',
+          code: '07',
+          industryname: '石油和天然气开采业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 8,
+          year: '2017',
+          code: '08',
+          industryname: '黑色金属矿采选业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 9,
+          year: '2017',
+          code: '09',
+          industryname: '有色金属矿采选业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 10,
+          year: '2017',
+          code: '10',
+          industryname: '非金属矿采选业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 11,
+          year: '2017',
+          code: '11',
+          industryname: '开采专业及辅助性活动',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        },
+        {
+          id: 12,
+          year: '2017',
+          code: '12',
+          industryname: '其他采矿业',
+          description: null,
+          industrycode: 'B',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1954,
+      year: '2017',
+      code: 'C',
+      industryname: '制造业',
+      description: null,
+      industrycode: 'C',
+      levels: 0,
+      children: [
+        {
+          id: 13,
+          year: '2017',
+          code: '13',
+          industryname: '农副食品加工业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 14,
+          year: '2017',
+          code: '14',
+          industryname: '食品制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 15,
+          year: '2017',
+          code: '15',
+          industryname: '酒、饮料和精制茶制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 16,
+          year: '2017',
+          code: '16',
+          industryname: '烟草制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 17,
+          year: '2017',
+          code: '17',
+          industryname: '纺织业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 18,
+          year: '2017',
+          code: '18',
+          industryname: '纺织服装、服饰业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 19,
+          year: '2017',
+          code: '19',
+          industryname: '皮革、毛皮、羽毛及其制品和制鞋业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 20,
+          year: '2017',
+          code: '20',
+          industryname: '木材加工和木、竹、藤、棕、草制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 21,
+          year: '2017',
+          code: '21',
+          industryname: '家具制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 22,
+          year: '2017',
+          code: '22',
+          industryname: '造纸和纸制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 23,
+          year: '2017',
+          code: '23',
+          industryname: '印刷和记录媒介复制业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 24,
+          year: '2017',
+          code: '24',
+          industryname: '文教、工美、体育和娱乐用品制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 25,
+          year: '2017',
+          code: '25',
+          industryname: '石油、煤炭及其他燃料加工业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 26,
+          year: '2017',
+          code: '26',
+          industryname: '化学原料和化学制品制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 27,
+          year: '2017',
+          code: '27',
+          industryname: '医药制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 28,
+          year: '2017',
+          code: '28',
+          industryname: '化学纤维制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 29,
+          year: '2017',
+          code: '29',
+          industryname: '橡胶和塑料制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 30,
+          year: '2017',
+          code: '30',
+          industryname: '非金属矿物制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 31,
+          year: '2017',
+          code: '31',
+          industryname: '黑色金属冶炼和压延加工业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 32,
+          year: '2017',
+          code: '32',
+          industryname: '有色金属冶炼和压延加工业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 33,
+          year: '2017',
+          code: '33',
+          industryname: '金属制品业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 34,
+          year: '2017',
+          code: '34',
+          industryname: '通用设备制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 35,
+          year: '2017',
+          code: '35',
+          industryname: '专用设备制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 36,
+          year: '2017',
+          code: '36',
+          industryname: '汽车制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 37,
+          year: '2017',
+          code: '37',
+          industryname: '铁路、船舶、航空航天和其他运输设备制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 38,
+          year: '2017',
+          code: '38',
+          industryname: '电气机械和器材制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 39,
+          year: '2017',
+          code: '39',
+          industryname: '计算机、通信和其他电子设备制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 40,
+          year: '2017',
+          code: '40',
+          industryname: '仪器仪表制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 41,
+          year: '2017',
+          code: '41',
+          industryname: '其他制造业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 42,
+          year: '2017',
+          code: '42',
+          industryname: '废弃资源综合利用业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        },
+        {
+          id: 43,
+          year: '2017',
+          code: '43',
+          industryname: '金属制品、机械和设备修理业',
+          description: null,
+          industrycode: 'C',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1955,
+      year: '2017',
+      code: 'D',
+      industryname: '电力、热力、燃气及水生产和供应业',
+      description: null,
+      industrycode: 'D',
+      levels: 0,
+      children: [
+        {
+          id: 44,
+          year: '2017',
+          code: '44',
+          industryname: '电力、热力生产和供应业',
+          description: null,
+          industrycode: 'D',
+          levels: 1
+        },
+        {
+          id: 45,
+          year: '2017',
+          code: '45',
+          industryname: '燃气生产和供应业',
+          description: null,
+          industrycode: 'D',
+          levels: 1
+        },
+        {
+          id: 46,
+          year: '2017',
+          code: '46',
+          industryname: '水的生产和供应业',
+          description: null,
+          industrycode: 'D',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1956,
+      year: '2017',
+      code: 'E',
+      industryname: '建筑业',
+      description: null,
+      industrycode: 'E',
+      levels: 0,
+      children: [
+        {
+          id: 47,
+          year: '2017',
+          code: '47',
+          industryname: '房屋建筑业',
+          description: null,
+          industrycode: 'E',
+          levels: 1
+        },
+        {
+          id: 48,
+          year: '2017',
+          code: '48',
+          industryname: '土木工程建筑业',
+          description: null,
+          industrycode: 'E',
+          levels: 1
+        },
+        {
+          id: 49,
+          year: '2017',
+          code: '49',
+          industryname: '建筑安装业',
+          description: null,
+          industrycode: 'E',
+          levels: 1
+        },
+        {
+          id: 50,
+          year: '2017',
+          code: '50',
+          industryname: '建筑装饰、装修和其他建筑业',
+          description: null,
+          industrycode: 'E',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1957,
+      year: '2017',
+      code: 'F',
+      industryname: '批发和零售业',
+      description: null,
+      industrycode: 'F',
+      levels: 0,
+      children: [
+        {
+          id: 51,
+          year: '2017',
+          code: '51',
+          industryname: '批发业',
+          description: null,
+          industrycode: 'F',
+          levels: 1
+        },
+        {
+          id: 52,
+          year: '2017',
+          code: '52',
+          industryname: '零售业',
+          description: null,
+          industrycode: 'F',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1958,
+      year: '2017',
+      code: 'G',
+      industryname: '交通运输、仓储和邮政业',
+      description: null,
+      industrycode: 'G',
+      levels: 0,
+      children: [
+        {
+          id: 53,
+          year: '2017',
+          code: '53',
+          industryname: '铁路运输业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 54,
+          year: '2017',
+          code: '54',
+          industryname: '道路运输业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 55,
+          year: '2017',
+          code: '55',
+          industryname: '水上运输业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 56,
+          year: '2017',
+          code: '56',
+          industryname: '航空运输业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 57,
+          year: '2017',
+          code: '57',
+          industryname: '管道运输业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 58,
+          year: '2017',
+          code: '58',
+          industryname: '多式联运和运输代理业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 59,
+          year: '2017',
+          code: '59',
+          industryname: '装卸搬运和仓储业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        },
+        {
+          id: 60,
+          year: '2017',
+          code: '60',
+          industryname: '邮政业',
+          description: null,
+          industrycode: 'G',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1959,
+      year: '2017',
+      code: 'H',
+      industryname: '住宿和餐饮业',
+      description: null,
+      industrycode: 'H',
+      levels: 0,
+      children: [
+        {
+          id: 61,
+          year: '2017',
+          code: '61',
+          industryname: '住宿业',
+          description: null,
+          industrycode: 'H',
+          levels: 1
+        },
+        {
+          id: 62,
+          year: '2017',
+          code: '62',
+          industryname: '餐饮业',
+          description: null,
+          industrycode: 'H',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1960,
+      year: '2017',
+      code: 'I',
+      industryname: '信息传输、软件和信息技术服务业',
+      description: null,
+      industrycode: 'I',
+      levels: 0,
+      children: [
+        {
+          id: 63,
+          year: '2017',
+          code: '63',
+          industryname: '电信、广播电视和卫星传输服务',
+          description: null,
+          industrycode: 'I',
+          levels: 1
+        },
+        {
+          id: 64,
+          year: '2017',
+          code: '64',
+          industryname: '互联网和相关服务',
+          description: null,
+          industrycode: 'I',
+          levels: 1
+        },
+        {
+          id: 65,
+          year: '2017',
+          code: '65',
+          industryname: '软件和信息技术服务业',
+          description: null,
+          industrycode: 'I',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1961,
+      year: '2017',
+      code: 'J',
+      industryname: '金融业',
+      description: null,
+      industrycode: 'J',
+      levels: 0,
+      children: [
+        {
+          id: 66,
+          year: '2017',
+          code: '66',
+          industryname: '货币金融服务',
+          description: null,
+          industrycode: 'J',
+          levels: 1
+        },
+        {
+          id: 67,
+          year: '2017',
+          code: '67',
+          industryname: '资本市场服务',
+          description: null,
+          industrycode: 'J',
+          levels: 1
+        },
+        {
+          id: 68,
+          year: '2017',
+          code: '68',
+          industryname: '保险业',
+          description: null,
+          industrycode: 'J',
+          levels: 1
+        },
+        {
+          id: 69,
+          year: '2017',
+          code: '69',
+          industryname: '其他金融业',
+          description: null,
+          industrycode: 'J',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1962,
+      year: '2017',
+      code: 'K',
+      industryname: '房地产业',
+      description: null,
+      industrycode: 'K',
+      levels: 0,
+      children: [
+        {
+          id: 70,
+          year: '2017',
+          code: '70',
+          industryname: '房地产业',
+          description: null,
+          industrycode: 'K',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1963,
+      year: '2017',
+      code: 'L',
+      industryname: '租赁和商务服务业',
+      description: null,
+      industrycode: 'L',
+      levels: 0,
+      children: [
+        {
+          id: 71,
+          year: '2017',
+          code: '71',
+          industryname: '租赁业',
+          description: null,
+          industrycode: 'L',
+          levels: 1
+        },
+        {
+          id: 72,
+          year: '2017',
+          code: '72',
+          industryname: '商务服务业',
+          description: null,
+          industrycode: 'L',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1964,
+      year: '2017',
+      code: 'M',
+      industryname: '科学研究和技术服务业',
+      description: null,
+      industrycode: 'M',
+      levels: 0,
+      children: [
+        {
+          id: 73,
+          year: '2017',
+          code: '73',
+          industryname: '研究和试验发展',
+          description: null,
+          industrycode: 'M',
+          levels: 1
+        },
+        {
+          id: 74,
+          year: '2017',
+          code: '74',
+          industryname: '专业技术服务业',
+          description: null,
+          industrycode: 'M',
+          levels: 1
+        },
+        {
+          id: 75,
+          year: '2017',
+          code: '75',
+          industryname: '科技推广和应用服务业',
+          description: null,
+          industrycode: 'M',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1965,
+      year: '2017',
+      code: 'N',
+      industryname: '水利、环境和公共设施管理业',
+      description: null,
+      industrycode: 'N',
+      levels: 0,
+      children: [
+        {
+          id: 76,
+          year: '2017',
+          code: '76',
+          industryname: '水利管理业',
+          description: null,
+          industrycode: 'N',
+          levels: 1
+        },
+        {
+          id: 77,
+          year: '2017',
+          code: '77',
+          industryname: '生态保护和环境治理业',
+          description: null,
+          industrycode: 'N',
+          levels: 1
+        },
+        {
+          id: 78,
+          year: '2017',
+          code: '78',
+          industryname: '公共设施管理业',
+          description: null,
+          industrycode: 'N',
+          levels: 1
+        },
+        {
+          id: 79,
+          year: '2017',
+          code: '79',
+          industryname: '土地管理业',
+          description: null,
+          industrycode: 'N',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1966,
+      year: '2017',
+      code: 'O',
+      industryname: '居民服务、修理和其他服务业',
+      description: null,
+      industrycode: 'O',
+      levels: 0,
+      children: [
+        {
+          id: 80,
+          year: '2017',
+          code: '80',
+          industryname: '居民服务业',
+          description: null,
+          industrycode: 'O',
+          levels: 1
+        },
+        {
+          id: 81,
+          year: '2017',
+          code: '81',
+          industryname: '机动车、电子产品和日用产品修理业',
+          description: null,
+          industrycode: 'O',
+          levels: 1
+        },
+        {
+          id: 82,
+          year: '2017',
+          code: '82',
+          industryname: '其他服务业',
+          description: null,
+          industrycode: 'O',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1967,
+      year: '2017',
+      code: 'P',
+      industryname: '教育',
+      description: null,
+      industrycode: 'P',
+      levels: 0,
+      children: [
+        {
+          id: 83,
+          year: '2017',
+          code: '83',
+          industryname: '教育',
+          description: null,
+          industrycode: 'P',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1968,
+      year: '2017',
+      code: 'Q',
+      industryname: '卫生和社会工作',
+      description: null,
+      industrycode: 'Q',
+      levels: 0,
+      children: [
+        {
+          id: 84,
+          year: '2017',
+          code: '84',
+          industryname: '卫生',
+          description: null,
+          industrycode: 'Q',
+          levels: 1
+        },
+        {
+          id: 85,
+          year: '2017',
+          code: '85',
+          industryname: '社会工作',
+          description: null,
+          industrycode: 'Q',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1969,
+      year: '2017',
+      code: 'R',
+      industryname: '文化、体育和娱乐业',
+      description: null,
+      industrycode: 'R',
+      levels: 0,
+      children: [
+        {
+          id: 86,
+          year: '2017',
+          code: '86',
+          industryname: '新闻和出版业',
+          description: null,
+          industrycode: 'R',
+          levels: 1
+        },
+        {
+          id: 87,
+          year: '2017',
+          code: '87',
+          industryname: '广播、电视、电影和录音制作业',
+          description: null,
+          industrycode: 'R',
+          levels: 1
+        },
+        {
+          id: 88,
+          year: '2017',
+          code: '88',
+          industryname: '文化艺术业',
+          description: null,
+          industrycode: 'R',
+          levels: 1
+        },
+        {
+          id: 89,
+          year: '2017',
+          code: '89',
+          industryname: '体育',
+          description: null,
+          industrycode: 'R',
+          levels: 1
+        },
+        {
+          id: 90,
+          year: '2017',
+          code: '90',
+          industryname: '娱乐业',
+          description: null,
+          industrycode: 'R',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1970,
+      year: '2017',
+      code: 'S',
+      industryname: '公共管理、社会保障和社会组织',
+      description: null,
+      industrycode: 'S',
+      levels: 0,
+      children: [
+        {
+          id: 91,
+          year: '2017',
+          code: '91',
+          industryname: '中国共产党机关',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        },
+        {
+          id: 92,
+          year: '2017',
+          code: '92',
+          industryname: '国家机构',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        },
+        {
+          id: 93,
+          year: '2017',
+          code: '93',
+          industryname: '人民政协、民主党派',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        },
+        {
+          id: 94,
+          year: '2017',
+          code: '94',
+          industryname: '社会保障',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        },
+        {
+          id: 95,
+          year: '2017',
+          code: '95',
+          industryname: '群众团体、社会团体和其他成员组织',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        },
+        {
+          id: 96,
+          year: '2017',
+          code: '96',
+          industryname: '基层群众自治组织及其他组织',
+          description: null,
+          industrycode: 'S',
+          levels: 1
+        }
+      ]
+    },
+    {
+      id: 1971,
+      year: '2017',
+      code: 'T',
+      industryname: '国际组织',
+      description: null,
+      industrycode: 'T',
+      levels: 0,
+      children: [
+        {
+          id: 97,
+          year: '2017',
+          code: '97',
+          industryname: '国际组织',
+          description: null,
+          industrycode: 'T',
+          levels: 1
+        }
+      ]
+    }
+  ];
+  return builder(result);
 };
 Mock.mock(/\/mock\/tree\/index/, 'get', treeList); // tree
 Mock.mock(/\/mock\/complicate-tree\/index/, 'get', complicateTreeList); // tree
+Mock.mock(/\/mock\/county-tree\/index/, 'get', countyList); // tree
+Mock.mock(/\/mock\/industry-tree\/index/, 'get', industryList); // 所属行业 tree

@@ -14,7 +14,9 @@ function doFocus(el, binding) {
   if (el.tagName.toLowerCase() === 'input') {
     inputEl = el;
   } else if (el.tagName.toLowerCase() !== 'input' && el.childNodes.length > 0) {
-    inputEl = Array.from(el.childNodes).find(child => !!child.tagName && (child.tagName).toLowerCase() === 'input');
+    inputEl = Array.from(el.childNodes).find(
+      child => !!child.tagName && child.tagName.toLowerCase() === 'input'
+    );
   }
   if (_isEqual(_isNil(binding.value), false) && binding.value === 'focused') {
     inputEl && inputEl.focus();

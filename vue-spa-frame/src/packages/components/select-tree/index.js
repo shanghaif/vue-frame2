@@ -27,8 +27,7 @@ const BaseSelectTree = {
     },
     // 最多只能选择几个数量
     maxItem: {
-      type: Number,
-      default: 20
+      type: Number
     },
     // 输入框宽度
     width: {
@@ -83,6 +82,11 @@ const BaseSelectTree = {
     valueField: {
       type: String,
       default: 'id'
+    },
+    // 是否显示完整的路径（true 显示完整的路径，false 仅显示最后一级）
+    showAllLevels: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -91,7 +95,9 @@ const BaseSelectTree = {
         this.clear();
       } else {
         // 单选
-        this.setSingleNode();
+        if (val !== this.curSelectValue) {
+          this.setSingleNode();
+        }
       }
     }
   },
@@ -99,7 +105,7 @@ const BaseSelectTree = {
     this.popoverOffsetTop = 0; // 下拉面板的 offsetTop 偏差值
     this.selectInputHeight = 0; // select 控件对应的 input 框的高度
     return {
-      placement: 'bottom',
+      placement: 'bottom-start',
       treeUserRef: `${this._uid}-selectTree`,
       popoverVisible: false,
       // 本地数据
@@ -116,6 +122,12 @@ const BaseSelectTree = {
   },
   created() {},
   methods: {
+    /**
+     * @desc 获取 tree 对象
+     */
+    getTree() {
+      return this.$refs[this.treeUserRef];
+    },
     /**
      * @desc 手动打开tree下拉面板
      */
@@ -177,13 +189,12 @@ const BaseSelectTree = {
           this.prefixLabel
         );
       }
+      const style = { width: `${this.width}px` }; // 文本框控件宽度
       const vNode = h(
         'el-select',
         {
           ref: `${this._uid}-base-select-tree-ref`,
-          style: {
-            width: `${this.width}px` // 文本框控件宽度
-          },
+          style,
           attrs: {
             id: this.$attrs.id,
             autofocus: this.$attrs.autofocus,
@@ -208,6 +219,10 @@ const BaseSelectTree = {
               ].$el.offsetHeight; // input 框的高度
             },
             clear: () => {
+              this.$emit(
+                'clearValue',
+                this.multiple ? this.curSelectValueList : this.curSelectValue
+              );
               this.clear();
               this.$refs[this.treeUserRef].clearChecked();
               this.$emit('selectTreeChange', this.multiple ? [] : '');
@@ -216,6 +231,10 @@ const BaseSelectTree = {
               this.$emit('clear', this.multiple ? [] : '');
             },
             'remove-tag': tag => {
+              this.$emit(
+                'clearValue',
+                this.multiple ? this.curSelectValueList : this.curSelectValue
+              );
               const index = _findIndex(
                 this.curSelectValueList,
                 value => value === tag
@@ -243,9 +262,19 @@ const BaseSelectTree = {
           },
           nativeOn: {
             click: event => {
-              const selectTree = this.$refs[`${this._uid}-base-select-tree-ref`];
-              if (!_isNil(selectTree) && !_isNil(selectTree.$el) && !_isNil(document.body.clientHeight)) {
-                if (document.body.clientHeight - selectTree.$el.parentNode.offsetTop < 470) {
+              const selectTree = this.$refs[
+                `${this._uid}-base-select-tree-ref`
+              ];
+              if (
+                !_isNil(selectTree) &&
+                !_isNil(selectTree.$el) &&
+                !_isNil(document.body.clientHeight)
+              ) {
+                if (
+                  document.body.clientHeight -
+                    selectTree.$el.parentNode.offsetTop <
+                  470
+                ) {
                   this.placement = 'top-start';
                 }
               }
@@ -328,7 +357,7 @@ const BaseSelectTree = {
         ref: this.treeUserRef,
         attrs: {
           defaultCheckedKeys: this.curDefaultCheckedKeys,
-          checkStrictly: this.multiple, // 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 false
+          checkStrictly: _get(this.$attrs, 'check-strictly', this.multiple), // 在显示复选框的情况下，是否严格的遵循父子不互相关联的做法，默认为 false
           showCheckbox: this.multiple, // 出现复选框
           ..._omit(this.$attrs, [
             'defaultCheckedKeys',
@@ -391,9 +420,18 @@ const BaseSelectTree = {
                   const nodes = that.$refs[that.treeUserRef].getCheckedNodes();
                   if (!_isEmpty(nodes)) {
                     for (let i = 0, len = nodes.length; i < len; i++) {
+                      const treeNode = that
+                        .getTree()
+                        .getTree()
+                        .getNode(nodes[i][that.valueField]);
+                      const levelStr = that
+                        .getTree()
+                        .getNodeParentLevel(treeNode);
                       that.options.push({
                         [that.valueField]: nodes[i][that.valueField],
-                        [that.displayField]: nodes[i][that.displayField]
+                        [that.displayField]: that.showAllLevels
+                          ? levelStr
+                          : nodes[i][that.displayField]
                       });
                       if (that.multiple) {
                         that.curSelectValueList.push(nodes[i][that.valueField]);
@@ -419,33 +457,113 @@ const BaseSelectTree = {
                 .getTree()
                 .getCheckedKeys();
               // 操作最大的选中数量
-              if (checkedKeys.length > this.maxItem) {
+              if (!_isNil(this.maxItem) && checkedKeys.length > this.maxItem) {
                 this.$refs[this.treeUserRef].setCheckedKeys(
                   this.curSelectValueList
                 );
                 return;
               }
-              if (!_includes(checkedKeys, node[this.valueField])) {
-                return;
+              if (!_get(this.$attrs, 'check-strictly', this.multiple)) {
+                // 多选，父子级联
+                const options = [];
+                this.curSelectLabelList = [];
+                this.curSelectValueList = [];
+                this.options = [];
+                this.curSelectNodeList = treeCheckedNode.checkedNodes;
+                for (
+                  let i = 0, len = this.curSelectNodeList.length;
+                  i < len;
+                  i++
+                ) {
+                  const name = _get(
+                    this.curSelectNodeList[i],
+                    this.displayField
+                  );
+                  const value = _get(
+                    this.curSelectNodeList[i],
+                    this.valueField
+                  );
+                  this.curSelectLabelList.push(name);
+                  this.curSelectValueList.push(value);
+                  const treeNode = this.getTree()
+                    .getTree()
+                    .getNode(value);
+                  const levelStr = this.getTree().getNodeParentLevel(treeNode);
+                  options.push({
+                    [this.displayField]: this.showAllLevels ? levelStr : name,
+                    [this.valueField]: value
+                  });
+                }
+                this.options = options;
+              } else {
+                if (!_includes(checkedKeys, node[this.valueField])) {
+                  this.change(this.curSelectNodeList);
+                  return;
+                }
+                this.curSelectNodeList.push(node);
+                this.curSelectLabelList.push(node[this.displayField]);
+                this.curSelectValueList.push(node[this.valueField]);
+                const treeNode = this.getTree()
+                  .getTree()
+                  .getNode(node[this.valueField]);
+                const levelStr = this.getTree().getNodeParentLevel(treeNode);
+                this.options.push({
+                  [this.displayField]: this.showAllLevels
+                    ? levelStr
+                    : node[this.displayField],
+                  [this.valueField]: node[this.valueField]
+                });
               }
-              this.curSelectNodeList.push(node);
-              this.curSelectLabelList.push(node[this.displayField]);
-              this.curSelectValueList.push(node[this.valueField]);
-              this.options.push({
-                [this.displayField]: node[this.displayField],
-                [this.valueField]: node[this.valueField]
-              });
               this.$emit('selectTreeChange', this.curSelectValueList);
               this.change(this.curSelectNodeList);
             }
           },
           // v-model input事件
-          currentChange: (record = {}) => {
+          currentChange: (record = {}, curNode = {}) => {
             // 单选
             if (!this.multiple) {
+              if (
+                _has(this.$attrs, 'isSelectedLastNode') &&
+                this.$attrs.isSelectedLastNode
+              ) {
+                const treeProps = this.$refs[this.treeUserRef].props;
+                // 设置需要选中最里面的节点
+                if (
+                  _has(record, treeProps.children) &&
+                  !_isNil(_get(record, treeProps.children)) &&
+                  _get(record, treeProps.children).length !== 0
+                ) {
+                  return;
+                }
+              }
+              if (
+                (_has(this.$attrs, 'selectedLevel') &&
+                  this.$attrs.selectedLevel &&
+                  curNode.level !== this.$attrs.selectedLevel) ||
+                (_has(this.$attrs, 'disabledNodes') &&
+                  !_isEmpty(this.$attrs.disabledNodes) &&
+                  _includes(
+                    this.$attrs.disabledNodes,
+                    _get(curNode, `data.${this.valueField}`)
+                  ))
+              ) {
+                return;
+              }
+              if (
+                _has(curNode, 'data.disabled') &&
+                curNode.data.disabled === true
+              ) {
+                return;
+              }
+              const node = this.getTree()
+                .getTree()
+                .getNode(record[this.valueField]);
+              const levelStr = this.getTree().getNodeParentLevel(node);
               this.options = [];
               this.options.push({
-                [this.displayField]: record[this.displayField],
+                [this.displayField]: this.showAllLevels
+                  ? levelStr
+                  : record[this.displayField],
                 [this.valueField]: record[this.valueField]
               });
               this.curSelectValue = record[this.valueField];
@@ -456,8 +574,27 @@ const BaseSelectTree = {
                 [this.valueField]: record[this.valueField]
               });
             }
+          },
+          // 清空数据事件
+          clearData: () => {
+            this.clear();
+            this.$refs[this.treeUserRef].clearChecked();
+            this.$emit('selectTreeChange', this.multiple ? [] : '');
+            this.change([]);
+            this.setSelectPanel2InputOffsetTop();
+            this.$emit('clear', this.multiple ? [] : '');
           }
-        }
+        },
+        scopedSlots: _has(this.$scopedSlots, 'default')
+          ? {
+              default: props => {
+                return this.$scopedSlots.default(props);
+              },
+              handleIconScope: props => {
+                return this.$scopedSlots.handleMenuScope(props);
+              }
+            }
+          : undefined
       });
     },
     /**
@@ -467,16 +604,19 @@ const BaseSelectTree = {
       const that = this;
       if (
         !_isNil(that.$refs[that.treeUserRef]) &&
-        !_isNil(that.$refs[that.treeUserRef].getTree())
+        !_isNil(that.$refs[that.treeUserRef].getTree()) &&
+        !_isNil(that.selectTreeValue)
       ) {
         const checkedNode = that.$refs[that.treeUserRef]
           .getTree()
           .getNode(that.selectTreeValue);
         if (!_isNil(checkedNode)) {
           const record = checkedNode;
-          that.options = [];
-          that.options.push({
-            [that.displayField]: record.data[that.displayField],
+          this.options = [];
+          this.options.push({
+            [that.displayField]: this.showAllLevels
+              ? this.getTree().getNodeParentLevel(checkedNode)
+              : record.data[that.displayField],
             [that.valueField]: record.data[that.valueField]
           });
           that.curSelectValue = record.data[that.valueField];
@@ -532,7 +672,7 @@ const BaseSelectTree = {
     /**
      * @desc 清空
      */
-    clear: function () {
+    clear: function() {
       this.curSelectNodeList = [];
       this.curSelectLabelList = [];
       this.curSelectValueList = [];

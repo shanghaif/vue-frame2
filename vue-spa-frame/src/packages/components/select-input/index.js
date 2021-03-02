@@ -128,9 +128,10 @@ const BaseSelectInput = {
           input: value => {
             // v-model
             this.vValue = value;
+            this.$emit('selectInputChange', this.vValue);
           },
           change: val => {
-            this.$emit('selectInputChange', val);
+            // this.$emit('selectInputChange', val);
           }
         },
         ref: 'combo-box-input'

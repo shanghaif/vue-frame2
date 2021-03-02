@@ -11,10 +11,7 @@ class MakeConst {
     this.constBuilder(options);
   }
 
-  constBuilder({
-    sep = '/',
-    config = []
-  } = {}) {
+  constBuilder({ sep = '/', config = [] } = {}) {
     Object.keys(config).map(namespace => {
       // console.info(namespace, config[namespace]);
       this._createConstSingle({
@@ -25,11 +22,7 @@ class MakeConst {
     });
   }
 
-  _createConstSingle({
-    namespace,
-    sep = '/',
-    config = {}
-  }) {
+  _createConstSingle({ namespace, sep = '/', config = {} }) {
     Object.defineProperty(this.const, `${namespace}`, { value: config });
   }
 }

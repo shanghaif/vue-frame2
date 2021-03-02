@@ -1,8 +1,19 @@
 <template>
-  <div :class="[$style.container, 'basic3-layout']">
+  <div :class="[$style.container, 'basic3-layout', ctCls.box]">
     <base-border-layout v-bind="layout">
       <template v-slot:north>
-        <top-view3 :title="title" v-if="renderTopView"></top-view3>
+        <top-view3
+          ref="topView3"
+          :title="title"
+          :subtitle="subtitle"
+          :renderDropColumnDown="renderDropColumnDown"
+          :renderDropDown="renderDropDown"
+          :renderLoginOut="renderLoginOut"
+          :ctCls="{
+            left: 'my-top-view3'
+          }"
+          v-if="renderTopView"
+        ></top-view3>
       </template>
       <template v-slot:west> </template>
       <template v-slot:center>
@@ -32,29 +43,68 @@
 
 <script>
 import TopView3 from './components/top-view3.vue';
-import {
-  DEFAULT_SETTINGS
-} from '@config/index.js';
+import { DEFAULT_SETTINGS } from '@config/index.js';
 import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'Basic3Layout',
-  provide: function () {
+  provide: function() {
     return {
       getBase3Layout: this
     };
   },
   components: { TopView3 },
   props: {
-    // 顶部栏目标题文字
+    // 顶部栏目标题文字-副标题
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 主标题
+    subtitle: {
+      type: String,
+      default: DEFAULT_SETTINGS.subtitle
     },
     // 渲染 top-view.vue
     renderTopView: {
       type: Boolean,
       default: true
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          box: undefined,
+          north: undefined,
+          west: undefined,
+          center: undefined,
+          south: undefined,
+          east: undefined,
+          inner: {
+            north: undefined,
+            west: undefined,
+            center: undefined,
+            south: undefined,
+            east: undefined
+          }
+        };
+      }
     }
   },
   data() {
@@ -64,14 +114,22 @@ export default {
         westWidth: 'auto',
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.northCls
+        northCls: `${this.$style.northCls} ${this.ctCls.north}`,
+        westCls: `${this.ctCls.west}`,
+        eastCls: `${this.ctCls.east}`,
+        southCls: `${this.ctCls.south}`,
+        centerCls: `${this.ctCls.center}`
       },
       innerLayout: {
         northHeight: '30px',
         westWidth: '0px',
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.borderBottom
+        northCls: `${this.$style.borderBottom} ${this.ctCls.inner.north}`,
+        westCls: `${this.ctCls.inner.west}`,
+        eastCls: `${this.ctCls.inner.east}`,
+        southCls: `${this.ctCls.inner.south}`,
+        centerCls: `${this.ctCls.inner.center}`
       },
       breadCrumbOptions: []
     };
@@ -128,7 +186,10 @@ export default {
      */
     onBreadClick(option, event) {
       const { matched } = this.$router.currentRoute;
-      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+      if (
+        !_isEmpty(matched) &&
+        !_isNil(matched[matched.length - 1].instances.default)
+      ) {
         const that = matched[matched.length - 1].instances.default;
         _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }
@@ -141,7 +202,7 @@ export default {
 .container {
   /* 修改组件样式 同 deep、<<< */
   :global .el-menu.el-menu--horizontal {
-    border-bottom: 0px;
+    border-bottom: 0;
   }
 }
 </style>

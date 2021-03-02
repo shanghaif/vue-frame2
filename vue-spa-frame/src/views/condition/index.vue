@@ -1,21 +1,21 @@
 <template>
   <div>
-    <el-button @click="onFilter">筛选</el-button>
-    <data-middle
+    <el-button type="primary" @click="onFilter">点击查询</el-button>
+    <br /><br />
+    <base-table-select-condition
       ref="tagCondition"
       :fieldList="fieldList"
       :data="filterCondition"
       @currentCondition="getCondition"
-    ></data-middle>
+    ></base-table-select-condition>
+    <br />
+    <br />
+    {{ filterCondition }}
   </div>
 </template>
 
 <script>
-import dataMiddle from '@packages/components/condition/data-middle';
 export default {
-  components: {
-    dataMiddle
-  },
   data() {
     return {
       fieldList: [
@@ -81,6 +81,3 @@ export default {
   }
 };
 </script>
-
-<style lang="">
-</style>

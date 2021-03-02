@@ -107,7 +107,7 @@ const BaseRollGrid = {
       }
     },
     tableData(val, oldVal) {
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         // 此处可以监听子 table 已经渲染完成并挂载到了父级元素上
         if (_isNil(this.timer) && !_isEmpty(val) && this.autoplay) {
           this.timer = setInterval(this.rollHandler, this.waitTime);

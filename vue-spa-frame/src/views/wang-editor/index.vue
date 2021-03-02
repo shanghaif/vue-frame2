@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import E from 'wangeditor';
+
 export default {
   data() {
     this.editor = null;
@@ -25,7 +27,7 @@ export default {
   },
   created() {
     setTimeout(() => {
-      const E = window.wangEditor;
+      // const E = window.wangEditor;
       this.editor = new E('#div1');
       // 或者 const editor = new E( document.getElementById('div1') )
       this.editor.create();
@@ -49,5 +51,3 @@ export default {
   }
 };
 </script>
-
-<style></style>

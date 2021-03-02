@@ -19,12 +19,14 @@
           @addNodeHandle="addNodeHandle"
           :isRender="true"
           :filter-node-method="filterNode"
+          :default-checked-keys="[12]"
+          :disabledNodes="[8]"
         >
           <!-- 自定义树节点的内容 -->
           <span class="custom-tree-node" slot-scope="{ node }">
             <!-- 可以在 node 对象中存放一个 icon 的字段用于配置节点的小图标 :class="node.id===2 ? 'el-icon-light-rain' : 'el-icon-delete'-->
             <span>
-              {{node.data.menuName}}
+              {{ node.data.menuName }}
             </span>
           </span>
           <template v-slot:handleMenuScope="{ node }">
@@ -56,6 +58,11 @@
       </template>
       <template v-slot:center>
         tree 组件滚动样式
+        <p>基金募集管理 这个节点被设置为禁用了</p>
+        <p>
+          disabledNodes 属性是禁用节点的配置，数组传递 `valueField`
+          所配置的字段值
+        </p>
       </template>
     </base-border-layout>
   </div>
@@ -126,9 +133,7 @@ export default {
       westCls: this.$style.westCls,
       centerCls: this.$style.centerCls
     };
-    return {
-
-    };
+    return {};
   },
   methods: {
     editNodeHandle(node, value, event) {
@@ -159,15 +164,15 @@ export default {
 </script>
 
 <style lang="less" module>
-.box{
+.box {
   .full-y;
-  .west-cls{
-    padding: 0px 10px;
+  .west-cls {
     box-sizing: border-box;
+    padding: 0 10px;
   }
-  .center-cls{
-    border: 1px solid #4A8AF4;
+  .center-cls {
     box-sizing: border-box;
+    border: 1px solid rgba(74, 138, 244);
   }
 }
 </style>

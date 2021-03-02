@@ -42,5 +42,12 @@ export default {
     { paramValue: 4, paramDesc: '授信成功' },
     { paramValue: 5, paramDesc: '需求关闭' },
     { paramValue: 6, paramDesc: '需求撤回' }
+  ],
+  // 嵌套 grid 状态字段
+  STATE_NESTING_GRID: [
+    { paramValue: 1, paramDesc: '待分配' },
+    { paramValue: 2, paramDesc: '待受理' },
+    { paramValue: 3, paramDesc: '处理中' },
+    { paramValue: 4, paramDesc: '已办结' }
   ]
 };

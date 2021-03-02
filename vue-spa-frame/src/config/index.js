@@ -15,8 +15,11 @@ export const CONST_DEFAULT_CONFIG = {
 };
 // basic-layout.vue 配置
 export const DEFAULT_SETTINGS = {
-  title: 'Vue 单页面框架', // 顶部栏目标题文字
-  iconfontUrl: () => { return require('@assets/images/logo.png'); }, // 顶部栏目图标
+  subtitle: 'Vue 单页面框架', // 主标题
+  title: 'spa', // 顶部栏目标题文字-副标题
+  iconfontUrl: () => {
+    return require('@assets/images/logo.png');
+  }, // 顶部栏目图标
   collapsed: false, // 侧边菜单栏是否收缩
   titleClick(event) {
     // 顶部栏目标题文字-点击事件
@@ -47,4 +50,9 @@ export const USER_API_CONFIG = {
 export const USER_AXIOS_CONFIG = {
   baseURL: process.env.BASE_API,
   timeout: 5000
+};
+// 路由的打开类型
+export const ROUTER_OPEN_TYPE = {
+  menu: 'menu', // 通过菜单打开
+  push: 'push' // 通过 push 程序的形式打开
 };

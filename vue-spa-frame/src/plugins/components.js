@@ -9,6 +9,10 @@ export default {
     // 全局配置参数
     const defaultGlobalOptions = {
       grid: {
+        paginationAttributes: {
+          currentPage: 1,
+          pageSize: 10
+        },
         page: 'page',
         size: 'size',
         total: 'data.totalRecord',

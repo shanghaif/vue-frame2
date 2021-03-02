@@ -37,20 +37,25 @@ const BaseBreadCrumb = {
         for (let i = 0, len = this.options.length; i < len; i++) {
           const option = this.options[i];
           vNodes.push(
-            this.$createElement('el-breadcrumb-item', {
-              style: { cursor },
-              props: _omit(option, ['text']),
-              nativeOn: {
-                click: (event) => {
-                  const index = _findLastIndex(this.options, o => o.text === event.target.innerText);
-                  if (index !== -1 && index !== this.options.length - 1) {
-                    this.$emit('bread-click', option, event);
+            this.$createElement(
+              'el-breadcrumb-item',
+              {
+                style: { cursor },
+                props: _omit(option, ['text']),
+                nativeOn: {
+                  click: event => {
+                    const index = _findLastIndex(
+                      this.options,
+                      o => o.text === event.target.innerText
+                    );
+                    if (index !== -1 && index !== this.options.length - 1) {
+                      this.$emit('bread-click', option, event);
+                    }
                   }
                 }
-              }
-            }, [
-              option.text
-            ])
+              },
+              [option.text]
+            )
           );
         }
       }
@@ -58,14 +63,18 @@ const BaseBreadCrumb = {
     }
   },
   render(h) {
-    return h('el-breadcrumb', {
-      ref: `${this._uid}-base-bread-crumb`,
-      attrs: {
-        id: this.$attrs.id
+    return h(
+      'el-breadcrumb',
+      {
+        ref: `${this._uid}-base-bread-crumb`,
+        attrs: {
+          id: this.$attrs.id
+        },
+        class: { 'base-bread-crumb': true, [this.ctCls]: this.ctCls },
+        props: _assign({}, this.$attrs)
       },
-      class: { 'base-bread-crumb': true, [this.ctCls]: this.ctCls },
-      props: _assign({}, this.$attrs)
-    }, this.createElBreadcrumb());
+      this.createElBreadcrumb()
+    );
   }
 };
 export default BaseBreadCrumb;

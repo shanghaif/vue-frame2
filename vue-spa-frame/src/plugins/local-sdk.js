@@ -3,14 +3,10 @@
  */
 window.mLocalSdk = {
   resourceVersion: '1.0.0',
-  resourceJavascriptList: [{
-
-  }],
-  needUpdate: (function () {
-
-  })(),
+  resourceJavascriptList: [{}],
+  needUpdate: (function() {})(),
   // 判断文件是否为IE的方法
-  isIE: (function () {
+  isIE: (function() {
     const v = 3;
     const div = document.createElement('div');
     const all = div.getElementsByTagName('i');
@@ -20,7 +16,7 @@ window.mLocalSdk = {
     return v > 5 ? v : false;
   })(),
   // 检查本地缓存是否溢出
-  checkHedge: function () {
+  checkHedge: function() {
     const localStorageLength = localStorage.length;
     let localStorageSize = 0;
     for (let i = 0; i < localStorageLength; i++) {
@@ -30,7 +26,5 @@ window.mLocalSdk = {
     return localStorageSize;
   },
   // 启动方法，也是读取本地缓存
-  startUp: function () {
-
-  }
+  startUp: function() {}
 };

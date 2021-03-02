@@ -1,7 +1,7 @@
 <template>
-  <div class="condition">
-    <div class="condition_operator">
-      <span class="condition_operator-text" @click="handleToggle(data.id)">
+  <div class="base-condition">
+    <div class="base-condition_operator">
+      <span class="base-condition_operator-text" @click="handleToggle(data.id)">
         <i class="iconfont iconqiehuan"></i><br />
         {{ logicMap[data.logicalOperator] }}
       </span>
@@ -45,12 +45,7 @@
           type="text"
           icon="el-icon-delete"
           @click="
-            handleDeleteFilterItem(
-              idx,
-              filterItem,
-              data.id,
-              data.parentId
-            )
+            handleDeleteFilterItem(idx, filterItem, data.id, data.parentId)
           "
           style="margin-left: 19px"
         ></el-button>
@@ -68,12 +63,12 @@
 </template>
 
 <script>
-import { logicMap, LOGICOPERATOR } from '@constant/constant.js';
+import { logicMap, LOGICOPERATOR } from './constant.js';
 import conditionItem from './condition-item.vue';
 
 export default {
   name: 'condition',
-  provide: function () {
+  provide: function() {
     return {
       getPanel: this
     };
@@ -136,51 +131,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-@primaryColor: #3E7EFF;
-@deepBlueColor: #1B68FD;
-@gray: #f3f5f7;
-
-@gray-border:1px solid rgba(220, 223, 230, 1);
-@tab-border: 2px solid #e4e7ed;
-@paddingWidth: 21px;
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.condition {
-  display: table;
-  width: 100%;
-  border-top: @gray-border;
-  & & {
-    border-top: none;
-  }
-
-  &_operator {
-    display: table-cell;
-    width: 32px;
-    text-align: center;
-    border-left: @gray-border;
-    border-bottom: @gray-border;
-    vertical-align: middle;
-    color: rgba(144, 147, 153, 1);
-    font-size: 12px;
-    font-family: PingFangSC-Regular;
-    &-text {
-      cursor: pointer;
-
-      .iconqiehuan {
-        color: #3e7eff;
-        font-size: 13px;
-      }
-    }
-  }
-  &_child {
-    flex: 1;
-  }
-}
-</style>

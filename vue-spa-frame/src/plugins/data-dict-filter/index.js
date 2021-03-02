@@ -32,9 +32,10 @@ class DataDictFilter {
       if (!this.filterKeys.includes(key.toUpperCase())) {
         this.filterKeys.push(key.toUpperCase());
         this.dictData.push({ [key]: dictionary[key] });
-        Vue.filter(key.toUpperCase(), function (value) {
+        Vue.filter(key.toUpperCase(), function(value) {
           if (value.length) return;
-          const tar = dictionary[key].find(item => item.paramValue === value) || {};
+          const tar =
+            dictionary[key].find(item => item.paramValue === value) || {};
           return tar.paramDesc;
         });
       }
@@ -54,7 +55,7 @@ class DataDictFilter {
       if (!this.filterKeys.includes(key.toUpperCase())) {
         this.filterKeys.push(key.toUpperCase());
         this.dictData.push({ [key]: configOpt[key] });
-        Vue.filter(key.toUpperCase(), function (value) {
+        Vue.filter(key.toUpperCase(), function(value) {
           if (value.length) return;
           const tar = configOpt.find(item => item.paramValue === value) || {};
           return _get(tar, 'paramDesc');
@@ -74,20 +75,30 @@ class DataDictFilter {
         p.then(defines => {
           if (Object.prototype.hasOwnProperty.call(defines, 'default')) {
             this._append(defines.default);
-          } else if (Object.prototype.hasOwnProperty.call(defines, 'data') && Object.prototype.hasOwnProperty.call(defines, 'code')) {
+          } else if (
+            Object.prototype.hasOwnProperty.call(defines, 'data') &&
+            Object.prototype.hasOwnProperty.call(defines, 'code')
+          ) {
             if (_isArray(defines.data)) {
               for (let i = 0, length = defines.data.length; i < length; i++) {
                 const dictKeys = _keys(defines.data[i]);
-                const dictName = !_isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
-                const dictList = _isArray(dictKeys[0]) ? dictKeys[0] : dictKeys[1];
-                const itemDict = _map(defines.data[i][dictList], (item) => {
-                  return { paramValue: _get(item, this.code), paramDesc: _get(item, this.label) };
+                const dictName = !_isArray(dictKeys[0])
+                  ? dictKeys[0]
+                  : dictKeys[1];
+                const dictList = _isArray(dictKeys[0])
+                  ? dictKeys[0]
+                  : dictKeys[1];
+                const itemDict = _map(defines.data[i][dictList], item => {
+                  return {
+                    paramValue: _get(item, this.code),
+                    paramDesc: _get(item, this.label)
+                  };
                 });
                 // 由数字、26个英文字母或者下划线组成的字符串
                 if (/^\w+$/.test(defines.data[i][dictName])) {
                   this._append({ [defines.data[i][dictName]]: itemDict });
                 } else {
-                  const itemDict = _map(defines.data[i].data, (item) => {
+                  const itemDict = _map(defines.data[i].data, item => {
                     return { paramValue: item.id, paramDesc: item.name };
                   });
                   this._append({ ['DICT_' + i]: itemDict });
@@ -114,10 +125,13 @@ class DataDictFilter {
    */
   _append(defines = {}) {
     for (const [key, elem] of Object.entries(defines)) {
-      if (Object.prototype.hasOwnProperty.call(defines, key) && !this.filterKeys.includes(elem.name)) {
+      if (
+        Object.prototype.hasOwnProperty.call(defines, key) &&
+        !this.filterKeys.includes(elem.name)
+      ) {
         this.filterKeys.push(key.toUpperCase());
         this.dictData.push({ [key]: elem });
-        Vue.filter(key.toUpperCase(), function (value) {
+        Vue.filter(key.toUpperCase(), function(value) {
           if (value.length) return;
           const tar = elem.find(item => item.paramValue === value) || {};
           return _get(tar, 'paramDesc');
@@ -130,7 +144,7 @@ class DataDictFilter {
    * @desc 获取某个字典数据
    */
   get(key) {
-    const dict = _find(this.dictData, (item) => {
+    const dict = _find(this.dictData, item => {
       return _keys(item)[0] === key;
     });
     return dict ? Object.values(dict)[0] : dict;

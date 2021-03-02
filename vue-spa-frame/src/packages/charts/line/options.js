@@ -11,7 +11,8 @@ const baseOptions = {
     text: '标题-折线图',
     subtext: '示例-折线图表',
     // link: 'http://www.baidu.com', // 打开网页
-    link: 'javascript: void(\'0\')', // 调用点击事件，（外部通过 listeners: {titleClick: ()=>{}} 事件）
+    // eslint-disable-next-line quotes
+    link: "javascript: void('0')", // 调用点击事件，（外部通过 listeners: {titleClick: ()=>{}} 事件）
     target: 'self', // 保证不会在新的窗口弹出
     left: 'center',
     show: true
@@ -138,7 +139,7 @@ const baseOptions = {
           value: 901.676,
           label: {
             // 格式化单个数据
-            formatter: function (v) {
+            formatter: function(v) {
               return Math.floor(v.value * 100) / 100;
             }
           }
@@ -183,7 +184,7 @@ const baseOptions = {
           label: {
             show: true,
             // 格式化 data 数据，在这里可以进行小数点位数控制（如果需要控制单个值请使用 data 的key和value形式）
-            formatter: function (v) {
+            formatter: function(v) {
               return Math.floor(v.value * 100) / 100;
             }
           }, // 每个折点都显示数值
@@ -220,7 +221,7 @@ const baseOptions = {
         title: '自定义扩展方法1',
         icon:
           'image://https://panjiachen.gitee.io/vue-element-admin/favicon.ico',
-        onclick: function () {
+        onclick: function() {
           console.info('自定义扩展方法1');
         }
       }
@@ -275,6 +276,6 @@ const baseOptions = {
     formatter: '{b0}（{a0}）：{c0}个/人<br/>{b1}（{a1}）：{c1}%'
   }
 };
-export default function () {
+export default function() {
   return { ...baseOptions };
-};
+}

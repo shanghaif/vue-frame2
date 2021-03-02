@@ -38,6 +38,11 @@ export default {
     this.$nextTick(() => {
       // 定义弹框，注意要在 mounted 保证节点已经挂载到 Dom 中了。
       this.dialogInstance = this.$baseDialog({
+        /* component: () => {
+          return this.$createElement(Detail, {
+            ref: 'add-plugin-dialog-ref'
+          });
+        }, */
         component: Detail,
         container: this.$el,
         // center: true,
@@ -183,5 +188,3 @@ export default {
   }
 };
 </script>
-
-<style></style>

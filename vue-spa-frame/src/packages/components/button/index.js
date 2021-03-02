@@ -41,7 +41,7 @@ const baseButton = {
     iconPosition: {
       type: String,
       default: 'left',
-      validator: function (value) {
+      validator: function(value) {
         return _includes(['left', 'right'], value);
         // return ['left', 'right'].includes(value);
       }

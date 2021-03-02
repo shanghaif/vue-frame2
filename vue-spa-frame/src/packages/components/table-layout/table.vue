@@ -35,7 +35,6 @@ export default {
 </script>
 
 <style>
-.base-table-container{
-
+.base-table-container {
 }
 </style>

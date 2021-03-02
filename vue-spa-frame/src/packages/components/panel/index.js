@@ -1,7 +1,5 @@
 /**
  * @desc 面板组件
  */
-const BasePanel = {
-
-};
+const BasePanel = {};
 export default BasePanel;

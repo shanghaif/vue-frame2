@@ -1,0 +1,137 @@
+/* 穿梭grid */
+/* stylelint-disable */
+.base-transfer-grid {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  .base-transfer-grid-left-cls {
+    padding: 10px;
+  }
+  .left-grid {
+    width: 48%;
+    // background-color: pink;
+    border: 1px solid rgb(235, 235, 235);
+    .search-north-bar {
+      // background-color: royalblue;
+      height: 100%;
+      color: rgb(96, 98, 102);
+      > div:first-child {
+        margin-bottom: 8px;
+      }
+    }
+    .show-grid-center {
+      // border: 1px solid red;
+      // box-sizing: border-box;
+      height: 100%;
+      > div:first-child {
+        border-top: 0 solid rgb(235, 238, 245);
+        border-bottom: 0 solid rgb(235, 238, 245);
+      }
+      .el-collapse-item__wrap {
+        border-bottom: 0 solid rgb(235, 238, 245);
+      }
+    }
+  }
+  .right-grid {
+    width: 48%;
+    border: 1px solid rgb(235, 235, 235);
+    // background-color: powderblue;
+    .search-north-bar {
+      // background-color: royalblue;
+      height: 100%;
+      > span:first-child {
+        margin-bottom: 8px;
+        color: rgb(96, 98, 102);
+        cursor: pointer;
+        i {
+          margin-left: 5px;
+        }
+      }
+    }
+    .right-show-grid-center {
+      position: relative;
+      // border: 1px solid red;
+      // box-sizing: border-box;
+      height: 100%;
+      .no-slot-empty {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90px;
+        margin-left: -45px;
+      }
+      ul {
+        padding: 0;
+        // background-color: royalblue;
+        margin: 0;
+        li {
+          height: 40px;
+          padding: 0 20px;
+          line-height: 40px;
+          color: rgb(96, 98, 102);
+          cursor: pointer;
+          span {
+            display: inline-block;
+            width: calc(100% - 30px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            white-space: nowrap;
+          }
+          i {
+            float: right;
+            font-size: 18px;
+            line-height: 40px;
+          }
+          &:hover {
+            i {
+              color: red;
+            }
+          }
+        }
+        .empty {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 90px;
+          margin-left: -45px;
+        }
+      }
+      // 右侧插槽分块
+
+      /* .slot-expand-box{
+        height: 33%;
+        background-color: pink;
+        overflow: auto;
+      } */
+      .el-tabs {
+        height: calc(100% - 60px);
+      }
+      .el-tabs__content {
+        height: 100%;
+        // background-color: pink;
+        .el-tab-pane {
+          height: 100%;
+        }
+        .right-slot-expand-tab-inner {
+          // background-color: powderblue;
+
+          /* display: flex;
+          justify-content: center;
+          align-items: center; */
+          position: relative;
+          height: 100%;
+          overflow: auto;
+        }
+        .empty {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          display: inline-block;
+          width: 90px;
+          margin-left: -45px;
+        }
+      }
+    }
+  }
+}

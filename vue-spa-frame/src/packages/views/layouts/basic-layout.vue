@@ -1,8 +1,19 @@
 <template>
-  <div :class="$style.container">
+  <div :class="[$style.container, ctCls.box]">
     <base-border-layout v-bind="layout">
       <template v-slot:north>
-        <top-view ref="topView" :title="title" v-if="renderTopView"></top-view>
+        <top-view
+          ref="topView"
+          :title="title"
+          :subtitle="subtitle"
+          :renderDropColumnDown="renderDropColumnDown"
+          :renderDropDown="renderDropDown"
+          :renderLoginOut="renderLoginOut"
+          :ctCls="{
+            left: 'my-top-view1'
+          }"
+          v-if="renderTopView"
+        ></top-view>
       </template>
       <template v-slot:west>
         <base-nav-menu
@@ -11,11 +22,12 @@
           v-bind="menuProps"
           @select="handleSelect"
           :svgIcons="svgIcons"
+          navTitle="导航标题"
         >
         </base-nav-menu>
       </template>
       <template v-slot:center>
-        <base-border-layout :class="$style.bgFff" v-bind="innerLayout">
+        <base-border-layout v-bind="innerLayout">
           <template v-slot:north>
             <div class="mt-8">
               <base-bread-crumb
@@ -41,7 +53,11 @@
 
 <script>
 import TopView from './components/top-view.vue';
-import { ROOT_PAGE_NAME, DEFAULT_SETTINGS } from '@config/index.js';
+import {
+  ROOT_PAGE_NAME,
+  DEFAULT_SETTINGS,
+  ROUTER_OPEN_TYPE
+} from '@config/index.js';
 import svgIcons from '@/plugins/icons.js';
 import _last from 'lodash/last';
 import _split from 'lodash/split';
@@ -71,10 +87,15 @@ export default {
     menuId: {
       type: [String, Number]
     },
-    // 顶部栏目标题文字
+    // 顶部栏目标题文字-副标题
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 主标题
+    subtitle: {
+      type: String,
+      default: DEFAULT_SETTINGS.subtitle
     },
     // 渲染 top-view.vue
     renderTopView: {
@@ -85,12 +106,58 @@ export default {
     renderNavMenu: {
       type: Boolean,
       default: true
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          box: '',
+          north: '',
+          west: this.$style.westBox,
+          center: this.$style.innerCenterCls,
+          south: '',
+          east: '',
+          inner: {
+            north: this.$style.innerNorthBox,
+            west: '',
+            center: this.$style.innerCenterBox,
+            south: '',
+            east: ''
+          }
+        };
+      }
+    },
+    // 外围 border 布局的边距
+    isPadding: {
+      type: Boolean,
+      default: true
+    },
+    // 内部 border 布局的边距
+    innerIsPadding: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
+    this.svgIcons = svgIcons;
     return {
-      svgIcons: svgIcons,
       menus: [],
       navTitle: '',
       layout: {
@@ -98,22 +165,34 @@ export default {
         westWidth: this.renderNavMenu ? 'auto' : '0px', // 设置为定值时，配合 nav-menu 导航菜单收缩菜单面板之后的宽度还是定值所以这里推荐自动
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.northCls
+        northCls: `${this.$style.northCls} ${this.ctCls.north}`,
+        westCls: `${this.ctCls.west}`,
+        eastCls: `${this.ctCls.east}`,
+        southCls: `${this.ctCls.south}`,
+        centerCls: `${this.ctCls.center}`,
+        isPadding: this.isPadding
       },
       innerLayout: {
         northHeight: '30px',
         westWidth: '0px',
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.borderBottom
+        northCls: `${this.$style.borderBottom} ${this.ctCls.inner.north}`,
+        westCls: `${this.ctCls.inner.west}`,
+        eastCls: `${this.ctCls.inner.east}`,
+        southCls: `${this.ctCls.inner.south}`,
+        centerCls: `${this.ctCls.inner.center}`,
+        isPadding: this.innerIsPadding
       },
       menuProps: {
         collapsed: DEFAULT_SETTINGS.collapsed, // 侧栏收起状态
         defaultActive: '',
         textColor: '#BFCBD9',
+        navIcon: 'el-icon-menu',
         activeTextColor: '#409EFF',
         backgroundColor: '#304156',
-        collapseText: '收起导航'
+        collapseText: '收起导航',
+        collapsePosition: 'bottom'
       },
       breadCrumbOptions: []
     };
@@ -141,7 +220,7 @@ export default {
     // }, 3000);
   },
   methods: {
-    getMenus() {
+    getMenus(to, from) {
       if (this.ROOT_PAGE_NAME !== ROOT_PAGE_NAME) {
         let menus = this.$store.getters.getMenus;
         if (!_isNil(this.menuId)) {
@@ -183,7 +262,7 @@ export default {
           }
           menus = menuList[0];
         } else {
-          const getMatchedMenu = function (menus, code) {
+          const getMatchedMenu = function(menus, code) {
             return _find(menus, menu => menu.menuCode === code);
           };
           menus = getMatchedMenu(menus, this.ROOT_PAGE_NAME);
@@ -277,6 +356,8 @@ export default {
             }
           }
         } else {
+          const currentRoute = this.$router.resolve({ name: menu.menuCode });
+          _set(currentRoute, 'resolved.meta.toType', ROUTER_OPEN_TYPE.menu); // 标识路由是从菜单点击打开的
           this.$router.push({ name: menu.menuCode });
         }
       } else {

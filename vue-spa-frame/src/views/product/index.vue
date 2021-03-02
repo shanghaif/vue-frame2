@@ -12,10 +12,10 @@ export default {};
 
 <style>
 .test-mobile-cls {
-  width: 750px;
   box-sizing: border-box;
-  border-bottom: 7.5px solid palegreen;
+  width: 750px;
   font-size: 16px;
   letter-spacing: 1px;
+  border-bottom: 7.5px solid palegreen;
 }
 </style>

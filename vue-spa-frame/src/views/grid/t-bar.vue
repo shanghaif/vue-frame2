@@ -114,9 +114,9 @@ export default {
 
 <style lang="less" module>
 .box {
-  padding: 5px 0px;
+  padding: 5px 0;
 }
-.menu{
-  padding: 5px 0px;
+.menu {
+  padding: 5px 0;
 }
 </style>

@@ -2,8 +2,12 @@
   <div :class="$style.container">
     <p :class="$style.aaa">个人中心</p>
     <!-- <el-input v-model="input" placeholder="请输入内容"></el-input> -->
-    <el-button size="small" @click="onOpenUserPage">路由跳转</el-button>
-    <el-button size="small" @click="onOpenDetail">打开详情</el-button>
+    <el-button size="small" @click="onOpenUserPage"
+      >路由跳转-动态路由</el-button
+    >
+    <el-button size="small" @click="onOpenDetail"
+      >打开详情-打开子路由</el-button
+    >
     <div>{{ NAME_OF_CONSTANT[0].name }}&nbsp;{{ OTHER }}</div>
     <div>
       <router-view></router-view>
@@ -33,6 +37,23 @@
       </base-permission-box>
       <el-button type="success" @click="onChangeDisabled">成功按钮</el-button>
     </div>
+    <div :class="$style.myFontStyle">
+      <span>自定义字体（导入外部字体库 assets/font/style）</span>
+    </div>
+    <div :class="$style.carouselProgressBox">
+      <div><h3>自定义百分比进度条滚动组件</h3></div>
+      <div>
+        <base-carousel-progress
+          :list="list"
+          :barColor="barColor"
+          dotBorder="transparent"
+          dotShadow="#FFFF00"
+          borderCls="1px solid #1E44BA"
+          style="height: 100%;"
+          :ctCls="$style.progressCtCls"
+        ></base-carousel-progress>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,6 +71,49 @@ export default {
     ...mapGetters(['getMenus'])
   },
   data() {
+    this.barColor = ['#F7F8CA', '#FFD01B'];
+    this.list = [
+      {
+        name: '广州钟鼓科技有限公司', // 企业名称
+        rank: 1, // 排名 不传的话按默认顺序排名
+        total: 30, // 总额
+        // value: 300, // 当前数据
+        unit: '%', // 单位
+        percent: 30 // 当没有value的时候可以传当前所占的比例、可以传小数
+      },
+      {
+        name: '浙江宇视科技有限公司',
+        rank: 2,
+        total: 50,
+        // value: 230,
+        unit: '%',
+        percent: 50
+      },
+      {
+        name: '华三通信（H3C）',
+        rank: 3,
+        total: 78,
+        // value: 130,
+        unit: '%',
+        percent: 78
+      },
+      {
+        name: '天健会计师事务所',
+        rank: 4,
+        total: 82,
+        // value: 567,
+        unit: '%',
+        percent: 82
+      },
+      {
+        name: '百世物流科技（中国）有限公司',
+        rank: 5,
+        total: 46,
+        // value: 431,
+        unit: '%',
+        percent: 46
+      }
+    ];
     return {
       input: Math.ceil(Math.random() * 10)
       /* buttons: [
@@ -103,15 +167,40 @@ export default {
 };
 </script>
 
-<style module>
+<style lang="less" module>
+// @import url('../../assets/font/style/font.css'); // 载入自定义字体库，已移动到 static/plugins/font/style/font.css
 .container {
   margin-left: 20px;
+  .my-font-style {
+    span {
+      font-family: 'pmzd';
+      font-size: 28px;
+    }
+  }
 }
 .aaa {
-  color: red;
   font-size: 14px;
+  color: red;
 }
 .ys-button-cls {
-  margin: 10px 0px;
+  margin: 10px 0;
+}
+.carousel-progress-box {
+  width: 500px;
+  height: 250px;
+  > div:nth-child(2) {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 0 10px;
+    background: url('/static/images/layout5-bg.png') no-repeat;
+    background-size: 100% 100%;
+    border: 0.1rem solid rgb(48, 79, 176);
+    box-shadow: inset 0 1px 60px 0 rgba(12, 254, 255, 0.3);
+  }
+}
+.progress-ct-cls {
+  :global .label-name {
+    color: rgb(75, 139, 244) !important;
+  }
 }
 </style>

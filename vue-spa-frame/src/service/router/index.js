@@ -33,18 +33,26 @@ requireModule.keys().forEach(filePath => {
     const aModuleNameList = _split(moduleName, CONST_DEFAULT_CONFIG.sep);
     const aDropRightArray = _dropRight(aModuleNameList);
     var commonRoutes = _get(modules, 'common', []);
-    const setRouterChildren = function (moduleRouter, path) {
+    const setRouterChildren = function(moduleRouter, path) {
       if (!_has(moduleRouter, 'children')) {
         moduleRouter.children = [];
       }
       const requireModuleList = requireModule(path).default;
       for (let i = 0, len = requireModuleList.length; i < len; i++) {
-        moduleRouter.children.push(requireModule(path).default[i]);
+        const oRouterConfig = requireModule(path).default[i];
+        moduleRouter.children.push(oRouterConfig);
       }
     };
     for (let i = 0, len = aDropRightArray.length; i < len; i++) {
       const value = aDropRightArray[i];
-      const path = _join(_slice(aDropRightArray, 0, _findIndex(aDropRightArray, (o) => o === value) + 1), '/');
+      const path = _join(
+        _slice(
+          aDropRightArray,
+          0,
+          _findIndex(aDropRightArray, o => o === value) + 1
+        ),
+        '/'
+      );
       const lastName = aModuleNameList[aModuleNameList.length - 1];
       const filePath = './' + path + '/' + lastName + '.js';
       let moduleRouter = null;
@@ -60,7 +68,7 @@ requireModule.keys().forEach(filePath => {
         const name = _has(item, 'name') ? item.name : item.module;
         return name === value;
       });
-      if (i === (len - 1)) {
+      if (i === len - 1) {
         if (_findIndex(loadedFileList, o => o === filePath) === -1) {
           moduleRouter && setRouterChildren(moduleRouter, filePath);
           loadedFileList.push(filePath);
@@ -77,6 +85,6 @@ requireModule.keys().forEach(filePath => {
     }
   }
 });
-export default function () {
+export default function() {
   return modules.common;
-};
+}

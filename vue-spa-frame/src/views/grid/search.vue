@@ -2,14 +2,14 @@
   <div :class="$style.box">
     <el-form ref="form" :model="form" label-width="80px">
       <el-row>
-        <el-col :span="6">
+        <el-col :span="4">
           <el-form-item prop="name" label="企业名称">
             <el-input
               v-model="form.name"
               placeholder="请输入企业名称"
             ></el-input> </el-form-item
         ></el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item prop="dateTimeValue" label="申请时间">
             <el-date-picker
               v-model="form.dateTimeValue"
@@ -24,7 +24,27 @@
             >
             </el-date-picker> </el-form-item
         ></el-col>
-        <el-col :span="10"
+        <el-col :span="5">
+          <el-form-item prop="name" label="企业名称">
+            <base-select-tree
+              ref="more-select-tree"
+              :width="250"
+              :treeWidth="250"
+              :multiple="true"
+              :check-strictly="false"
+              :isRenderRoot="false"
+              :props="defaultProps"
+              :collapse-tags="false"
+              api="common/getIndustryTree"
+              v-model="industry"
+              displayField="industryname"
+              valueField="code"
+              :lazy="false"
+              :isSelectedLastNode="false"
+              :showAllLevels="true"
+            ></base-select-tree></el-form-item
+        ></el-col>
+        <el-col :span="9"
           ><div :class="$style.ml30">
             <el-button type="primary" @click="onSearch">查询</el-button>
             <el-button type="info" @click="onReset">重置</el-button>
@@ -48,15 +68,21 @@ export default {
     }
   },
   data() {
+    this.defaultProps = {
+      children: 'children',
+      label: 'industryname',
+      value: 'id'
+    };
     return {
       form: {
         name: '',
         dateTimeValue: ''
-      }
+      },
+      industry: []
     };
   },
   created() {
-    this.getBaseGrid.$on('onChangeRowEvent', (row) => {
+    this.getBaseGrid.$on('onChangeRowEvent', row => {
       console.info('点击选中的行', row);
     });
   },
@@ -87,5 +113,6 @@ export default {
 </script>
 
 <style lang="less" module>
-.box {}
+.box {
+}
 </style>

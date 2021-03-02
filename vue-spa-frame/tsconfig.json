@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    // 与 Vue 的浏览器支持保持一致
+    "target": "es5",
+    // 这可以对 `this` 上的数据属性进行更严格的推断
+    "strict": true,
+    "experimentalDecorators": true,
+    "module": "es6",
+    "baseUrl": "./",
+    // "baseUrl": "/",
+    // "allowJs":true,// 编译时，允许有 js 文件
+    // "allowSyntheticDefaultImports":true,// 允许引入没有默认导出的模块
+    "paths": {
+      "@/*": ["src/*"],
+      "src/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
+      "@views/*": ["src/views/*"],
+      "@store/*": ["src/store/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

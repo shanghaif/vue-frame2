@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p>银行端-{{ id | SEX_TYPE }}</p>
+  <div class="user-manage-box">
+    <p class="user-index-p">银行端-{{ id | SEX_TYPE }}</p>
     <div>
       <base-select :options="tableData" v-model="value"></base-select>
     </div>
@@ -15,7 +15,9 @@
       >
       <el-button size="small" @click="onDown">下载1</el-button>
       <el-button size="small" @click="onOpenUserPage">路由跳转</el-button>
-      <el-button size="small" @click="onOpenMenuPage">打开指定菜单 menuId</el-button>
+      <el-button size="small" @click="onOpenMenuPage"
+        >打开指定菜单 menuId</el-button
+      >
     </div>
     <br />
     <div>
@@ -24,7 +26,84 @@
     <div class="vw-rem">
       <img src="../../assets/images/1234.png" alt="" />
       <img src="../../assets/images/wx.jpg" alt="" />
-      <img src="/static/images/123.jpg" alt="" /> <!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
+      <img src="/static/images/123.jpg" alt="" />
+      <!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
+    </div>
+    <div>
+      <div><h3>时间轴组件：</h3></div>
+      <p style="color: red">注意：</p>
+      <p>
+        由于原始的 饿了么 时间轴组件 `el-steps` 不支持将 description
+        描述信息放到 时间轴的上面，
+      </p>
+      <p style="margin-bottom: 20px;">
+        所以修改了 el-steps 组件，增加了 position 参数 up 放到上面 down 放到下面
+      </p>
+      <base-steps :active="3" position="up" align-center>
+        <base-step title="">
+          <template v-slot:description>
+            <div>
+              202006
+            </div>
+          </template>
+          <template v-slot:icon>
+            <span></span>
+          </template>
+        </base-step>
+        <base-step title="">
+          <template v-slot:description>
+            <div>
+              202007
+            </div>
+          </template>
+          <template v-slot:icon>
+            <span></span>
+          </template>
+        </base-step>
+        <base-step title="">
+          <template v-slot:description>
+            <div>
+              202008
+            </div>
+          </template>
+          <template v-slot:icon>
+            <span></span>
+          </template>
+        </base-step>
+        <base-step title="">
+          <template v-slot:description>
+            <div>
+              202009
+            </div>
+          </template>
+          <template v-slot:icon>
+            <span></span>
+          </template>
+        </base-step>
+      </base-steps>
+    </div>
+    <div>
+      <div><h4>下拉月份组件</h4></div>
+      <el-date-picker
+        class="datePicker"
+        v-model="date"
+        type="month"
+        :picker-options="pickerOptions"
+        placeholder="选择月"
+        popper-class="monthSelect"
+        :clearable="false"
+        format="yyyy-MM"
+        @change="setCurrentDate"
+      >
+      </el-date-picker>
+      <span style="padding-left: 20px;">{{ currentDate }}</span>
+    </div>
+    <div>
+      <div>
+        <h3>图片懒加载指令：</h3>
+        滚动滚动条，图片可见时才会发送请求
+      </div>
+      <img class="lazy-img" data-src="/static/images/lazy-test.jpg" v-lazy />
     </div>
   </div>
 </template>
@@ -35,13 +114,21 @@ import { down } from '@utils/index.js';
 export default {
   data() {
     return {
+      bb: '',
       id: 1,
       value: 1,
       tableData: [],
       columns: [
         { label: '姓名', field: 'username' },
         { label: '性别', field: 'sex', filter: 'SEX_TYPE' }
-      ]
+      ],
+      date: '',
+      currentDate: '',
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   created() {
@@ -65,7 +152,9 @@ export default {
         // 请求成功
         if (response.code === '0000' && 'token' in response.data) {
           // 设置通用请求头参数
-          this.$loaderApiLibrary.setHeaderOptions({ token: response.data.token });
+          this.$loaderApiLibrary.setHeaderOptions({
+            token: response.data.token
+          });
         }
       });
     },
@@ -92,7 +181,7 @@ export default {
       const obj = { name: '张三' };
       console.info(_get(obj, name));
 
-      this.$vBus.on('b', function (p) {
+      this.$vBus.on('b', function(p) {
         console.info('添加事件', p);
       });
     },
@@ -134,25 +223,45 @@ export default {
       }).then(res => {
         console.info('123 ', res);
       }) */
+    },
+    /**
+     * @description 获取当前时间
+     */
+    setCurrentDate(data) {
+      const date = new Date(data);
+      this.currentDate = `${date.getFullYear()}-${date.getMonth() + 1}`;
+      console.log('currentDate ', this.currentDate);
     }
   }
 };
 </script>
 
-<style>
+<style lang="less">
+@import './css/index.css';
+.user-manage-box {
+  .full-y;
+
+  overflow: auto;
+}
 .vw-rem {
-  width: 100px;
+  /* width: 100px; */
   height: 100px;
+  margin-bottom: 30px;
   border: 1px solid red;
+  img {
+    width: 100px;
+    height: 100px;
+  }
 }
-.vw-rem img{
-  width: 100px;
-  height: 100px;
-}
-.a{
+.a {
   background-color: aliceblue;
 }
-.b{
+.b {
   font-size: 14px;
+}
+.lazy-img {
+  width: 300px;
+  height: 200px;
+  margin-top: 400px;
 }
 </style>

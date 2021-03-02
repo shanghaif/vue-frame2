@@ -2,13 +2,20 @@
   <div>
     <div style="width: 300px;">
       <div>
-        <p>不是懒加载（不配置根节点）</p>
+        <p>懒加载（不配置根节点）</p>
+        <div style="margin: 10px 0;">
+          <el-button type="primary" @click="onClear">清空</el-button>
+          <el-button type="primary" :disabled="true" @click="onGetData"
+            >获取数据</el-button
+          >
+          <p>（懒加载模式下，清空在获取数据未支持）</p>
+        </div>
         <base-tree
           ref="tree-ref"
           api="common/getTree"
           display-field="label"
           :handleMenu="menu"
-          :lazy="false"
+          :lazy="true"
           :is-render-root="false"
           :show-checkbox="true"
           :isRender="true"
@@ -16,7 +23,7 @@
         ></base-tree>
       </div>
       <div>
-        <p>懒加载（配置根节点，复杂 tree 的使用）</p>
+        <p>不是懒加载（配置根节点，复杂 tree 的使用）</p>
         <p>
           新增事件 `addNodeHandle`
           会取消默认的增加节点逻辑，如果需要使用默认新增加逻辑就不要传递`addNodeHandle`
@@ -288,6 +295,18 @@ export default {
       console.info(value, data);
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
+    },
+    /**
+     * @desc 清空tree数据
+     */
+    onClear() {
+      this.$refs['tree-ref'].clearData();
+    },
+    /**
+     * @desc 获取 tree 的数据
+     */
+    onGetData() {
+      this.$refs['tree-ref'].refreshAll();
     }
   }
 };
@@ -295,11 +314,11 @@ export default {
 
 <style>
 .custom-tree-node {
-  flex: 1;
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
   padding-right: 8px;
+  font-size: 14px;
 }
 </style>

@@ -32,7 +32,9 @@ const state = {
   // 角色对应的菜单
   roleMenus: {},
   // 系统用户访问令牌
-  token: ''
+  token: '',
+  // 刷新 token
+  refreshToken: ''
 };
 const getters = {
   getData: state => {
@@ -58,33 +60,41 @@ const getters = {
   // 登录用户和密码
   getLoginCacheUserInfo: state => {
     return state.loginCacheUserInfo;
+  },
+  getRefreshToken: state => {
+    return state.refreshToken;
   }
 };
 const actions = {
   // 登录
-  handleLogin({ dispatch, commit, state }, { userName, password, remember = false }) {
+  handleLogin(
+    { dispatch, commit, state },
+    { userName, password, remember = false }
+  ) {
     console.info(userName, password);
     return new Promise((resolve, reject) => {
       // 根据具体请求结果返回 解决（或拒绝）
       // Vue.prototype.$api['login/doLogin']({code: code,password: password},{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
-      Vue.prototype.$api['login/doLogin']({
-        data: { userName, password },
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        }
-      },
-      {
-        // 自定义错误拦截，此处只是示例真实项目可以注释掉
-        request_error_callback: function ({ status, statusText, data }) {
-          // 某个请求的特定异常提示
-          if (!_isNil(data)) {
-            Vue.prototype.$errorMsg(data.data);
-          } else {
-            Vue.prototype.$errorMsg(`${status}：${statusText}`);
+      Vue.prototype.$api['login/doLogin'](
+        {
+          data: { userName, password },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
-          return false;
+        },
+        {
+          // 自定义错误拦截，此处只是示例真实项目可以注释掉
+          request_error_callback: function({ status, statusText, data }) {
+            // 某个请求的特定异常提示
+            if (!_isNil(data)) {
+              Vue.prototype.$errorMsg(data.data);
+            } else {
+              Vue.prototype.$errorMsg(`${status}：${statusText}`);
+            }
+            return false;
+          }
         }
-      })
+      )
         .then(resData => {
           if (
             resData.code === Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
@@ -111,6 +121,10 @@ const actions = {
           console.info(error);
         });
     });
+  },
+  // 更新用户信息
+  updateData({ commit, state }, resData) {
+    commit('UPDATE_DATA', resData.data);
   },
   // 设置通用请求头参数
   setApiHeaderParams({ commit, state }, { token }) {
@@ -146,8 +160,14 @@ const actions = {
   fetchMenus({ commit, state }) {
     return new Promise((resolve, reject) => {
       Vue.prototype.$api['common/getMenus']().then(resData => {
+        if (
+          resData.code !== Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+        ) {
+          resolve();
+          return;
+        }
         // resData = resData.data;
-        const handlerMate = function (item) {
+        const handlerMate = function(item) {
           item.menuCode = _get(item, 'href', item.menuCode);
           item.menuName = _get(item, 'name', item.menuName);
           item.menuUrl = _get(item, 'href', item.menuUrl);
@@ -156,7 +176,7 @@ const actions = {
           item.childMenus = _get(item, 'children', []).length;
           item.target = _get(item, 'hrefType', 'in');
         };
-        const handlerWhile = function (data) {
+        const handlerWhile = function(data) {
           for (let i = 0, len = data.length; i < len; i++) {
             handlerMate(data[i]);
             if (_has(data[i], 'children') && !_isEmpty(data[i].children)) {
@@ -188,7 +208,7 @@ const actions = {
       return;
     }
     const routes = router.options.routes;
-    const checkChildren = function (oRouter, aMenusList) {
+    const checkChildren = function(oRouter, aMenusList) {
       for (const value of Object.values(oRouter)) {
         const oMenu = _find(aMenusList, menu => menu.menuCode === value.name);
         if (_has(value, 'children') && !_isEmpty(value.children)) {
@@ -203,7 +223,7 @@ const actions = {
         }
       }
     };
-    const setRouterMeta = function (router, oMenu) {
+    const setRouterMeta = function(router, oMenu) {
       !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
       if (_has(router, 'meta.isOpen')) {
         // 重置 isOpen
@@ -212,7 +232,7 @@ const actions = {
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
         _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
         // 如果父节点是 false，那么对应的所有子节点都应该是 false
-        const doWhileFn = function (item) {
+        const doWhileFn = function(item) {
           for (let i = 0, len = item.length; i < len; i++) {
             _set(item[i], 'meta.isOpen', false);
             if (_has(item[i], 'children') && item[i].children.length > 0) {
@@ -238,12 +258,18 @@ const actions = {
           []
         ); */
         let menuModels = state.roleMenus.models;
-        const router2Menus = _find(state.roleMenus.models, model => model.menuCode === value.name);
+        const router2Menus = _find(
+          state.roleMenus.models,
+          model => model.menuCode === value.name
+        );
         if (!_isNil(router2Menus)) {
           menuModels = _get(router2Menus, 'children', []);
         }
         for (const elem of value.children.values()) {
-          const itemMenu = _find(menuModels, model => model.menuCode === elem.name);
+          const itemMenu = _find(
+            menuModels,
+            model => model.menuCode === elem.name
+          );
           itemMenu && menu2Children.push(itemMenu);
         }
         checkChildren(value.children, menu2Children);
@@ -287,6 +313,9 @@ const mutations = {
     if ('token' in data) {
       state.token = data.token;
     }
+    if ('refresh_token' in data) {
+      state.refreshToken = data.refresh_token;
+    }
     state.isLogin = true;
   },
   [GET_USER_DATA](state, data) {
@@ -299,6 +328,7 @@ const mutations = {
     state.isLogin = false;
     state.initedApp = false;
     state.userDetailData = {};
+    state.refreshToken = null;
     setTimeout(() => {
       // 移除全部缓存
       if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {

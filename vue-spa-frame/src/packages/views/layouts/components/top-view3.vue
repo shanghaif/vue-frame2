@@ -6,12 +6,19 @@
           $style.fullY,
           $style.logoBox,
           $style.flexCenter,
-          $style.pointer
+          $style.pointer,
+          ctCls.left
         ]"
         @click="titleClick"
       >
         <img :src="iconfontUrl()" alt="" />
-        {{ title }}
+        <div v-if="subtitle.length > 0">
+          <span>{{ subtitle }}</span>
+          <span>{{ title }}</span>
+        </div>
+        <div v-else>
+          {{ title }}
+        </div>
       </div>
     </template>
     <template v-slot:middle>
@@ -21,6 +28,7 @@
         :menus="getMenus"
         v-bind="menuProps"
         @select="handleSelect"
+        :svgIcons="svgIcons"
       >
       </base-nav-menu>
     </template>
@@ -31,8 +39,10 @@
             size="mini"
             title="当前应用名称"
             :options="dropColumnDownOptions"
-            trigger="click"
+            trigger="hover"
+            :hide-on-click="true"
             @click="onDropColumnDownClick"
+            v-if="renderDropColumnDown"
           ></base-drop-column-down>
         </div>
         <div @click="onClickFullScreen" title="全屏" :class="$style.pointer">
@@ -43,7 +53,11 @@
             size="mini"
             :title="getUserData.userName"
             :options="options"
+            v-if="renderDropDown"
           ></base-drop-down>
+        </div>
+        <div v-if="renderLoginOut" :class="$style.logout" @click="onLoginout">
+          <i class="el-icon-switch-button"></i>
         </div>
       </div>
     </template>
@@ -56,6 +70,7 @@ import {
   DEFAULT_SETTINGS,
   LOGIN_PAGE_NAME
 } from '@config/index.js';
+import svgIcons from '@/plugins/icons.js';
 import screenfull from 'screenfull';
 import { mapActions, mapGetters } from 'vuex';
 import _find from 'lodash/find';
@@ -71,10 +86,39 @@ export default {
   name: 'TopView3',
   inject: ['getBase3Layout'],
   props: {
-    // 顶部栏目标题文字
+    // 顶部栏目标题文字-副标题
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 主标题
+    subtitle: {
+      type: String,
+      default: DEFAULT_SETTINGS.subtitle
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          left: undefined
+        };
+      }
     }
   },
   computed: {
@@ -111,6 +155,7 @@ export default {
   data() {
     this.ROOT_PAGE_NAME = ROOT_PAGE_NAME; // 根路由名称
     return {
+      svgIcons: svgIcons,
       iconfontUrl: DEFAULT_SETTINGS.iconfontUrl,
       titleClick: DEFAULT_SETTINGS.titleClick.bind(this),
       logoutLoading: false,
@@ -308,7 +353,13 @@ export default {
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;
-        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+        if (
+          !_isEmpty(matched) &&
+          !_isNil(
+            matched[matched.length - 1].instances.default.$options
+              .routerActivated
+          )
+        ) {
           const that = matched[matched.length - 1].instances.default;
           that.$options.routerActivated.call(that);
         }
@@ -320,7 +371,7 @@ export default {
      */
     onLoginout(event) {
       this.dialogInstance = this.$baseDialog({
-        component: this.$createElement('div', {}, ['确认要登出吗?']),
+        component: () => this.$createElement('div', {}, ['确认要登出吗?']),
         container: this.$el,
         center: true,
         width: '350px',

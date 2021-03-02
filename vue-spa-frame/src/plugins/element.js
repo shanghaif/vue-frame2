@@ -14,7 +14,8 @@ Vue.use(ElementUI, {
 });
 Vue.use(ElementUI);
 Vue.prototype.$message = ElementUI.Message;
-function messageFun(message, type = 'success') { // type success/warning/info/error
+function messageFun(message, type = 'success') {
+  // type success/warning/info/error
   ElementUI.Message({
     type,
     message,

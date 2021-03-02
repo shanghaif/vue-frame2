@@ -11,10 +11,10 @@
 <script>
 import condition from './condition.vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { LOGICOPERATOR } from '@constant/constant.js';
+import { LOGICOPERATOR } from './constant.js';
 
 export default {
-  name: 'dataMiddle',
+  name: 'BaseTableSelectCondition',
   components: {
     condition
   },
@@ -114,7 +114,7 @@ export default {
           !currntNode.conditionList.length
         ) {
           // 当只有 一个条件的时候，会移除当前的Condition，将下级的条件合并到父级
-          (currntNode.filterList || []).map((item) => {
+          (currntNode.filterList || []).map(item => {
             parentNode.filterList.push(item);
           });
 
@@ -124,13 +124,13 @@ export default {
           const filterList = [];
           const conditionList = [];
 
-          currntNode.conditionList.forEach((v) => {
+          currntNode.conditionList.forEach(v => {
             // 所有的conidtionList的filter合并到父级
 
             filterList.push(...v.filterList);
             // 将所有子节点的conditionList 合并放到父级
             conditionList.push(
-              ...v.conditionList.map((condition) => {
+              ...v.conditionList.map(condition => {
                 condition.parentId = parentNode.id;
                 return condition;
               })
@@ -150,9 +150,7 @@ export default {
      */
     deleteCurCondition(id, parentId) {
       const parentNode = this.getNode(parentId);
-      const conditionIdx = parentNode.conditionList.findIndex(
-        (v) => v.id === id
-      );
+      const conditionIdx = parentNode.conditionList.findIndex(v => v.id === id);
 
       parentNode.conditionList.splice(conditionIdx, 1);
     },
@@ -178,7 +176,7 @@ export default {
       } else {
         // 不同的时候加一个condition
         const condition = _cloneDeep(this.DATAMODEL);
-        const idx = currntNode.filterList.findIndex((v) => v === filterItem);
+        const idx = currntNode.filterList.findIndex(v => v === filterItem);
         const parentId = currntNode.id;
 
         currntNode.filterList.splice(idx, 1);
@@ -269,6 +267,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-</style>

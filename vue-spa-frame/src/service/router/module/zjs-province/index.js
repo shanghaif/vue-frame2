@@ -14,13 +14,19 @@ const index = [
         name: 'jgq-area',
         path: 'jgq-area',
         meta: { title: '江干区' },
-        component: () => import(/* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/hz-city/jgq-area/index.vue')
+        component: () =>
+          import(
+            /* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/hz-city/jgq-area/index.vue'
+          )
       },
       {
         name: 'xh-area',
         path: 'xh-area',
         meta: { title: '西湖区' },
-        component: () => import(/* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/hz-city/xh-area/index.vue')
+        component: () =>
+          import(
+            /* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/hz-city/xh-area/index.vue'
+          )
       }
     ]
   },
@@ -28,7 +34,10 @@ const index = [
     name: 'jx-city',
     path: 'jx-city',
     meta: { title: '嘉兴市' },
-    component: () => import(/* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/jx-city/index.vue')
+    component: () =>
+      import(
+        /* webpackChunkName:"views/zjs-province" */ '@views/zjs-province/jx-city/index.vue'
+      )
   }
 ];
 

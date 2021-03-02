@@ -7,7 +7,12 @@
         </slot>
       </div>
       <div class="mi">
-        <slot name="middle">
+        <el-scrollbar v-if="isMiddleScroll">
+          <slot name="middle">
+            <!--主列-->
+          </slot>
+        </el-scrollbar>
+        <slot v-else name="middle">
           <!--主列-->
         </slot>
       </div>
@@ -31,11 +36,20 @@ export default {
     // 自定义样式
     ctCls: {
       type: String
+    },
+    // 中间区域是否需要添加滚动组件
+    isMiddleScroll: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     this.desc = '双飞翼布局，左右两列需要设置宽度值，高度自适应父容器';
-    return {};
-  }
+    return {
+      height: 0,
+      miWidth: 0 // 中间区域的宽度
+    };
+  },
+  created() {}
 };
 </script>

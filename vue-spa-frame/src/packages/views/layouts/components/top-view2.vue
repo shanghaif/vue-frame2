@@ -6,12 +6,19 @@
           $style.fullY,
           $style.logoBox,
           $style.flexCenter,
-          $style.pointer
+          $style.pointer,
+          ctCls.left
         ]"
         @click="titleClick"
       >
         <img :src="iconfontUrl()" alt="" />
-        {{ title }}
+        <div v-if="subtitle.length > 0">
+          <span>{{ subtitle }}</span>
+          <span>{{ title }}</span>
+        </div>
+        <div v-else>
+          {{ title }}
+        </div>
       </div>
     </template>
     <template v-slot:middle>
@@ -30,8 +37,10 @@
             size="mini"
             title="当前应用名称"
             :options="dropColumnDownOptions"
-            trigger="click"
+            trigger="hover"
+            :hide-on-click="true"
             @click="onDropColumnDownClick"
+            v-if="renderDropColumnDown"
           ></base-drop-column-down>
         </div>
         <div @click="onClickFullScreen" title="全屏" :class="$style.pointer">
@@ -42,7 +51,11 @@
             size="mini"
             :title="getUserData.userName"
             :options="options"
+            v-if="renderDropDown"
           ></base-drop-down>
+        </div>
+        <div v-if="renderLoginOut" :class="$style.logout" @click="onLoginout">
+          <i class="el-icon-switch-button"></i>
         </div>
       </div>
     </template>
@@ -75,10 +88,39 @@ export default {
   name: 'TopView2',
   inject: ['getBase2Layout'],
   props: {
-    // 顶部栏目标题文字
+    // 顶部栏目标题文字-副标题
     title: {
       type: String,
       default: DEFAULT_SETTINGS.title
+    },
+    // 主标题
+    subtitle: {
+      type: String,
+      default: DEFAULT_SETTINGS.subtitle
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          left: undefined
+        };
+      }
     }
   },
   computed: {
@@ -147,6 +189,7 @@ export default {
       titleClick: DEFAULT_SETTINGS.titleClick.bind(this),
       buttonGroupOption: {
         width: '120px',
+        height: '64px',
         textColor: '#BFCBD9',
         activeTextColor: '#4989F4',
         backgroundColor: '#fff',
@@ -304,8 +347,12 @@ export default {
               }
               if (this.checkedFirstMenu2BlockIndex !== index) {
                 // 当前点击不是初始模块并且没有点击菜单项
-                if (!_isEmpty(this.getBase2Layout.$refs.menu.getSubMenuList())) {
-                  this.getBase2Layout.$refs.menu.open(this.getBase2Layout.$refs.menu.getFirstSubMenuIndex());
+                if (
+                  !_isEmpty(this.getBase2Layout.$refs.menu.getSubMenuList())
+                ) {
+                  this.getBase2Layout.$refs.menu.open(
+                    this.getBase2Layout.$refs.menu.getFirstSubMenuIndex()
+                  );
                 }
                 if (aPathKeyList[0] === this.buttonGroupOption.defaultActive) {
                   this.getBase2Layout.menuProps.defaultActive =
@@ -418,7 +465,7 @@ export default {
      */
     onLoginout(event) {
       this.dialogInstance = this.$baseDialog({
-        component: this.$createElement('div', {}, ['确认要登出吗?']),
+        component: () => this.$createElement('div', {}, ['确认要登出吗?']),
         container: this.$el,
         center: true,
         width: '350px',

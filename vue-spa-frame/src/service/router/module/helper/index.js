@@ -4,10 +4,11 @@
 
 const index = [
   {
-    path: '/info',
-    name: 'info',
+    path: '/helper-info',
+    name: 'helper-info',
     meta: { title: '帮助中心' },
-    component: () => import(/* webpackChunkName:"views/helper" */ '@views/helper/index.vue')
+    component: () =>
+      import(/* webpackChunkName:"views/helper" */ '@views/helper/index.vue')
   }
 ];
 

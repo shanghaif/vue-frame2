@@ -1,9 +1,6 @@
 <template>
   <div :style="$style.box">
-    <div
-      style="width: 600px;"
-      v-if="true"
-    >
+    <div style="width: 600px;" v-if="true">
       <base-roll-grid
         api="test/getRollGrid"
         :height="400"
@@ -15,9 +12,9 @@
         :border="true"
       ></base-roll-grid>
     </div>
-    <br/>
-    <el-button type="primary" @click="autoplay=true">启动</el-button>&nbsp;
-    <el-button type="info" @click="autoplay=false">停止</el-button>
+    <br />
+    <el-button type="primary" @click="autoplay = true">启动</el-button>&nbsp;
+    <el-button type="info" @click="autoplay = false">停止</el-button>
   </div>
 </template>
 

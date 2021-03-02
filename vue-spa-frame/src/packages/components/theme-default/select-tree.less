@@ -3,12 +3,19 @@
  */
 .base-select-tree {
   position: relative;
+  .el-select {
+    overflow: hidden;
+    .el-select__tags {
+      max-height: 150px;
+      overflow: auto;
+    }
+  }
 }
-.base-select-tree-down-empty + div{
+.base-select-tree-down-empty + div {
   border-bottom-color: transparent !important;
 }
 // 下拉 tree 的面板
-.el-popover{
+.el-popover {
   // max-height: 360px;
   // overflow: auto;
   // padding: 10px;
@@ -16,10 +23,10 @@
 .base-el-popover {
   max-height: 400px;
   overflow: hidden;
-  .base-tree-el-scrollbar{
+  .base-tree-el-scrollbar {
     max-height: 400px;
     overflow: hidden !important;
-    .el-scrollbar__wrap{
+    .el-scrollbar__wrap {
       max-height: 400px;
     }
   }

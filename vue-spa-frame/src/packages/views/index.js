@@ -9,13 +9,7 @@ import Basic3Layout from './layouts/basic3-layout.vue';
 import Basic4Layout from './layouts/basic4-layout.vue';
 import BasePersonal from './common-view/personal.vue';
 
-export {
-  BlankLayout,
-  BasicLayout,
-  Basic2Layout,
-  Basic3Layout,
-  Basic4Layout
-};
+export { BlankLayout, BasicLayout, Basic2Layout, Basic3Layout, Basic4Layout };
 export default {
   BaseRouteView,
   BasePersonal

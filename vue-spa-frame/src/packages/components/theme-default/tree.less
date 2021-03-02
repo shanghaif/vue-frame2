@@ -1,63 +1,65 @@
 /* tree 树 */
-.base-tree-el-scrollbar{
+.base-tree-el-scrollbar {
   height: 100%;
   .el-scrollbar__wrap {
     overflow-x: hidden;
-    margin-right: 0px !important;
+
+    /* margin-right: 0px !important;
     margin-bottom: 0px !important;
     padding-bottom: 10px;
     box-sizing: border-box;
+    overflow: hidden; */
   }
 }
 .base-tree {
+  .el-tree-node__content {
+    position: relative;
+    height: 30px;
+    &:hover {
+      color: rgba(0, 0, 0);
+      background-color: rgba(224, 240, 255, 1);
+    }
+  }
   > .el-tree-node {
-    min-width: 100%;
     display: inline-block;
+    min-width: 100%;
   }
   // elementUI Tree 选中节点背景色修改
   .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #cde6ff !important;
+    background-color: rgb(205, 230, 255) !important;
     .el-input__count-inner {
-      background-color: #cde6ff;
-    }
-  }
-  .el-tree-node__content {
-    height: 30px;
-    position: relative;
-    &:hover {
-      color: rgba(0, 0, 0, 1);
-      background-color: rgba(224,240,255, 1);
+      background-color: rgb(205, 230, 255);
     }
   }
 }
 .handle-menu-tree-node {
-  flex: 1;
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
   padding-right: 8px;
+  font-size: 14px;
 }
 .base-tree-node-item {
-  padding-right: 5px;
   box-sizing: border-box;
+  padding-right: 5px;
   > div:nth-child(2) {
     display: none;
     .confirm-btn {
-      color: #0080ff;
+      color: rgb(0, 128, 255);
     }
     .cancel-btn {
     }
     .confirm-btn,
     .cancel-btn {
-      font-size: 14px;
       padding-left: 4px;
+      font-size: 14px;
     }
   }
   input {
+    width: 80px !important;
     height: 21px !important;
     line-height: 21px !important;
-    width: 80px !important;
   }
   .base-tree-node-edit-input {
     > input:first-child {

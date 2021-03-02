@@ -7,6 +7,8 @@ module.exports = {
   sys_app_title: 'vue-spa-frame', // 网站名称，html 的 title 标签
   isBundleAnalyzer: false, // 是否使用 webpack-bundle-analyzer 进行打包分析
   prodConsoleType: ['error', 'warn'], // 生产环境，则自动清理掉打印的日志，但保留 error 与 warn
+  // 需要 px2rem 的文件或模块（路径用 `/` 分割）从 src 路径开始，如果其它页面不在 src 中需要将路径层级达到 src 这一层，如果到模块这一层则转换该模块下的所有文件，示例：['src/views/home/index.vue', 'src/views/service-platform/setting/frame']
+  px2RemModule: ['src/views/responsive-page/index.vue'],
   providePlugin: {
     $: 'jquery',
     jQuery: 'jquery',
@@ -30,7 +32,9 @@ module.exports = {
     _join: ['lodash', 'join'],
     _last: ['lodash', 'last'],
     _find: ['lodash', 'find'],
-    _keys: ['lodash', 'keys']
+    _keys: ['lodash', 'keys'],
+    _filter: ['lodash', 'filter'],
+    _cloneDeep: ['lodash', 'cloneDeep']
   }, // 提供全局的变量
   // 抽离库不打包到构建文件中减小构建包体积，但要通过 script 标签在外部引入（单页 html-webpack-externals-plugin,多页 html-webpack-tags-plugin）
   externals: {
@@ -55,7 +59,8 @@ module.exports = {
     '@packages': 'src/packages',
     '@mock': 'src/mock',
     '@service': 'src/service',
-    '@constant': 'src/common/constant'
+    '@constant': 'src/common/constant',
+    '@store': 'src/store'
   },
   // 指定的依赖库不会被 splitChunks 分割到 otherDependencies 缓存组内
   removeOtherDependenciesCacheGroupsLibs: [
@@ -73,10 +78,13 @@ module.exports = {
     // 直接放入到 html 文件中，不用和 externals 匹配，开发和生产都会放入
     outsideJs: [
       // 'https://webapi.amap.com/maps?key=f7ac15a8687e70001f0d8f9e65007f09&v=1.4.15&plugin=Map3D,AMap.DistrictSearch,Loca,AMap.DistrictLayer,SimpleMarker,DistrictExplorer,' // 高德地图
-      '/static/plugins/wangEditor/3.1.1/wangEditor.min.js' // 富文本编辑器插件
+      '/static/plugins/wangEditor/3.1.1/wangEditor.min.js', // 富文本编辑器插件
+      'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js', // html转pdf并且下载
+      'https://cdn.bootcdn.net/ajax/libs/jspdf/1.5.3/jspdf.min.js'
     ],
     outsideCss: [
-      '/static/plugins/wangEditor/3.1.1/wangEditor.min.css' // 富文本编辑器插件
+      '/static/plugins/wangEditor/3.1.1/wangEditor.min.css', // 富文本编辑器插件
+      '/static/plugins/font/style/font.css' // 自定义字体图库
     ],
     // 公共的一些js，会注入到 html 页面中
     js: [

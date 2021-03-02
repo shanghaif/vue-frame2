@@ -11,6 +11,8 @@ const paths = [
   'platform.roleMenus',
   'platform.loginCacheUserInfo',
   'platform.userDetailData',
+  'platform.data',
+  'platform.refreshToken',
   // 'platform.data',
   // 'platform.roleMenus',
   'menus',

@@ -38,11 +38,47 @@
           <!-- <p>{{ id }},{{ content }},{{ minute }}</p> -->
         </template>
         <template v-slot:footer>
-          <div :class="$style.footer" @click="onOpenMessage">
-            查看全部
-          </div>
+          <div :class="$style.footer" @click="onOpenMessage">查看全部</div>
         </template>
       </base-drop-down>
+    </div>
+    <div>
+      <p>多层级下拉框一级动态绑定传参</p>
+
+      <base-drop-down
+        size="mini"
+        titleColor="#000"
+        title="多层级下拉"
+        icon="el-icon-caret-bottom"
+        :hide-on-click="false"
+        :item-ct-cls="$style.topViewItemCtCls"
+        :options="optionsList"
+        trigger="click"
+        ref="userNameDropdown"
+      ></base-drop-down>
+    </div>
+    <div>
+      <h4>Menu（菜单）</h4>
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        menu-trigger="click"
+        @select="handleSelect"
+      >
+        <el-submenu index="2">
+          <template slot="title">我的工作台</template>
+          <el-menu-item index="2-1">选项1</el-menu-item>
+          <el-menu-item index="2-2">选项2</el-menu-item>
+          <el-menu-item index="2-3">选项3</el-menu-item>
+          <el-submenu index="2-4">
+            <template slot="title">选项4</template>
+            <el-menu-item index="2-4-1">选项1</el-menu-item>
+            <el-menu-item index="2-4-2">选项2</el-menu-item>
+            <el-menu-item index="2-4-3">选项3</el-menu-item>
+          </el-submenu>
+        </el-submenu>
+      </el-menu>
     </div>
   </div>
 </template>
@@ -51,6 +87,7 @@
 export default {
   data() {
     return {
+      activeIndex: '1',
       options: [
         {
           text: '个人中心',
@@ -84,8 +121,35 @@ export default {
             '25日，据韩联社最新消息，金正恩就韩公民遭朝方射杀一事向韩方致歉。',
           minute: '28分钟前'
         }
+      ],
+      optionsList: [
+        {
+          text: '切换部门',
+          disabled: false,
+          listeners: {},
+          children: []
+        },
+        {
+          text: '个人中心',
+          divided: true,
+          listeners: { click: this.onRouterPersonl }
+        },
+        {
+          listeners: { click: this.onLoginout },
+          divided: true,
+          render: h => {
+            return h(
+              'span',
+              { class: 'dropDown-warn-menu-item-color' },
+              '登出系统'
+            );
+          }
+        }
       ]
     };
+  },
+  created() {
+    this.addEvent();
   },
   methods: {
     /**
@@ -114,32 +178,77 @@ export default {
      * @desc 登出
      * @param {Objetc} event - 事件html对象
      */
-    onLoginout(event) {}
+    onLoginout(event) {},
+    changeDepartant(data) {},
+    onRouterPersonl() {},
+    /**
+     * @description 新增数据
+     */
+    addEvent() {
+      this.optionsList[0].children = [
+        {
+          text: '部门一',
+          id: 1,
+          listeners: {
+            click: () => {
+              this.changeDepartant('id');
+            }
+          }
+        },
+        {
+          text: '部门二',
+          id: 2,
+          listeners: {
+            click: () => {
+              this.changeDepartant('id');
+            }
+          }
+        },
+        {
+          text: '部门三',
+          id: 3,
+          listeners: {
+            click: () => {
+              this.changeDepartant('id');
+            }
+          }
+        }
+      ];
+
+      this.$nextTick(() => {
+        this.$refs.userNameDropdown.updateDropdown();
+      });
+    },
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+    }
   }
 };
 </script>
 
 <style lang="less">
 .message-item-cls {
+  box-sizing: border-box;
   width: 340px;
   height: 60px;
-  border-bottom: 1px solid @border-weight;
-  box-sizing: border-box;
   padding: 10px;
+  border-bottom: 1px solid @border-weight;
   // padding-top: 0px;
   .relative;
-  &:hover{
+  &:hover {
     background-color: @fill-sky-blue;
     .pointer;
   }
   > div:first-child {
     .half-y;
+
     padding-left: 33px;
     font-size: @font-size-small;
+    line-height: 20px;
     .textOverflow();
     // background-color: aqua;
     .relative;
-    line-height: 20px;
+
     /* &::before{
       content: "\e72b";
       font-family: "el-icon";
@@ -147,6 +256,7 @@ export default {
     } */
     .el-badge {
       .absolute;
+
       top: 7px;
       left: 10px;
       // padding: 0px 20px;
@@ -158,31 +268,45 @@ export default {
     // background-color: red;
     > span:first-child {
       .fl;
-      line-height: 20px;
+
       margin-left: 33px;
-      .weight-black-color-fn(0.45);
       font-size: @font-size-small;
+      line-height: 20px;
+      .weight-black-color-fn(0.45);
     }
     > span:nth-child(2) {
       .fr;
-      line-height: 20px;
+
       margin-right: 17px;
-      color: rgba(66, 147, 244, 100);
       font-size: @font-size-small;
+      line-height: 20px;
+      color: rgba(66, 147, 244, 100);
     }
   }
 }
 </style>
 
-<style lang="less" module>
-.top-view-item-ct-cls{
+<style lang="less" scoped>
+/deep/ .el-menu-demo {
+  display: flex;
+  flex-direction: column;
+  width: 160px;
 }
-.footer{
+/deep/ .el-menu--horizontal > .el-submenu .el-submenu__title {
+  height: 30px;
+  line-height: 30px;
+}
+</style>
+
+<style lang="less" module>
+.top-view-item-ct-cls {
+}
+.footer {
   height: 55px;
-  line-height: 55px;
-  .t-center;
-  color: rgba(66, 147, 244, 100);
   font-size: @font-size-medium;
-  .pointer
+  line-height: 55px;
+  color: rgba(66, 147, 244, 100);
+  .t-center;
+  .pointer;
 }
 </style>

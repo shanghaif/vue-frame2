@@ -14,9 +14,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   presets: ['@vue/cli-plugin-babel/preset'],
-  plugins: [
-    ...prodPlugin
-  ]
+  plugins: [...prodPlugin]
   /* plugins: [
     // elementUI 按需加载
     [
