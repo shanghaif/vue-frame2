@@ -6,11 +6,6 @@
 
 <script>
 export default {
-  created() {
-  }
+  created() {}
 };
 </script>
-
-<style>
-
-</style>

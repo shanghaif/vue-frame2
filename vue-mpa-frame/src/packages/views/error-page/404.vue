@@ -1,5 +1,8 @@
 <template>
-  <div :class="[$style.fullY, $style.flexCenter]" style="background-color:#ffffff">
+  <div
+    :class="[$style.fullY, $style.flexCenter]"
+    style="background-color: rgba(255,255,255)"
+  >
     <div :class="$style.error">
       <div :class="$style.errorImg">
         <img src="@assets/images/error-page/index-gone.png" />
@@ -36,12 +39,12 @@ export default {
   p:nth-child(2) {
     font-size: @font-size-large;
     font-weight: @title-font-weight;
-    color: #2e3133;
+    color: rgba(46, 49, 51);
   }
 
   p:nth-child(3) {
     font-size: @font-size-small;
-    color: #5c6166;
+    color: rgba(92, 97, 102);
   }
 }
 </style>

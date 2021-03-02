@@ -1,8 +1,5 @@
 import storage from 'good-storage';
-import {
-  isStartWithNum,
-  hasLetter
-} from './check.js';
+import { isStartWithNum, hasLetter } from './check.js';
 
 /**
  * 调用localStorage 存储方法
@@ -11,10 +8,19 @@ import {
  * @param fn 成功回调
  * @param error
  */
-export const setLocalStorage = (key, value, fn = () => {}, error = () => {}) => {
+export const setLocalStorage = (
+  key,
+  value,
+  fn = () => {},
+  error = () => {}
+) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
-  if (isStartWithNum(key)) return error(new Error('LocalStorage param key must contains letter'));
-  if (typeof value === 'object') return error(new Error('LocalStorage param value type must not be an object'));
+  if (isStartWithNum(key))
+    return error(new Error('LocalStorage param key must contains letter'));
+  if (typeof value === 'object')
+    return error(
+      new Error('LocalStorage param value type must not be an object')
+    );
   if (window.localStorage) {
     try {
       window.localStorage.setItem(key, value);
@@ -33,11 +39,15 @@ export const setLocalStorage = (key, value, fn = () => {}, error = () => {}) => 
  * @param error
  * @returns {*}
  */
-export const removeLocalStorage = (key, error = () => {
-  return '';
-}) => {
+export const removeLocalStorage = (
+  key,
+  error = () => {
+    return '';
+  }
+) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
-  if (!hasLetter(key)) return error(new Error('LocalStorage param key must contains letter'));
+  if (!hasLetter(key))
+    return error(new Error('LocalStorage param key must contains letter'));
   if (window.localStorage) {
     return window.localStorage.removeItem(key);
   } else {
@@ -51,11 +61,15 @@ export const removeLocalStorage = (key, error = () => {
  * @param error
  * @returns {*}
  */
-export const getLocalStorage = (key, error = () => {
-  return '';
-}) => {
+export const getLocalStorage = (
+  key,
+  error = () => {
+    return '';
+  }
+) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
-  if (!hasLetter(key)) return error(new Error('LocalStorage param key must contains letter'));
+  if (!hasLetter(key))
+    return error(new Error('LocalStorage param key must contains letter'));
   if (window.localStorage) {
     return window.localStorage.getItem(key);
   } else {
@@ -65,8 +79,12 @@ export const getLocalStorage = (key, error = () => {
 
 export const setSession = (key, value, fn = () => {}, error = () => {}) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
-  if (isStartWithNum(key)) return error(new Error('SessionStorage param key must contains letter'));
-  if (typeof value === 'object') return error(new Error('SessionStorage param value type must not be an object'));
+  if (isStartWithNum(key))
+    return error(new Error('SessionStorage param key must contains letter'));
+  if (typeof value === 'object')
+    return error(
+      new Error('SessionStorage param value type must not be an object')
+    );
   if (window.sessionStorage) {
     try {
       window.sessionStorage.setItem(key, value);
@@ -79,11 +97,15 @@ export const setSession = (key, value, fn = () => {}, error = () => {}) => {
   }
 };
 
-export const removeSession = (key, error = () => {
-  return '';
-}) => {
+export const removeSession = (
+  key,
+  error = () => {
+    return '';
+  }
+) => {
   if (!key) return error(new Error('sessionStorage must has a param key'));
-  if (!hasLetter(key)) return error(new Error('sessionStorage param key must contains letter'));
+  if (!hasLetter(key))
+    return error(new Error('sessionStorage param key must contains letter'));
   if (window.sessionStorage) {
     return window.sessionStorage.removeItem(key);
   } else {
@@ -91,11 +113,15 @@ export const removeSession = (key, error = () => {
   }
 };
 
-export const getSession = (key, error = () => {
-  return '';
-}) => {
+export const getSession = (
+  key,
+  error = () => {
+    return '';
+  }
+) => {
   if (!key) return error(new Error('sessionStorage must has a param key'));
-  if (!hasLetter(key)) return error(new Error('sessionStorage param key must contains letter'));
+  if (!hasLetter(key))
+    return error(new Error('sessionStorage param key must contains letter'));
   if (window.sessionStorage) {
     return window.sessionStorage.getItem(key);
   } else {

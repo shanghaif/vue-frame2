@@ -72,7 +72,8 @@ const paths = [
   'platform.initedApp',
   'platform.isLogin',
   'platform.token',
-  // 'platform.data',
+  'platform.data',
+  'platform.refreshToken',
   // 'platform.roleMenus',
   'menus',
   'userData'
@@ -91,7 +92,7 @@ export default new Vuex.Store({
   actions,
   mutations,
   plugins: [
-    function (store) {
+    function(store) {
       // 自定义 vuex 插件，Vue 还未初始化完成
     },
     createPersistedState

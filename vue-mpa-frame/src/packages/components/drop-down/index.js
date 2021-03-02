@@ -51,34 +51,123 @@ const BaseDropDown = {
       this.$refs[`${this._uid}-base-drop-down`].hide();
     },
     /**
-     * @desc 创建 el-dropdown-item
+     * @description 创建子项下拉框
+     * @param { Object } data 下拉框的子项
      */
-    createElDropdownItem() {
+    createChildrenDropdown(data) {
+      const list = data.children;
+      const h = this.$createElement;
+
+      return h(
+        'el-dropdown',
+        {
+          props: {
+            placement: 'right-start'
+          },
+          class: {
+            'subset-dropdown': true
+          }
+        },
+        [
+          h(
+            'div',
+            { class: { 'el-dropdown-link': true, 'link-content': true } },
+            [
+              h('span', { class: { 'link-text': true } }, [data.text]),
+              h(
+                'i',
+                {
+                  class: {
+                    'el-icon-arrow-right': true,
+                    'link-icon': true
+                  }
+                },
+                []
+              )
+            ]
+          ),
+          h(
+            'el-dropdown-menu',
+            {
+              slot: 'dropdown',
+              class: { [this.dropdownMenuCls]: this.dropdownMenuCls }
+            },
+            [
+              list.map(item => {
+                return h(
+                  'el-dropdown-item',
+                  {
+                    class: { [this.itemCtCls]: this.itemCtCls },
+                    props: _omit(item, ['text', 'listeners']),
+                    nativeOn: _get(item, 'listeners', {})
+                  },
+                  [
+                    item.children && item.children.length
+                      ? this.createChildrenDropdown(item)
+                      : item.text
+                  ]
+                );
+              })
+            ]
+          )
+        ]
+      );
+    },
+    /**
+     * @description 刷新组件
+     */
+    updateDropdown() {
+      this.$forceUpdate();
+    },
+    /**
+     * @desc 创建 el-dropdown-item
+     * @param { Array } data子项的数组
+     */
+    createElDropdownItem(data) {
       const vNodes = [];
       if (!_isNil(this.options)) {
         for (let i = 0, len = this.options.length; i < len; i++) {
           const option = this.options[i];
-          const vNode = _has(this.$scopedSlots, 'default')
-            ? this.$scopedSlots.default(option)
-            : this.$createElement(
-              'el-dropdown-item',
-              {
-                class: { [this.itemCtCls]: this.itemCtCls },
-                props: _omit(option, ['text', 'listeners']),
-                nativeOn: _get(option, 'listeners', {})
-              },
-              [
-                _has(option, 'render')
-                  ? option.render.call(this.$parent, this.$createElement)
-                  : option.text
-              ]
-            );
+          let vNode = {};
+
+          if (_has(this.$scopedSlots, 'default')) {
+            vNode = this.$scopedSlots.default(option);
+            vNodes.push(vNode);
+            continue;
+          }
+
+          // 如果有子项的话添加子节点
+          if (option.children && option.children.length > 0) {
+            vNode = this.$createElement('el-dropdown-item', {}, [
+              this.createChildrenDropdown(option)
+            ]);
+
+            vNodes.push(vNode);
+            continue;
+          }
+
+          vNode = this.$createElement(
+            'el-dropdown-item',
+            {
+              class: { [this.itemCtCls]: this.itemCtCls },
+              props: _omit(option, ['text', 'listeners']),
+              nativeOn: _get(option, 'listeners', {})
+            },
+            [
+              _has(option, 'render')
+                ? option.render.call(this.$parent, this.$createElement)
+                : option.text
+            ]
+          );
+
           vNodes.push(vNode);
         }
+
         if (_has(this.$slots, 'footer')) {
           vNodes.push(this.$slots.footer);
         }
       }
+
       return vNodes;
     }
   },
@@ -108,9 +197,7 @@ const BaseDropDown = {
             [
               _has(this.$slots, 'title') ? this.$slots.title : this.title,
               h('i', {
-                class: _isNil(this.icon)
-                  ? 'el-icon-arrow-down el-icon--right'
-                  : this.icon
+                class: _isNil(this.icon) ? 'el-icon-caret-bottom' : this.icon
               })
             ]
           ),

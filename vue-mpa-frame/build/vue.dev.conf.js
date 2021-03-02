@@ -10,11 +10,16 @@ const buildDate = JSON.stringify(new Date().toLocaleString());
 const HOST = process.env.HOST;
 const PORT = process.env.PORT && Number(process.env.PORT);
 // 路径重写
-const setHistoryRewritesPages = function (pages = {}) {
-  return Object.keys(pages).sort((a, b) => b.length - a.length).map(name => ({
-    from: new RegExp(`^/${name}`),
-    to: path.posix.join(processConfig.dev.assetsPublicPath, pages[name].filename || `${name}.html`)
-  }));
+const setHistoryRewritesPages = function(pages = {}) {
+  return Object.keys(pages)
+    .sort((a, b) => b.length - a.length)
+    .map(name => ({
+      from: new RegExp(`^/${name}`),
+      to: path.posix.join(
+        processConfig.dev.assetsPublicPath,
+        pages[name].filename || `${name}.html`
+      )
+    }));
 };
 const rewritesPages = setHistoryRewritesPages(baseVueConfig.pages);
 
@@ -46,7 +51,9 @@ const devConfig = merge(baseVueConfig, {
     hotOnly: processConfig.dev.hotOnly,
     compress: processConfig.dev.compress,
     open: processConfig.dev.open,
-    overlay: processConfig.dev.overlay ? { warnings: false, errors: true } : false,
+    overlay: processConfig.dev.overlay
+      ? { warnings: false, errors: true }
+      : false,
     headers: processConfig.dev.headers,
     proxy: processConfig.dev.proxyTable,
     publicPath: processConfig.dev.assetsPublicPath,

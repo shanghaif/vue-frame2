@@ -30,7 +30,11 @@ const BaseViewCollapse = {
         setTimeout(() => {
           for (let i = 0, len = this.propsRef.length; i < len; i++) {
             const view = this.$parent.$refs[this.propsRef[i].ref];
-            if (!_isNil(view) && this.activeName === this.propsRef[i].name && _hasIn(view.$options, 'viewCollapseActivated')) {
+            if (
+              !_isNil(view) &&
+              this.activeName === this.propsRef[i].name &&
+              _hasIn(view.$options, 'viewCollapseActivated')
+            ) {
               view.$options.viewCollapseActivated.call(view); // 激活事件
             }
           }
@@ -50,7 +54,8 @@ const BaseViewCollapse = {
       //   this.$refs[`${this._uid}-el-collapse-ref`].$parent.$parent.$el
       //     .clientHeight
       // );
-      this.itemHeight = `${this.$refs[`${this._uid}-el-collapse-ref`].$parent.$parent.$el.clientHeight - 2}px`;
+      this.itemHeight = `${this.$refs[`${this._uid}-el-collapse-ref`].$parent
+        .$parent.$el.clientHeight - 2}px`;
       // console.info(this.$refs[`${this._uid}-el-collapse-ref`].$children);
       // this.$refs[`${this._uid}-el-collapse-ref`].$children[0].$el.style.height = 300;
     });
@@ -68,7 +73,20 @@ const BaseViewCollapse = {
             ...slotNode.data.attrs
           }
         },
-        [h('div', { style: { height: this.itemHeight } }, [slotNode])]
+        [
+          h(
+            'div',
+            {
+              style: {
+                height:
+                  _get(slotNode, 'data.attrs.height') === 'auto'
+                    ? 'auto'
+                    : this.itemHeight
+              }
+            },
+            [slotNode]
+          )
+        ]
       );
       collapseItemList.push(collapseItem);
     }

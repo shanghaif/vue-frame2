@@ -96,7 +96,8 @@ const BaseBlockGroup = {
         []
       );
       if (aChildrenList.length > this.isActive) {
-        !_isNil(aChildrenList[this.isActive]) && aChildrenList[this.isActive].click();
+        !_isNil(aChildrenList[this.isActive]) &&
+          aChildrenList[this.isActive].click();
       }
     },
     /**
@@ -114,7 +115,10 @@ const BaseBlockGroup = {
         for (let i = 0, len = this.buttonGroup.length; i < len; i++) {
           const option = this.buttonGroup[i];
           let icon = null;
-          if ((_has(option, 'icon') || _has(option, 'iconUrl')) && this.isShowIcon) {
+          if (
+            (_has(option, 'icon') || _has(option, 'iconUrl')) &&
+            this.isShowIcon
+          ) {
             icon = this.$createElement('i', {
               class: option.icon || option.iconUrl
             });
@@ -122,7 +126,11 @@ const BaseBlockGroup = {
           let vNode;
           if (_has(this.$scopedSlots, 'default')) {
             // 自定义节点的内容
-            vNode = this.$scopedSlots.default({ index: i, props: this.$props, menuOption: this.buttonGroup[i] });
+            vNode = this.$scopedSlots.default({
+              index: i,
+              props: this.$props,
+              menuOption: this.buttonGroup[i]
+            });
           } else {
             vNode = this.$createElement(
               'div',
@@ -131,7 +139,7 @@ const BaseBlockGroup = {
                   width: this.width,
                   height: this.height,
                   border: !this.border ? 'none' : true,
-                  marginLeft: (i === 0) ? '0px' : this.spaceVal,
+                  marginLeft: i === 0 ? '0px' : this.spaceVal,
                   'background-color':
                     this.backgroundColor && this.isActive !== i
                       ? this.backgroundColor

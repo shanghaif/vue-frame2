@@ -1,52 +1,82 @@
-@collapse-height: 48px;
+// @collapse-height: 48px;
 .base-nav-menu-box {
-  height: 100%;
-  box-sizing: border-box;
-  overflow-y: hidden;
   position: relative;
-  .base-nav-menu{
-    // height: 100%;
-    height: calc(100% - @collapse-height);
-    border-right: none;
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: hidden;
+  .base-nav-menu {
     box-sizing: border-box;
     overflow: auto;
+    // height: 100%;
+    // height: calc(100% - @collapse-height);
+    border-right: none;
     &:not(.el-menu--collapse) {
-      width: 210px;
+      width: 240px;
     }
+
+    /* .el-menu-item, .el-submenu__title{
+      height: 42px;
+      line-height: 42px;
+    }
+    .el-submenu__title{
+      &:hover{
+        > svg:first-child{
+          background-color: #fff;
+        }
+      }
+      > svg:first-child{
+        background-color:  rgba(232, 243, 255, 1);
+        width: 16px;
+        height: 16px;
+        border-radius: 100%;
+        // transform: scale(0.83);
+        color: #0080FF !important;
+        display: inline-block;
+        padding: 2px;
+        box-sizing: border-box;
+      }
+      > i:first-child::before{
+        font-size: 8px;
+        position: relative;
+        top: -6px;
+      }
+    } */
   }
   .collapse {
-    align-items: center;
-    cursor: pointer;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    height: @collapse-height;
+    align-items: center;
+    // height: @collapse-height;
     justify-content: flex-start;
-    font-size: 14px;
     width: 100%;
     padding-left: 10px;
-    box-sizing: border-box;
-    span{
+    font-size: 14px;
+    cursor: pointer;
+    span {
       font-size: 14px;
       color: rgb(191, 203, 217);
     }
     i {
-      padding: 0px 12px 0px 0px;
+      padding: 0 12px 0 0;
       font-size: 16px;
-      color: #909399;
+      color: rgb(144, 147, 153);
     }
   }
   .nav-top-title {
-    font-size: 14px;
-    height: 48px;
+    box-sizing: border-box;
+    width: 100%;
+    // height: 48px;
     padding-left: 20px;
-    span{
+    font-size: 14px;
+    span {
       color: rgb(191, 203, 217);
-      line-height: 48px;
+      // line-height: 48px;
     }
     i {
       padding: @menu-icon-text-padding;
-      color: #909399;
-      line-height: 48px;
+      color: rgb(144, 147, 153);
+      // line-height: 48px;
     }
   }
 }

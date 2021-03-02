@@ -13,11 +13,12 @@ export default {
   components: { BasicLayout },
   data() {
     return {
-      basicLayout: DEFAULT_SETTINGS
+      basicLayout: {
+        ...DEFAULT_SETTINGS,
+        isPadding: false
+      }
     };
   },
   methods: {}
 };
 </script>
-
-<style></style>

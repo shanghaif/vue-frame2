@@ -15,13 +15,19 @@ const index = [
         name: 'base-grid',
         path: 'base-grid',
         meta: { title: '基础-grid' },
-        component: () => import(/* webpackChunkName:"views/grid" */ '@bank_views/grid/index.vue')
+        component: () =>
+          import(
+            /* webpackChunkName:"views/grid" */ '@bank_views/grid/index.vue'
+          )
       },
       {
         name: 'roll-grid',
         path: 'roll-grid',
         meta: { title: '滚动-grid' },
-        component: () => import(/* webpackChunkName:"views/grid" */ '@bank_views/grid/roll-grid/index.vue')
+        component: () =>
+          import(
+            /* webpackChunkName:"views/grid" */ '@bank_views/grid/roll-grid/index.vue'
+          )
       }
     ]
   }

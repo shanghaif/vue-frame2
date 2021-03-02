@@ -51,13 +51,27 @@ const BaseGridPagination = {
       }
     }
   },
+  watch: {
+    currentPage(val, oldVal) {
+      this.curCurrentPage = val;
+    }
+  },
   data() {
-    return {};
+    return {
+      curCurrentPage: this.currentPage
+    };
   },
   created() {
     this.getBaseGrid.setPaginationEl(this);
   },
   methods: {
+    /**
+     * @desc 获取 el-pagination 组件
+     * @method
+     */
+    getEl() {
+      return this.$refs[`${this._uid}-base-grid-pagination`];
+    },
     /**
      * @desc 自定义内容，需要在 layout 中列出 slot
      * @method
@@ -102,7 +116,7 @@ const BaseGridPagination = {
      * @param {Number} page 页数
      */
     updateCurrentPage(page) {
-      this.currentPage = page;
+      this.curCurrentPage = page;
     },
     /**
      * @desc pageSize 改变时会触发
@@ -138,10 +152,11 @@ const BaseGridPagination = {
     return h(
       'el-pagination',
       {
+        ref: `${this._uid}-base-grid-pagination`,
         style,
         props: _assign({ layout: this.layout }, this.paginationAttributes, {
           total: this.total,
-          currentPage: this.currentPage,
+          currentPage: this.curCurrentPage,
           pageSize: this.pageSize
         }),
         on: {

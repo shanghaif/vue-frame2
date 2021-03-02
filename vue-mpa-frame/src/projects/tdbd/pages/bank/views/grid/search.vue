@@ -56,7 +56,7 @@ export default {
     };
   },
   created() {
-    this.getBaseGrid.$on('onChangeRowEvent', (row) => {
+    this.getBaseGrid.$on('onChangeRowEvent', row => {
       console.info('点击选中的行', row);
     });
   },
@@ -86,5 +86,6 @@ export default {
 </script>
 
 <style lang="less" module>
-.box {}
+.box {
+}
 </style>

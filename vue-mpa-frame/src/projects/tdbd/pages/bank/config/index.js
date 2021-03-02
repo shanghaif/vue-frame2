@@ -15,8 +15,11 @@ export const CONST_DEFAULT_CONFIG = {
 };
 // basic-layout.vue 配置
 export const DEFAULT_SETTINGS = {
-  title: 'Vue 多页面 bank', // 顶部栏目标题文字
-  iconfontUrl: () => { return require('@assets/images/logo.png'); }, // 顶部栏目图标
+  subtitle: 'Vue 多页面 bank',
+  title: 'mpa', // 顶部栏目标题文字
+  iconfontUrl: () => {
+    return require('@assets/images/logo.png');
+  }, // 顶部栏目图标
   collapsed: false, // 侧边菜单栏是否收缩
   titleClick(event) {
     // 顶部栏目标题文字-点击事件

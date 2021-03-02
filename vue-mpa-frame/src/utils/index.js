@@ -7,3 +7,4 @@ export * from './down.js';
 export * from './device.js';
 export * from './check.js';
 export * from './storage.js';
+export * from './tree.js';

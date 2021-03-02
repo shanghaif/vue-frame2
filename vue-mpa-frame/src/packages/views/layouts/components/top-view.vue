@@ -6,12 +6,19 @@
           $style.fullY,
           $style.logoBox,
           $style.flexCenter,
-          $style.pointer
+          $style.pointer,
+          ctCls.left
         ]"
         @click="titleClick"
       >
         <img :src="iconfontUrl()" alt="" />
-        {{ title }}
+        <div v-if="subtitle.length > 0">
+          <span>{{ subtitle }}</span>
+          <span v-if="title">{{ title }}</span>
+        </div>
+        <div v-else>
+          {{ title }}
+        </div>
       </div>
     </template>
     <template v-slot:middle> </template>
@@ -22,8 +29,10 @@
             size="mini"
             title="当前应用名称"
             :options="dropColumnDownOptions"
-            trigger="click"
+            trigger="hover"
+            :hide-on-click="true"
             @click="onDropColumnDownClick"
+            v-if="renderDropColumnDown"
           ></base-drop-column-down>
         </div>
         <div @click="onClickFullScreen" title="全屏" :class="$style.pointer">
@@ -34,7 +43,11 @@
             size="mini"
             :title="getUserData.userName"
             :options="options"
+            v-if="renderDropDown"
           ></base-drop-down>
+        </div>
+        <div v-if="renderLoginOut" :class="$style.logout" @click="onLoginout">
+          <i class="el-icon-switch-button"></i>
         </div>
       </div>
     </template>
@@ -49,13 +62,17 @@ import screenfull from 'screenfull';
 export default {
   name: 'TopView',
   props: {
-    // 顶部栏目标题文字
+    // 顶部栏目标题文字-副标题
     title: {
+      type: String
+    },
+    // 主标题
+    subtitle: {
       type: String
     },
     iconfontUrl: {
       type: Function,
-      default: function () {
+      default: function() {
         return require('@assets/images/logo.png');
       }
     },
@@ -66,6 +83,30 @@ export default {
     titleClick: {
       type: Function,
       default: () => {}
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          left: undefined
+        };
+      }
     }
   },
   computed: {
@@ -92,7 +133,7 @@ export default {
             list: [
               {
                 id: '1',
-                icon: 'el-icon-platform-eleme',
+                icon: 'symbol-icongd-gongyingxiaoshoulian',
                 label: '血缘关系图谱'
               },
               { id: '2', icon: 'el-icon-delete-solid', label: '事件关系图谱' },
@@ -103,8 +144,12 @@ export default {
           {
             title: '企业高质量评价',
             list: [
-              { id: '5', icon: 'el-icon-star-on', label: '评价任务' },
-              { id: '6', icon: 'el-icon-s-goods', label: '业务指导' },
+              {
+                id: '5',
+                icon: 'symbol-icongd-pingjiajieguo',
+                label: '评价任务'
+              },
+              { id: '6', icon: 'symbol-icongd-yewuzhidao', label: '业务指导' },
               { id: '7', icon: 'el-icon-warning', label: '进度管控' },
               { id: '8', icon: 'el-icon-error', label: '企业评价' },
               { id: '9', icon: 'el-icon-question', label: '评价结果' },
@@ -126,7 +171,11 @@ export default {
           {
             title: '数据管理',
             list: [
-              { id: '16', icon: 'el-icon-camera-solid', label: '数据管控大屏' },
+              {
+                id: '16',
+                icon: '/static/images/avatar.gif',
+                label: '数据管控大屏'
+              },
               { id: '17', icon: 'el-icon-s-platform', label: '数据管理中心' },
               { id: '18', icon: 'el-icon-s-fold', label: '企业标签' }
             ]
@@ -142,7 +191,11 @@ export default {
             list: [
               { id: '20', icon: 'el-icon-s-shop', label: '指数信息' },
               { id: '21', icon: 'el-icon-s-marketing', label: '指数指标信息' },
-              { id: '22', icon: 'el-icon-s-comment', label: '行业评估值信息' },
+              {
+                id: '22',
+                icon: '/static/images/lazy-test.jpg',
+                label: '行业评估值信息'
+              },
               {
                 id: '23',
                 icon: 'el-icon-s-opportunity',
@@ -192,6 +245,7 @@ export default {
         center: true,
         width: '350px',
         title: '提示',
+        isDestroy: true,
         slotNode: {
           footer: h => {
             return h('div', {}, [

@@ -22,14 +22,14 @@ function resolve(dir) {
 const webpackEntry = {};
 // 设置 alias 别名
 const alias = {};
-const setAlias = function () {
+const setAlias = function() {
   for (const name in frameConfig.useAlias) {
     alias[name] = resolve(frameConfig.useAlias[name]);
   }
 };
 setAlias();
 // mpa 自动载入
-const setMPA = function () {
+const setMPA = function() {
   const pages = {};
   const entryFiles = Glob.sync('./src/projects/*/pages/*/*.html');
   Object.keys(entryFiles).map(index => {
@@ -62,7 +62,7 @@ const setMPA = function () {
       const page = _get(babelCdnPages[n], 'page', '');
       const modules = _get(babelCdnPages[n], 'modules', []);
       if (page === filename && modules.length > 0) {
-        _forEach(modules, function (value, key) {
+        _forEach(modules, function(value, key) {
           _set(webpackEntry, value.name, value.js);
           babelCdnChunks.push(value.name);
         });
@@ -80,7 +80,11 @@ const setMPA = function () {
       entry: `./src/projects/${pageName}/pages/${filename}/main.js`,
       template: `./src/projects/${pageName}/pages/${filename}/index.html`,
       filename: `${filename}.html`,
-      title: _get(frameConfig, `pageHtmlOptions.${filename}.title`, frameConfig.sys_app_title),
+      title: _get(
+        frameConfig,
+        `pageHtmlOptions.${filename}.title`,
+        frameConfig.sys_app_title
+      ),
       favicon: path.join(__dirname, '../public/favicon.ico'),
       isRem: isRem,
       isUsedPr2Rem: isUsedPr2Rem,
@@ -93,21 +97,21 @@ const setMPA = function () {
       // 打包出的 chunks 中必须配置 filename 这个 chunk，和对象的 key 值匹配 ，否则启动页面会是空白
       chunks: isDev
         ? _concat(
-          ['chunk-vendors', 'chunk-common', `${filename}`],
-          babelCdnChunks
-        )
+            ['chunk-vendors', 'chunk-common', `${filename}`],
+            babelCdnChunks
+          )
         : _concat(
-          [
-            'vueBase',
-            'elementUi',
-            'chunk-default',
-            'otherDependencies',
-            'styles',
-            'chunk-components',
-            `${filename}`
-          ],
-          babelCdnChunks
-        )
+            [
+              'vueBase',
+              'elementUi',
+              'chunk-default',
+              'otherDependencies',
+              'styles',
+              'chunk-components',
+              `${filename}`
+            ],
+            babelCdnChunks
+          )
     };
   });
   return pages;

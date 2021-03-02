@@ -14,7 +14,7 @@ import _has from 'lodash/has';
  * @param {*} from
  * @param {*} next
  */
-const routerBeforeEachFunc = function (to, from, next) {
+const routerBeforeEachFunc = function(to, from, next) {
   NProgress.start();
   // 没有匹配到路由项则回退到 from 的路由
   if (_isEmpty(to.matched)) {
@@ -73,14 +73,16 @@ const routerBeforeEachFunc = function (to, from, next) {
     Promise.all([
       store.dispatch('platform/getDict'),
       store.dispatch('platform/setRouter')
-    ]).then(() => {
-      if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
-        router.push({ name: '404' });
-      }
-    }).finally(() => {
-      next();
-      NProgress.done();
-    });
+    ])
+      .then(() => {
+        if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
+          router.push({ name: '404' });
+        }
+      })
+      .finally(() => {
+        next();
+        NProgress.done();
+      });
     return;
   }
   // 已登录并且初始化完成，组装路由参数
@@ -105,8 +107,15 @@ const routerBeforeEachFunc = function (to, from, next) {
  * @param {*} from
  * @example window滚动条返回顶部、路由加载完成控制全局进度条
  */
-const routerAfterEachFunc = function (to, from) {
+const routerAfterEachFunc = function(to, from) {
   NProgress.done();
+  // 路由已经进入删除路由的打开类型
+  if (_has(to.meta, 'toType')) {
+    delete to.meta.toType;
+  }
+  if (_has(from.meta, 'toType')) {
+    delete from.meta.toType;
+  }
   // 进入新路由后，重置滚动条到顶部
   // 如果路由基本配置中已配置 'scrollBehavior' 则可以隐藏下面的代码
   /* if (document.body.scrollHeight > window.innerHeight) {
@@ -118,7 +127,7 @@ const routerAfterEachFunc = function (to, from) {
  * @desc 浏览器刷新
  * @example 在刷新时会执行到 router.onReady 可以处理把数据放入 localStorage 或 cookie 中的操作
  */
-const routerOnReady = function (to) {
+const routerOnReady = function(to) {
   // 判断 token 是否有效，无效直接打开登录页
   // if(){}
   // 刷新页面检测当前路由权限

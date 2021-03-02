@@ -15,8 +15,4 @@ const rollGridList = options => {
   }
   return builder({ results: result });
 };
-Mock.mock(
-  /\/mock\/roll\/grid/,
-  'get',
-  rollGridList
-); // 贷款需求管理列表
+Mock.mock(/\/mock\/roll\/grid/, 'get', rollGridList); // 贷款需求管理列表

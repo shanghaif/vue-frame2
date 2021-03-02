@@ -23,7 +23,8 @@
     <div class="vw-rem">
       <img src="../../assets/images/1234.png" alt="" />
       <img src="../../assets/images/wx.jpg" alt="" />
-      <img src="/static/images/123.jpg" alt="" /> <!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
+      <img src="/static/images/123.jpg" alt="" />
+      <!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
     </div>
   </div>
 </template>
@@ -63,7 +64,9 @@ export default {
         // 请求成功
         if (response.code === '0000' && 'token' in response.data) {
           // 设置通用请求头参数
-          this.$loaderApiLibrary.setHeaderOptions({ token: response.data.token });
+          this.$loaderApiLibrary.setHeaderOptions({
+            token: response.data.token
+          });
         }
       });
     },
@@ -84,7 +87,7 @@ export default {
       });
     },
     onAdd() {
-      this.$vBus.on('b', function (p) {
+      this.$vBus.on('b', function(p) {
         console.info('添加事件', p);
       });
     },
@@ -128,14 +131,14 @@ export default {
   height: 100px;
   border: 1px solid red;
 }
-.vw-rem img{
+.vw-rem img {
   width: 100px;
   height: 100px;
 }
-.a{
+.a {
   background-color: aliceblue;
 }
-.b{
+.b {
   font-size: 14px;
 }
 </style>

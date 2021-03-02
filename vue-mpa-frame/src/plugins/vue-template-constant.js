@@ -27,7 +27,9 @@ export default {
           if (Object.prototype.hasOwnProperty.call(constants, key)) {
             if (!REGEXP_CONSTANT.test(key)) {
               // 必须大写字母
-              error(`Constant '${key}' must use upper case letters and underscores`);
+              error(
+                `Constant '${key}' must use upper case letters and underscores`
+              );
               continue;
             }
             const frozen = deepFreeze(constants[key]);

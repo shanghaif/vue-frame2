@@ -53,7 +53,7 @@ const BaseGridTable = {
     // 默认选择第一行
     isSelectedFirstRow: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 第一次载入时是否自动刷新列表数据
     isReloadGrid: {
@@ -81,16 +81,52 @@ const BaseGridTable = {
     // 静态数据
     options: {
       type: Object
+    },
+    // 静态数据是否需要进行分页操作
+    isOptionsPage: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义当前分页参数 {page: 'page',size: 'size',total: 'data.total',data: 'data.records',pageNum: 'current',pageSize: 'size'}
+    pagingParams: {
+      type: Object
+    },
+    // 是否冻结下标列
+    isFixedIndex: {
+      type: Boolean,
+      default: false
+    },
+    // 是否冻结多选框列
+    isFixedSelection: {
+      type: Boolean,
+      default: false
+    },
+    // 插槽操作列配置
+    columnTool: {
+      type: Object,
+      default() {
+        return {
+          label: '操作'
+          // fixed: 'right'
+        };
+      }
+    },
+    // 序号是否连续性
+    isContinuityIndex: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     this.curQueryParams = {};
     // this.loading = null;
     this.currentRows = []; // 当前选中行集
+    this.unwatch = null; // 静态数据观察函数
     return {
       loading: false,
       currentRow: {}, // 当前选中行
-      tableData: []
+      tableData: [],
+      curApi: this.api
     };
   },
   computed: {
@@ -109,14 +145,18 @@ const BaseGridTable = {
       if (this.isSelectedFirstRow && !_isEmpty(val)) {
         setTimeout(() => {
           if (this.selectMode) {
-            this.$refs[`${this._uid}-base-table`].toggleRowSelection(
-              this.tableData[0]
-            );
+            if (!_isNil(this.$refs[`${this._uid}-base-table`])) {
+              this.$refs[`${this._uid}-base-table`].toggleRowSelection(
+                this.tableData[0]
+              );
+            }
           } else {
             this.currentRow = this.tableData[0];
-            this.$refs[`${this._uid}-base-table`].setCurrentRow(
-              this.tableData[0]
-            );
+            if (!_isNil(this.$refs[`${this._uid}-base-table`])) {
+              this.$refs[`${this._uid}-base-table`].setCurrentRow(
+                this.tableData[0]
+              );
+            }
           }
         }, 0);
       }
@@ -127,15 +167,62 @@ const BaseGridTable = {
       // 数据加载完成
       this.getBaseGrid.onLoadSuccess(val);
     },
-    // 监听静态数据源
-    options: {
-      handler: function (val, oldVal) {
-        if (!_isEmpty(val)) {
-          this.loadOptions();
+    api(val, oldVal) {
+      if (val !== this.curApi) {
+        this.curApi = val;
+        // setTimeout(() => {
+        //   this.getBaseGrid.reloadGrid();
+        // }, 0);
+      }
+    }
+  },
+  created() {
+    if (_has(this.getBaseGrid.$scopedSlots, 'columnTool')) {
+      this.columns.push({
+        ...this.columnTool,
+        slotNode: [
+          {
+            render: (h, row, column, index) => {
+              return this.getBaseGrid.$scopedSlots.columnTool(
+                row,
+                column,
+                index
+              );
+            }
+          }
+        ]
+      });
+    }
+    // 动态设置监听器-监听静态数据
+    const resultsField = _get(
+      this['$base-global-options'],
+      'grid.data',
+      'data.results'
+    );
+    if (_has(this.options, resultsField)) {
+      this.unwatch = this.$watch(`options.${resultsField}`, function(
+        newVal,
+        oldVal
+      ) {
+        console.log('resultsField ', newVal, oldVal);
+        const pageNumField = _get(
+          this['$base-global-options'],
+          'grid.pageNum',
+          'pageNum'
+        );
+        const pageNum = _get(this.options.data, pageNumField, 1);
+        if (pageNum !== 1) {
+          this.getBaseGrid.currentPage = pageNum; // 不是第一页
         }
-      },
-      deep: true,
-      immediate: true
+        this.$nextTick(this.loadOptions);
+      });
+    } else {
+      this.$watch('options', function(newVal, oldVal) {
+        this.loadOptions();
+      });
+    }
+    if (_get(this.options, resultsField, []).length > 0) {
+      this.loadOptions(); // 初始加载数据
     }
   },
   mounted() {
@@ -148,6 +235,23 @@ const BaseGridTable = {
       this.init();
     }
     this.getBaseGrid.setTableEl(this);
+    const resultsField = _get(
+      this['$base-global-options'],
+      'grid.data',
+      'data.results'
+    );
+    if (
+      !_isEmpty(this.options) &&
+      _get(this.options, resultsField, []).length > 0
+    ) {
+      this.loading = true;
+    }
+  },
+  beforeDestroy() {
+    if (!_isNil(this.unwatch)) {
+      this.unwatch(); // 之后取消观察
+      this.unwatch = null;
+    }
   },
   methods: {
     /**
@@ -204,25 +308,43 @@ const BaseGridTable = {
      * @method
      */
     loadData() {
-      if (!this.api) {
+      if (!this.curApi) {
         return;
       }
       // this.loadMask();
       !this.loading && (this.loading = true);
-      const params = _assign(
-        {},
-        {
-          [_get(this['$base-global-options'], 'grid.pageNum', 'pageNum')]: this
-            .getBaseGrid.currentPage,
-          [_get(
-            this['$base-global-options'],
-            'grid.pageSize',
-            'pageSize'
-          )]: this.getBaseGrid.pageSize
-        },
-        _omit(this.queryParams, ['data', 'headers']),
-        _omit(this.curQueryParams, ['data', 'headers'])
-      );
+      let params = null;
+      if (!_isNil(this.pagingParams)) {
+        params = _assign(
+          {},
+          {
+            [_get(this.pagingParams, 'pageNum', 'pageNum')]: this.getBaseGrid
+              .currentPage,
+            [_get(this.pagingParams, 'pageSize', 'pageSize')]: this.getBaseGrid
+              .pageSize
+          },
+          _omit(this.queryParams, ['data', 'headers']),
+          _omit(this.curQueryParams, ['data', 'headers'])
+        );
+      } else {
+        params = _assign(
+          {},
+          {
+            [_get(
+              this['$base-global-options'],
+              'grid.pageNum',
+              'pageNum'
+            )]: this.getBaseGrid.currentPage,
+            [_get(
+              this['$base-global-options'],
+              'grid.pageSize',
+              'pageSize'
+            )]: this.getBaseGrid.pageSize
+          },
+          _omit(this.queryParams, ['data', 'headers']),
+          _omit(this.curQueryParams, ['data', 'headers'])
+        );
+      }
       const data = _get(
         _assign(
           {},
@@ -241,20 +363,28 @@ const BaseGridTable = {
         'headers',
         {}
       );
-      this.$api[this.api]({ params, data, headers })
+      this.$api[this.curApi]({ params, data, headers })
         .then(response => {
-          this.getBaseGrid.setTotal(
-            _get(
+          let data = null;
+          if (!_isNil(this.pagingParams)) {
+            this.getBaseGrid.setTotal(
+              _get(response, _get(this.pagingParams, 'total', ''), 0)
+            );
+            data = _get(response, _get(this.pagingParams, 'data', ''), []);
+          } else {
+            this.getBaseGrid.setTotal(
+              _get(
+                response,
+                _get(this['$base-global-options'], 'grid.total', ''),
+                0
+              )
+            );
+            data = _get(
               response,
-              _get(this['$base-global-options'], 'grid.total', ''),
-              0
-            )
-          );
-          const data = _get(
-            response,
-            _get(this['$base-global-options'], 'grid.data', ''),
-            []
-          );
+              _get(this['$base-global-options'], 'grid.data', ''),
+              []
+            );
+          }
           this.tableData = _isNil(this.loadFilter)
             ? data
             : this.loadFilter(data);
@@ -275,15 +405,63 @@ const BaseGridTable = {
       const response = _isNil(this.loadFilter)
         ? this.options
         : this.loadFilter(this.options);
-      this.getBaseGrid.setTotal(
-        _get(response, _get(this['$base-global-options'], 'grid.total', ''), 0)
-      );
-      const data = _get(
-        response,
-        _get(this['$base-global-options'], 'grid.data', ''),
-        []
-      );
+      let data = null;
+      if (!_isNil(this.pagingParams)) {
+        this.getBaseGrid.setTotal(
+          _get(response, _get(this.pagingParams, 'total', ''), 0)
+        );
+        data = _get(response, _get(this.pagingParams, 'data', ''), []);
+      } else {
+        if (this.isOptionsPage) {
+          const resultsField = _get(
+            this['$base-global-options'],
+            'grid.data',
+            'data.results'
+          );
+          const totalField = _get(
+            this['$base-global-options'],
+            'grid.total',
+            ''
+          );
+          const currentPage = this.getBaseGrid.currentPage;
+          let pageSize = this.getBaseGrid.pageSize;
+          const totalNum = _get(response, totalField, 0);
+          if (pageSize === 0 && totalNum !== 0) {
+            pageSize = totalNum;
+          }
+          // 静态数据分页
+          this.getBaseGrid.setTotal(totalNum);
+          data = this.paginationHandle(
+            currentPage,
+            pageSize,
+            _get(response, resultsField, [])
+          );
+        } else {
+          data = _get(
+            response,
+            _get(this['$base-global-options'], 'grid.data', ''),
+            []
+          );
+        }
+      }
       this.tableData = data;
+      this.$nextTick(() => {
+        if (!_isEmpty(this.tableData)) {
+          this.loading = false;
+        }
+      });
+    },
+    /**
+     * @desc 数组分页-静态数据
+     * @param {Number} pageNo - 当前页
+     * @param {Number} pageSize - 一页显示多少条数据
+     * @param {Array} array - 数据
+     */
+    paginationHandle(pageNo, pageSize, array) {
+      const offset = (pageNo - 1) * pageSize;
+      return offset + pageSize >= array.length
+        ? array.slice(offset, array.length)
+        : array.slice(offset, offset + pageSize);
     },
     /**
      * @desc 设置查询参数
@@ -327,7 +505,7 @@ const BaseGridTable = {
         return;
       }
       const selectRows = _filter(this.tableData, item => {
-        return _some(rows, function (row) {
+        return _some(rows, function(row) {
           return item[row.field || 'id'] === row.value;
         });
       });
@@ -429,17 +607,21 @@ const BaseGridTable = {
       return this.currentRows;
     },
     // 构建列 el-table-column
-    tableColumnNodes() {
-      return _map(this.columns, elem => {
+    tableColumnNodes(column) {
+      return _map(column || this.columns, elem => {
+        if (_has(elem, 'hide') && elem.hide) {
+          return this.$createElement(); // 列的隐藏
+        }
         let filterMethod = null;
         let columnKey = null;
+        const h = this.$createElement;
         if (_has(elem, 'filters') && _has(elem, 'filter-method')) {
-          filterMethod = function (value, row, column) {
+          filterMethod = function(value, row, column) {
             return elem['filter-method'](value, row, column);
           };
         }
         if (_has(elem, 'filters') && !_has(elem, 'filter-method')) {
-          filterMethod = function (value, row, column) {
+          filterMethod = function(value, row, column) {
             const property = column.property;
             return row[property] === value;
           };
@@ -447,95 +629,146 @@ const BaseGridTable = {
         if (filterMethod != null) {
           columnKey = elem.name;
         }
-        return this.$createElement('el-table-column', {
-          props: _assign({}, _omit(elem, ['render', 'renderHeader', 'unit']), {
-            'filter-method': filterMethod,
-            columnKey: columnKey
-          }),
-          scopedSlots: {
-            default: ({ row, column, $index }) => {
-              // 自定义列的内容
-              if (_has(elem, 'render')) {
-                let columnValue = row[column.property];
-                if (_has(elem, 'filter')) {
-                  const dict = _find(this.$dict.get(elem.filter), item => {
-                    return (
-                      item.paramValue === row[column.property] ||
-                      item.paramValue === `${row[column.property]}`
-                    );
-                  });
-                  if (dict) {
-                    columnValue = `${dict.paramDesc}${_get(elem, 'unit', '')}`;
-                  }
-                }
-                return elem.render(
-                  this.$createElement,
-                  row,
-                  column,
-                  $index,
-                  columnValue
-                );
-              } else if (_has(elem, 'slotNode')) {
-                return _map(elem.slotNode, ({ render }) => {
-                  return render(this.$createElement, row, column, $index);
-                });
-              } else if (_has(elem, 'buttons')) {
-                // 配置项
-                const buttonNodes = [];
-                for (let i = 0, len = elem.buttons.length; i < len; i++) {
-                  const button = elem.buttons[i];
-                  if (_has(button, 'render')) {
-                    buttonNodes.push(
-                      button.render(this.$createElement, row, column, $index)
-                    );
-                  } else {
-                    let name = _get(button, 'el', 'base-label');
-                    if (!_includes(name, 'base')) {
-                      name = `base-${name}`;
-                    }
-                    const node = this.$createElement(name, {
-                      attrs: button.props,
-                      class: button.class,
-                      style: button.style,
-                      props: button.props,
-                      on: {
-                        click: () => {
-                          button.on.click(row, column, $index);
-                        }
-                      }
-                    });
-                    buttonNodes.push(node);
-                  }
-                }
-                return buttonNodes;
-              } else {
-                if (_has(elem, 'filter')) {
-                  const dict = _find(this.$dict.get(elem.filter), item => {
-                    return (
-                      item.paramValue === row[column.property] ||
-                      item.paramValue === `${row[column.property]}`
-                    );
-                  });
-                  if (dict) {
-                    return `${dict.paramDesc}${_get(elem, 'unit', '')}`;
-                  }
-                }
-                if (_isNil(row[column.property])) {
-                  return '';
-                }
-                return `${row[column.property]}${_get(elem, 'unit', '')}`;
+        // 多表头
+        const aMoreHeaderVNodeList = [];
+        if (_has(elem, 'children')) {
+          for (let n = 0, len = elem.children.length; n < len; n++) {
+            const children = elem.children[n];
+            const header = this.tableColumnNodes([children]); // 再次调用 `tableColumnNodes()` 方法构建出列
+            // const header = h('el-table-column', { props: children });
+            aMoreHeaderVNodeList.push(header);
+          }
+        }
+        return this.$createElement(
+          'el-table-column',
+          {
+            props: _assign(
+              {},
+              _omit(elem, ['render', 'renderHeader', 'unit']),
+              {
+                'filter-method': filterMethod,
+                columnKey: columnKey
               }
-            },
-            header: ({ column, $index }) => {
-              // 自定义表头的内容 不能和属性 `render-header`一起使用否则起效的是`render-header`
-              if (_has(elem, 'renderHeader')) {
-                return elem.renderHeader(this.$createElement, column, $index);
-              } else {
-                return column.label;
+            ),
+            scopedSlots: {
+              default: ({ row, column, $index }) => {
+                // 自定义列的内容
+                if (_has(elem, 'render')) {
+                  let columnValue = row[column.property];
+                  if (_has(elem, 'filter')) {
+                    const dict = _find(this.$dict.get(elem.filter), item => {
+                      return (
+                        item.paramValue === row[column.property] ||
+                        item.paramValue === `${row[column.property]}`
+                      );
+                    });
+                    if (dict) {
+                      columnValue = `${dict.paramDesc}${_get(
+                        elem,
+                        'unit',
+                        ''
+                      )}`;
+                    }
+                  }
+                  if (_isNil(elem.showValue) || elem.showValue) {
+                    return elem.render(
+                      this.$createElement,
+                      row,
+                      column,
+                      $index,
+                      columnValue
+                    );
+                  } else if (!_isNil(elem.showValue) && !elem.showValue) {
+                    // 不显示列的值，但列存在 区别于 hide 属性
+                    return undefined;
+                  }
+                } else if (_has(elem, 'slotNode')) {
+                  if (_isNil(elem.showValue) || elem.showValue) {
+                    return _map(elem.slotNode, ({ render }) => {
+                      return render(this.$createElement, row, column, $index);
+                    });
+                  } else if (!_isNil(elem.showValue) && !elem.showValue) {
+                    return undefined;
+                  }
+                } else if (_has(elem, 'buttons')) {
+                  // 配置项
+                  if (_isNil(elem.showValue) || elem.showValue) {
+                    const buttonNodes = [];
+                    for (let i = 0, len = elem.buttons.length; i < len; i++) {
+                      const button = elem.buttons[i];
+                      if (_has(button, 'render')) {
+                        buttonNodes.push(
+                          button.render(
+                            this.$createElement,
+                            row,
+                            column,
+                            $index
+                          )
+                        );
+                      } else {
+                        let name = _get(button, 'el', 'base-label');
+                        if (!_includes(name, 'base')) {
+                          name = `base-${name}`;
+                        }
+                        const node = this.$createElement(name, {
+                          attrs: button.props,
+                          class: button.class,
+                          style: button.style,
+                          props: button.props,
+                          on: {
+                            click: () => {
+                              button.on.click(row, column, $index);
+                            }
+                          }
+                        });
+                        buttonNodes.push(node);
+                      }
+                    }
+                    return buttonNodes;
+                  } else if (!_isNil(elem.showValue) && !elem.showValue) {
+                    return undefined;
+                  }
+                } else {
+                  if (_has(elem, 'filter')) {
+                    const dict = _find(this.$dict.get(elem.filter), item => {
+                      return (
+                        item.paramValue === row[column.property] ||
+                        item.paramValue === `${row[column.property]}`
+                      );
+                    });
+                    if (dict) {
+                      if (_isNil(elem.showValue) || elem.showValue) {
+                        return `${dict.paramDesc}${_get(elem, 'unit', '')}`;
+                      } else {
+                        return undefined;
+                      }
+                    }
+                  }
+                  if (_isNil(row[column.property])) {
+                    return '';
+                  }
+                  if (_isNil(elem.showValue) || elem.showValue) {
+                    return `${row[column.property]}${_get(elem, 'unit', '')}`;
+                  } else if (!_isNil(elem.showValue) && !elem.showValue) {
+                    // 不显示列的值，但列存在 区别于 hide 属性
+                    return undefined;
+                  }
+                }
+              },
+              header: ({ column, $index }) => {
+                // 自定义表头的内容 不能和属性 `render-header`一起使用否则起效的是`render-header`
+                if (_has(elem, 'renderHeader')) {
+                  return elem.renderHeader(this.$createElement, column, $index);
+                } else {
+                  return column.label;
+                }
               }
             }
-          }
-        });
+          },
+          [
+            h('template', { slot: 'default' }, aMoreHeaderVNodeList) // 多表头的插槽
+          ]
+        );
       });
     },
     // Table Slot
@@ -544,21 +777,47 @@ const BaseGridTable = {
         ? [this.$props.slotNode.append(this.$createElement)]
         : [];
     },
+    // Table Empty
+    appendEmptyNode() {
+      if (!_has(this.getBaseGrid.$slots, 'empty')) {
+        return [];
+      }
+      return this.getBaseGrid.$slots.empty;
+    },
     // 多选 el-table-column
     multipleSelectNode() {
       return this.selectMode
         ? this.$createElement('el-table-column', {
-          props: { type: 'selection', width: '50px' }
-        })
+            props: {
+              type: 'selection',
+              width: '50px',
+              fixed: this.isFixedSelection
+            }
+          })
         : [];
     },
     // 下标列
     indexColumn() {
       return this.isShowIndex
         ? this.$createElement('el-table-column', {
-          props: { type: 'index', width: '50px', label: this.indexLabel }
-        })
+            props: {
+              type: 'index',
+              width: '50px',
+              label: this.indexLabel,
+              fixed: this.isFixedIndex,
+              index: this.isContinuityIndex
+                ? this.createContinuityIndex
+                : undefined
+            }
+          })
         : [];
+    },
+    // 生成连续性的index
+    createContinuityIndex(index) {
+      return (
+        (this.getBaseGrid.currentPage - 1) * this.getBaseGrid.pageSize +
+        (index + 1)
+      );
     }
   },
   render(h) {
@@ -568,7 +827,7 @@ const BaseGridTable = {
         ref: `${this._uid}-base-table`,
         class: _get(this.$props, 'ctCls', {}),
         props: _assign({ border: true }, this.tableAttributes, {
-          height: '100%', // 实现固定表头的表格，数据可滚动
+          height: _get(this.tableAttributes, 'height', '100%'), // 实现固定表头的表格，数据可滚动
           highlightCurrentRow: this._highlightCurrentRow,
           data: this.tableData
         }),
@@ -594,10 +853,11 @@ const BaseGridTable = {
         ]
       },
       [
-        this.indexColumn(),
         this.multipleSelectNode(),
+        this.indexColumn(),
         this.tableColumnNodes(),
-        h('template', { slot: 'append' }, this.appendNode())
+        h('template', { slot: 'append' }, this.appendNode()),
+        h('template', { slot: 'empty' }, this.appendEmptyNode())
       ]
     );
   }

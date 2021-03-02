@@ -37,7 +37,7 @@ const BasePermissionBox = {
     // 监听路由变化
     this.$watch(
       '$route',
-      function (val, oldVal) {
+      function(val, oldVal) {
         const index = _findLastIndex(val.matched, item => {
           return _has(item, 'meta.buttons');
         });
@@ -55,7 +55,10 @@ const BasePermissionBox = {
       this.code &&
       this.buttons.length > 0
     ) {
-      const index = _findIndex(this.buttons, btn => _get(btn, 'code', btn.href) === this.code);
+      const index = _findIndex(
+        this.buttons,
+        btn => _get(btn, 'code', btn.href) === this.code
+      );
       if (index === -1) {
         return h();
       }

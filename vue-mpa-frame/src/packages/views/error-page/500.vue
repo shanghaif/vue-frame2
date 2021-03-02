@@ -2,7 +2,7 @@
   <div>
     对不起，服务出现异常，点击返回主页
     <el-button type="primary" @click="onToHome">
-        Back Home
+      Back Home
     </el-button>
   </div>
 </template>

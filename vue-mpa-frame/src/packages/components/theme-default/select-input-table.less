@@ -1,0 +1,28 @@
+/* 下拉搜索 table 不分页组件 */
+.base-select-input-table {
+  position: relative;
+  .el-input__prefix {
+    right: 0;
+    left: auto;
+    display: flex; // 加载中的icon小图标垂直水平居中
+    align-items: center;
+    justify-content: center;
+    padding-right: 10px;
+  }
+  .el-select__tags {
+    > span:first-child {
+      display: block;
+    }
+  }
+}
+.base-select-input-table_loading {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  margin-top: -50%;
+  margin-left: -50%;
+  overflow: hidden;
+  // z-index: -1;
+}

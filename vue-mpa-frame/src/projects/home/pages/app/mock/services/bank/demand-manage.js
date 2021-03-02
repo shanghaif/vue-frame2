@@ -29,7 +29,7 @@ const bankProductsList = options => {
     '西安赛富乐斯半导体科技有限公司'
   ];
   if (key.length > 0) {
-    aFundCodeUserNameList = _filter(aFundCodeUserNameList, function (item) {
+    aFundCodeUserNameList = _filter(aFundCodeUserNameList, function(item) {
       return _includes(item, key);
     });
     totalRecord = 200; // 修改下总数量

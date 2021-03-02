@@ -18,7 +18,8 @@ const routerObject = {
     target: '_blank|_self|_top|_parent',
     keepAlive: true,
     isOpen: true,
-    approve: true
+    approve: true,
+    toType: 'menu'
   }
 }
 
@@ -46,6 +47,7 @@ const routerObject = {
 | buttons              | 路由页面对应的权限按钮 | Array | -  |
 | isOpen              | 路由是否可访问，通常这是和菜单动态匹配后得到的结果（由 approve 进行控制，不要手动） | Boolean | -  |
 | approve              | 控制路由是否需要进行菜单的匹配来得到isOpen（设置 approve: true 后页面没有权限刷新浏览器也可以访问） | Boolean | -  |
+| toType               | 标识路由是从哪里点击打开的，可选值 menu 从菜单打开          | string  | menu      |
 
 > 路由自定义 `Icon` 请引入自定义 `svg` Icon 文件，然后传递给路由的 `meta.icon` 参数即可
 

@@ -7,7 +7,3 @@ export default {
   name: 'BaseUserComponent' // name 属性用于注册全局组件的名称
 };
 </script>
-
-<style>
-
-</style>

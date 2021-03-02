@@ -1,8 +1,15 @@
 /**
  * @desc 下拉树面板
  */
- .base-select-tree {
+.base-select-tree {
   position: relative;
+  .el-select {
+    overflow: hidden;
+    .el-select__tags {
+      max-height: 150px;
+      overflow: auto;
+    }
+  }
 }
 .base-select-tree-down-empty + div {
   border-bottom-color: transparent !important;
@@ -16,19 +23,11 @@
 .base-el-popover {
   max-height: 400px;
   overflow: hidden;
-  .base-tree-el-scrollbar{
+  .base-tree-el-scrollbar {
     max-height: 400px;
     overflow: hidden !important;
-    .el-scrollbar__wrap{
+    .el-scrollbar__wrap {
       max-height: 400px;
     }
-  }
-}
-.select-tree-panel {
-  .el-tree-node__label {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    word-break: break-all;
   }
 }

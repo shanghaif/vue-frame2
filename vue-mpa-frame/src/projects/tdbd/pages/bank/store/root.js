@@ -47,7 +47,7 @@ const actions = {
   // 获取子级菜单
   getChildrenMenus({ commit, state }, { id, menuCode, menuName, menus }) {
     return new Promise((resolve, reject) => {
-      const menu = _find(menus, function (value, index) {
+      const menu = _find(menus, function(value, index) {
         return value.id === id;
       });
       if (_has(menu, 'children') && menu.children.length > 0) {

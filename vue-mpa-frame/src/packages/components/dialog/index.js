@@ -27,10 +27,19 @@ import _concat from 'lodash/concat';
  * }
  */
 
-const BaseDialog = function (options = {}) {
+const BaseDialog = function(options = {}) {
   const that = this;
   const optionsKey = _keys(options);
   const VueModal = Vue.extend({
+    provide: function() {
+      return {
+        getBaseDialog: () => {
+          return this;
+        }
+      };
+    },
+    router: that.$router,
+    store: that.$store,
     props: optionsKey,
     render(h) {
       let customClass = 'base-el-dialog';
@@ -118,7 +127,6 @@ const BaseDialog = function (options = {}) {
       };
     },
     created() {
-      this.$store = that.$store;
       this.$nextTick(() => {
         document.body.appendChild(instance.$mount().$el);
       });
@@ -162,7 +170,7 @@ const BaseDialog = function (options = {}) {
             that.$createElement(
               'el-button',
               {
-                props: _get(option, 'props', function () {
+                props: _get(option, 'props', function() {
                   return {};
                 })(),
                 on: option.on
@@ -173,9 +181,9 @@ const BaseDialog = function (options = {}) {
         }
         return _has(this.$props, 'slotNode.footer')
           ? _concat(
-            [this.$props.slotNode.footer(this.$createElement)],
-            buttonsVNode
-          )
+              [this.$props.slotNode.footer(this.$createElement)],
+              buttonsVNode
+            )
           : _concat([], buttonsVNode);
       }
     }

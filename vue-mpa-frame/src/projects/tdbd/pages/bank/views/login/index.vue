@@ -28,16 +28,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      'platform/handleLogin'
-    ]),
+    ...mapActions(['platform/handleLogin']),
     onSubmit(event) {
-      this['platform/handleLogin']({ userName: this.form.name, password: this.form.pswd }).then(resData => {
-        this.$router.push({ path: '/' });
-      }).catch(error => {
-        console.info(error);
-        this.$notify({ type: 'danger', message: error || '登录失败' });
-      });
+      this['platform/handleLogin']({
+        userName: this.form.name,
+        password: this.form.pswd
+      })
+        .then(resData => {
+          this.$router.push({ path: '/' });
+        })
+        .catch(error => {
+          console.info(error);
+          this.$notify({ type: 'danger', message: error || '登录失败' });
+        });
     }
   }
 };
@@ -48,9 +51,9 @@ export default {
   height: 100%;
 }
 .login-box {
-  width: 500px;
-  margin: 0 auto;
   position: relative;
   top: 100px;
+  width: 500px;
+  margin: 0 auto;
 }
 </style>

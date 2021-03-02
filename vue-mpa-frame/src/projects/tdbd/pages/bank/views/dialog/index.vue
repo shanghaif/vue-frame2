@@ -10,8 +10,7 @@
 import Detail from './detail.vue';
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     this.desc = '自定义弹出框控件';
     this.dialogInstance = null;
@@ -60,5 +59,3 @@ export default {
   }
 };
 </script>
-
-<style></style>

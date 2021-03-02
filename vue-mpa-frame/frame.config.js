@@ -46,7 +46,9 @@ module.exports = {
     _join: ['lodash', 'join'],
     _last: ['lodash', 'last'],
     _find: ['lodash', 'find'],
-    _keys: ['lodash', 'keys']
+    _keys: ['lodash', 'keys'],
+    _filter: ['lodash', 'filter'],
+    _cloneDeep: ['lodash', 'cloneDeep']
   }, // 提供全局的变量
   // 抽离库不打包到构建文件中减小构建包体积，但要通过 script 标签在外部引入（单页 html-webpack-externals-plugin,多页 html-webpack-tags-plugin）
   externals: {
@@ -71,7 +73,9 @@ module.exports = {
     '@projects': 'src/projects',
     '@packages': 'src/packages',
     '@directives': 'src/directives',
+    '@bank': 'src/projects/tdbd/pages/bank',
     '@bank_views': 'src/projects/tdbd/pages/bank/views',
+    '@app': 'src/projects/home/pages/app',
     '@app_views': 'src/projects/home/pages/app/views'
   },
   // 指定的依赖库不会被 splitChunks 分割到 otherDependencies 缓存组内

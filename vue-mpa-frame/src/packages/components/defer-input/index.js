@@ -27,7 +27,7 @@ const BaseDeferInput = {
     resize: {
       type: String,
       default: 'both',
-      validator: function (value) {
+      validator: function(value) {
         return _includes(['none', 'both', 'horizontal', 'vertical'], value);
       }
     },
@@ -58,7 +58,7 @@ const BaseDeferInput = {
     slotType: {
       type: String,
       default: 'prepend',
-      validator: function (value) {
+      validator: function(value) {
         return _includes(['prefix', 'suffix', 'prepend', 'append'], value);
       }
     },
@@ -80,6 +80,11 @@ const BaseDeferInput = {
       default: 40
     },
     clearable: {
+      type: Boolean,
+      default: true
+    },
+    // 展示限制字数
+    showLimit: {
       type: Boolean,
       default: true
     }
@@ -205,7 +210,7 @@ const BaseDeferInput = {
      */
     _createChildSlotElement(h) {
       const nodes = [];
-      const appendSlotNode = function (b) {
+      const appendSlotNode = function(b) {
         for (const key in b) {
           const elem = b[key];
           nodes.push(
@@ -222,7 +227,7 @@ const BaseDeferInput = {
           )
         } */
       };
-      const appendSlot = function (b) {
+      const appendSlot = function(b) {
         for (const key in b) {
           const vNode = b[key];
           nodes.push(h('template', { slot: key }, vNode));
@@ -277,7 +282,7 @@ const BaseDeferInput = {
         },
         props: _assign(
           {},
-          { 'show-word-limit': true, clearable: this.clearable },
+          { 'show-word-limit': this.showLimit, clearable: this.clearable },
           this.$attrs,
           {
             type: this.type,

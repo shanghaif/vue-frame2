@@ -3,22 +3,30 @@
   .icon-placeolder {
     font-size: 12px;
   }
+  .clear-icon {
+    cursor: pointer;
+  }
 }
-.base-icon-picker-popper{
+.base-icon-picker-popper {
+  max-height: 365px;
+  overflow: auto;
   cursor: pointer;
   .icon-tab-outer {
     // width: 200px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    i {
+    svg {
       margin: 10px;
       cursor: pointer;
       &.active,
       &:hover {
-        color: #409eff;
+        color: rgb(64, 158, 255);
       }
     }
   }
-
+  .font-icon {
+    display: inline-block;
+    padding: 10px;
+  }
 }

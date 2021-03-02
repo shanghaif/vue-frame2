@@ -2,7 +2,7 @@
   <div>
     对不起，你没有访问该页面的权限，点击返回主页
     <el-button type="primary" @click="onToHome">
-        Back Home
+      Back Home
     </el-button>
   </div>
 </template>

@@ -1,14 +1,13 @@
 /**
  * @desc 这个网站的 store
  */
-import router from '../../../router/index.js';
+import router from '@bank/router/index.js';
 import _has from 'lodash/has';
 import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
 import _set from 'lodash/set';
-// import { session } from 'good-storage';
-// import { sStorageKey, isClearCache } from '../../../store/index.js';
+import { sStorageKey, isClearCache } from '@bank/store/index.js';
 
 const state = {
   data: {}, // 用户信息
@@ -21,7 +20,9 @@ const state = {
   // 角色对应的菜单
   roleMenus: {},
   // 系统用户访问令牌
-  token: ''
+  token: '',
+  // 刷新 token
+  refreshToken: ''
 };
 const getters = {
   getData: state => {
@@ -38,6 +39,9 @@ const getters = {
   },
   getMenus: state => {
     return state.roleMenus;
+  },
+  getRefreshToken: state => {
+    return state.refreshToken;
   }
 };
 const actions = {
@@ -48,6 +52,10 @@ const actions = {
   // 设置通用请求头参数
   setApiHeaderParams({ commit, state }, { token }) {
     Vue.prototype.$loaderApiLibrary.setHeaderOptions({ token });
+  },
+  // 更新用户信息
+  updateData({ commit, state }, resData) {
+    commit('UPDATE_DATA', resData.data);
   },
   // 登出
   handle_exit({ commit, state }) {
@@ -66,8 +74,14 @@ const actions = {
   fetchMenus({ commit, state }) {
     return new Promise((resolve, reject) => {
       Vue.prototype.$api['common/getMenus']().then(resData => {
+        if (
+          resData.code !== Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+        ) {
+          resolve();
+          return;
+        }
         // resData = resData.data;
-        const handlerMate = function (item) {
+        const handlerMate = function(item) {
           item.menuCode = _get(item, 'href', item.menuCode);
           item.menuName = _get(item, 'name', item.menuName);
           item.menuUrl = _get(item, 'href', item.menuUrl);
@@ -76,7 +90,7 @@ const actions = {
           item.childMenus = _get(item, 'children', []).length;
           item.target = _get(item, 'hrefType', 'in');
         };
-        const handlerWhile = function (data) {
+        const handlerWhile = function(data) {
           for (let i = 0, len = data.length; i < len; i++) {
             handlerMate(data[i]);
             if (_has(data[i], 'children') && !_isEmpty(data[i].children)) {
@@ -108,7 +122,7 @@ const actions = {
       return;
     }
     const routes = router.options.routes;
-    const checkChildren = function (oRouter, aMenusList) {
+    const checkChildren = function(oRouter, aMenusList) {
       for (const value of Object.values(oRouter)) {
         const oMenu = _find(aMenusList, menu => menu.menuCode === value.name);
         if (_has(value, 'children') && !_isEmpty(value.children)) {
@@ -122,12 +136,12 @@ const actions = {
         }
       }
     };
-    const setRouterMeta = function (router, oMenu) {
+    const setRouterMeta = function(router, oMenu) {
       !_isNil(oMenu) && !_has(oMenu, 'meta') && (oMenu.meta = {});
       if (_isNil(oMenu) && !_has(router, 'meta.approve')) {
         _set(router.meta, 'isOpen', false); // 路由权限，false 不能打开对应的页面
         // 如果父节点是 false，那么对应的所有子节点都应该是 false
-        const doWhileFn = function (item) {
+        const doWhileFn = function(item) {
           for (let i = 0, len = item.length; i < len; i++) {
             _set(item[i], 'meta.isOpen', false);
             if (_has(item[i], 'children') && item[i].children.length > 0) {
@@ -152,12 +166,18 @@ const actions = {
           []
         ); */
         let menuModels = state.roleMenus.models;
-        const router2Menus = _find(state.roleMenus.models, model => model.menuCode === value.name);
+        const router2Menus = _find(
+          state.roleMenus.models,
+          model => model.menuCode === value.name
+        );
         if (!_isNil(router2Menus)) {
           menuModels = _get(router2Menus, 'children', []);
         }
         for (const elem of value.children.values()) {
-          const itemMenu = _find(menuModels, model => model.menuCode === elem.name);
+          const itemMenu = _find(
+            menuModels,
+            model => model.menuCode === elem.name
+          );
           itemMenu && menu2Children.push(itemMenu);
         }
         checkChildren(value.children, menu2Children);
@@ -171,7 +191,9 @@ const actions = {
     // 载入本包中的字典
     const p1 = Vue.prototype.$dict.import(import('../../data-dict/index.js'));
     // 载入远程字典
-    const p2 = Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
+    const p2 = Vue.prototype.$dict.import(
+      Vue.prototype.$api['dict/getDictDataByTypeList']()
+    );
     return Promise.all([p1, p2]);
     // Vue.prototype.$dict.import(Vue.prototype.$api['dict/getDictDataByTypeList']());
   }
@@ -180,6 +202,7 @@ const GENERATE_STATE = 'GENERATE_STATE';
 const GENERATE_ROLE_MENUS = 'GENERATE_ROLE_MENUS';
 const SET_TOKEN = 'SET_TOKEN';
 const HANDLE_EXIT = 'HANDLE_EXIT';
+const UPDATE_DATA = 'UPDATE_DATA';
 const mutations = {
   [GENERATE_STATE](state, params) {
     for (const [key, value] of Object.entries(params)) {
@@ -195,18 +218,31 @@ const mutations = {
   [SET_TOKEN](state, value) {
     state.token = value;
   },
+  [UPDATE_DATA](state, data) {
+    state.data = data;
+    if ('access_token' in data) {
+      state.token = data.access_token;
+    }
+    if ('refresh_token' in data) {
+      state.refreshToken = data.refresh_token;
+    }
+    state.isLogin = true;
+  },
   [HANDLE_EXIT](state) {
     state.data = null;
     state.roleMenus = null;
     state.token = null;
     state.isLogin = false;
     state.initedApp = false;
+    state.refreshToken = null;
     setTimeout(() => {
       // 移除全部缓存
-      // localStorage.removeItem(sStorageKey);
-      localStorage.clear();
-      sessionStorage.clear();
-      // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
+      if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {
+        localStorage.removeItem(sStorageKey);
+      }
+      if (!_isNil(sessionStorage.getItem(sStorageKey)) && isClearCache) {
+        sessionStorage.removeItem(sStorageKey);
+      }
     }, 0);
   }
 };

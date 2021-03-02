@@ -11,3 +11,8 @@ export const CONST_DEFAULT_CONFIG = {
 };
 // 入口项目路由配置
 export const HOME_ROUTER_NAME = '/app';
+// 路由的打开类型
+export const ROUTER_OPEN_TYPE = {
+  menu: 'menu', // 通过菜单打开
+  push: 'push' // 通过 push 程序的形式打开
+};

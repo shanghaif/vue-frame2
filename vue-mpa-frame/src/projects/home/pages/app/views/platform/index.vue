@@ -48,17 +48,17 @@ ul {
   list-style-type: none;
 }
 li {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 160px;
   height: 100px;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
   border: 1px solid @border;
 }
 li:hover {
-  background-color: #90CEF9;
   color: white;
+  background-color: rgba(144, 206, 249);
 }
 </style>

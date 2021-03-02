@@ -27,10 +27,34 @@ import BaseDeferInput from './defer-input/index.js';
 import BaseLabel from './label/index.js';
 import BaseButton from './button/index.js';
 import BasePasswordCheck from './password-check/index.js';
+import BaseSelectGrid from './select-grid/index.js';
+import BaseTableSelectCondition from './condition/index.js';
+import BaseNestingGrid from './nesting-grid/grid.js';
+import BaseEditGrid from './edit-grid/grid.js';
+import { Steps, Step } from './steps/index.js';
+import BaseIframe from './panel/ux/iframe/index.js';
+import BaseDragGrid from './drag-grid/index.js';
+import BaseSelectInputTable from './select-input-table/index.js';
+import BaseCarouselProgress from './carousel-progress/index.js';
+import BaseTransferTree from './transfer-tree/index.js';
+import BaseTreeAnchor from './tree-anchor/index.js';
+import BaseSvgIcon from './svg-icon/index.js';
+import BaseTransferGrid from './transfer-table/index.js';
+import BaseDragDialog from './dialog/drag.js';
+import BaseVBoxLayout from './v-box-layout/index.js';
+import BaseHBoxLayout from './h-box-layout/index.js';
+import BaseColumnLayout from './column-layout/index.js';
+import BaseSelectIconPicker from './select-icon-picker/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
   Object.defineProperty(Vue.prototype, '$baseDialog', { value: BaseDialog });
+}
+// 弹出框-拖拽
+if (!_has(window, '$BaseDragDialog')) {
+  Object.defineProperty(Vue.prototype, '$BaseDragDialog', {
+    value: BaseDragDialog
+  });
 }
 // 弹出抽屉
 if (!_has(window, '$baseDrawer')) {
@@ -59,5 +83,23 @@ export default {
   BaseDeferInput,
   BaseLabel,
   BaseButton,
-  BasePasswordCheck
+  BasePasswordCheck,
+  BaseSelectGrid,
+  BaseTableSelectCondition,
+  BaseNestingGrid,
+  BaseEditGrid,
+  BaseSteps: Steps,
+  BaseStep: Step,
+  BaseIframe,
+  BaseDragGrid,
+  BaseSelectInputTable,
+  BaseCarouselProgress,
+  BaseTransferTree,
+  BaseTreeAnchor,
+  BaseSvgIcon,
+  BaseTransferGrid,
+  BaseVBoxLayout,
+  BaseHBoxLayout,
+  BaseColumnLayout,
+  BaseSelectIconPicker
 };

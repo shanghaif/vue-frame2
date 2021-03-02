@@ -25,7 +25,7 @@ export default function validate(data = {}, constraints = {}, isOne = false) {
 }
 
 // URL地址防注入 针对查询参数
-validator.pushRule('sqlXss', function (val = '', rval = true) {
+validator.pushRule('sqlXss', function(val = '', rval = true) {
   if (rval) {
     const re = /select|update|delete|truncate|join|union|exec|insert|drop|count|script|<|>|'|"|=|;/gi;
     const status = re.test(val);

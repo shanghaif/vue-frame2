@@ -3,7 +3,7 @@
  * @param str
  * @returns {boolean}
  */
-export const isStartWithNum = (str) => {
+export const isStartWithNum = str => {
   return /^[1-9]/.test(str);
 };
 
@@ -12,7 +12,7 @@ export const isStartWithNum = (str) => {
  * @param str
  * @returns {boolean}
  */
-export const hasLetter = (str) => {
+export const hasLetter = str => {
   return /[a-z]/i.test(str + '');
 };
 

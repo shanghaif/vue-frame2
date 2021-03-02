@@ -1,5 +1,9 @@
 // 构建 axios 实例
-import { requestSuccessFunc, responseSuccessFunc, responseErrorFunc } from '../../config/interceptor/axios.js';
+import {
+  requestSuccessFunc,
+  responseSuccessFunc,
+  responseErrorFunc
+} from '../../config/interceptor/axios.js';
 import axios from 'axios';
 
 /**
@@ -15,6 +19,10 @@ instance = axios.create();
 // 添加请求拦截器
 instance.interceptors.request.use(requestSuccessFunc);
 // 添加响应拦截器
-instance.interceptors.response.use(responseSuccessFunc, responseErrorFunc);
+instance.interceptors.response.use(responseSuccessFunc, function(
+  responseError
+) {
+  return responseErrorFunc(responseError, instance);
+});
 
 export default instance;

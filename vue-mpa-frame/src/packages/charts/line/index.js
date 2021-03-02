@@ -40,9 +40,9 @@ const Line = class Line {
     const legendData = [];
     console.info('mergeOptions ', mergeOptions.series);
     if (_isArray(mergeOptions.series)) {
-      _map(mergeOptions.series, function (value, key) {
+      _map(mergeOptions.series, function(value, key) {
         console.info(value, key);
-        _has(value, 'name') && (legendData.push(value.name));
+        _has(value, 'name') && legendData.push(value.name);
       });
       mergeOptions.legend.data = legendData;
     }
@@ -51,9 +51,7 @@ const Line = class Line {
   /**
    * @desc 数据精确度小数点位数
    */
-  setDataDecimals() {
-
-  }
+  setDataDecimals() {}
 
   /**
    * @desc 获取原始对象
@@ -67,7 +65,6 @@ const Line = class Line {
    */
   setData(data = []) {
     if (this.myChart) {
-
     }
   }
 
@@ -87,8 +84,9 @@ const Line = class Line {
 
   // 获取唯一值
   static getUID() {
-    return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0; var v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (Math.random() * 16) | 0;
+      var v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -105,13 +103,17 @@ const Line = class Line {
       this.myChart.hideLoading();
     }, 3000); */
     // 递归合并配置项
-    const mergeOptions = _mergeWith(this.baseOptions, _omit(options, ['listeners', 'isShowLegend', '']), function (objValue, srcValue) {
-      if (_isArray(srcValue)) {
-        for (let i = 0, len = srcValue.length; i < len; i++) {
-          _assign(objValue[i], srcValue[i]);
+    const mergeOptions = _mergeWith(
+      this.baseOptions,
+      _omit(options, ['listeners', 'isShowLegend', '']),
+      function(objValue, srcValue) {
+        if (_isArray(srcValue)) {
+          for (let i = 0, len = srcValue.length; i < len; i++) {
+            _assign(objValue[i], srcValue[i]);
+          }
         }
       }
-    });
+    );
     // 图例
     if (!options.isShowLegend) {
       this.baseOptions.legend.show = false;

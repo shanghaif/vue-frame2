@@ -2,9 +2,7 @@
   <div>
     <p class="aaa">个人中心</p>
     <el-button size="small" @click="onOpenUserPage">路由跳转</el-button>
-    <div>
-      {{NAME_OF_CONSTANT[0].name}}&nbsp;{{OTHER}}
-    </div>
+    <div>{{ NAME_OF_CONSTANT[0].name }}&nbsp;{{ OTHER }}</div>
     <div>
       <el-button v-action:add type="primary">添加-指令</el-button>
       <el-button v-action:delete type="primary">删除-指令</el-button>
@@ -70,9 +68,9 @@ export default {
 </script>
 
 <style>
-.aaa{
-  color: red;
+.aaa {
   font-size: 14px;
+  color: red;
 }
 </style>
 <style module>
@@ -80,6 +78,6 @@ export default {
   margin-left: 20px;
 }
 .ys-button-cls {
-  margin: 10px 0px;
+  margin: 10px 0;
 }
 </style>

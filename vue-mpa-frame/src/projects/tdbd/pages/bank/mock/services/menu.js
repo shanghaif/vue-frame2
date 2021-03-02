@@ -4,7 +4,7 @@
 import Mock from 'mockjs2';
 import { builder } from '../util';
 
-const getMenu = (options) => {
+const getMenu = options => {
   const aMenuList = [
     // models: [
     {
@@ -159,8 +159,7 @@ const getMenu = (options) => {
       ]
     }
     // ]
-  ]
-  ;
+  ];
   return builder(aMenuList);
 };
 

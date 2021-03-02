@@ -28,8 +28,13 @@ const TimeoutProvider = class TimeoutProvider {
    * const doEat = function(...params){console.log(params[0], this.name);}
    * timeoutProvider.setTimeout(new person, doEat, 2000, 'hello')
    */
-  setTimeout(scope = null, handler = function () {}, timeout = 1000, ...params) {
-    if (_isNil(scope) || _isNil(handler) || _isNil(timeout) || _isEqual(_isNumber(timeout), false)) {
+  setTimeout(scope = null, handler = function() {}, timeout = 1000, ...params) {
+    if (
+      _isNil(scope) ||
+      _isNil(handler) ||
+      _isNil(timeout) ||
+      _isEqual(_isNumber(timeout), false)
+    ) {
       return;
     }
     // @ts-ignore
@@ -53,17 +58,31 @@ const TimeoutProvider = class TimeoutProvider {
    * timeoutProvider.setInterval(new person, doEat, 2000, 'hello', '!')
    *
    */
-  setInterval(scope = null, handler = function () {}, interval = 1000, ...params) {
-    if (_isNil(scope) || _isNil(handler) || _isNil(interval) || _isEqual(_isNumber(interval), false)) {
+  setInterval(
+    scope = null,
+    handler = function() {},
+    interval = 1000,
+    ...params
+  ) {
+    if (
+      _isNil(scope) ||
+      _isNil(handler) ||
+      _isNil(interval) ||
+      _isEqual(_isNumber(interval), false)
+    ) {
       return;
     }
-    return _delay(function fn(...params) {
-      // @ts-ignore
-      const result = _bind(handler, scope)(...params);
-      if (_isEqual(_isNil(result), false)) {
-        result && _delay(fn, interval, ...params);
-      }
-    }, interval, ...params);
+    return _delay(
+      function fn(...params) {
+        // @ts-ignore
+        const result = _bind(handler, scope)(...params);
+        if (_isEqual(_isNil(result), false)) {
+          result && _delay(fn, interval, ...params);
+        }
+      },
+      interval,
+      ...params
+    );
   }
 
   /**
@@ -83,8 +102,18 @@ const TimeoutProvider = class TimeoutProvider {
    * var myDebounce = tp.setThrottle(personInstance, doSize, 3000)
    * jQuery(window).resize(myDebounce)
    */
-  setThrottle(scope = null, handler = null, wait = 1000, options = { leading: false, trailing: true }) {
-    if (_isNil(scope) || _isNil(handler) || _isNil(wait) || _isEqual(_isNumber(wait), false)) {
+  setThrottle(
+    scope = null,
+    handler = null,
+    wait = 1000,
+    options = { leading: false, trailing: true }
+  ) {
+    if (
+      _isNil(scope) ||
+      _isNil(handler) ||
+      _isNil(wait) ||
+      _isEqual(_isNumber(wait), false)
+    ) {
       return;
     }
     // @ts-ignore

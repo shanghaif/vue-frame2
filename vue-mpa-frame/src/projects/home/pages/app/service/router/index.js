@@ -29,7 +29,7 @@ requireModule.keys().forEach(filePath => {
     const aModuleNameList = _split(moduleName, CONST_DEFAULT_CONFIG.sep);
     const aDropRightArray = _dropRight(aModuleNameList);
     let commonRoutes = _get(modules, 'common', []);
-    const setRouterChildren = function (moduleRouter) {
+    const setRouterChildren = function(moduleRouter) {
       if (!_has(moduleRouter, 'children')) {
         moduleRouter.children = [];
       }
@@ -43,7 +43,7 @@ requireModule.keys().forEach(filePath => {
       const moduleRouter = _find(commonRoutes, item => {
         return item.name === value;
       });
-      if (i === (len - 1)) {
+      if (i === len - 1) {
         moduleRouter && setRouterChildren(moduleRouter);
       } else {
         commonRoutes = moduleRouter.children;
@@ -51,6 +51,6 @@ requireModule.keys().forEach(filePath => {
     }
   }
 });
-export default function () {
+export default function() {
   return modules.common;
-};
+}

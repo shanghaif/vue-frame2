@@ -7,18 +7,27 @@ const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: () => import(/* webpackChunkName:"views/platform" */ '@app_views/platform/index.vue')
+    component: () =>
+      import(
+        /* webpackChunkName:"views/platform" */ '@app_views/platform/index.vue'
+      )
   },
   {
     path: `/${LOGIN_PAGE_NAME}`,
     name: LOGIN_PAGE_NAME,
-    component: () => import(/* webpackChunkName:"views/helper" */ '@app_views/login/index.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/helper" */ '@app_views/login/index.vue'
+      ),
     meta: { title: '登录' }
   },
   {
     path: '/helper',
     name: 'helper',
-    component: () => import(/* webpackChunkName:"views/helper" */ '@app_views/helper/index.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/helper" */ '@app_views/helper/index.vue'
+      ),
     meta: { title: '帮助中心' }
     /* children: [
       {
@@ -43,7 +52,10 @@ const commonRoutes = [
   {
     path: '/404',
     name: '404',
-    component: () => import(/* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'
+      ),
     meta: { title: '404' }
   },
   {

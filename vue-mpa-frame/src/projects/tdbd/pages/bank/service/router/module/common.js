@@ -7,7 +7,10 @@ const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: () => import(/* webpackChunkName:"bank/views/platform" */ '@bank_views/platform/index.vue')
+    component: () =>
+      import(
+        /* webpackChunkName:"bank/views/platform" */ '@bank_views/platform/index.vue'
+      )
     // redirect: 'needs/loan'
     /* beforeEnter: (to, from, next) => {
       console.info('444444444444 ');
@@ -32,7 +35,10 @@ const commonRoutes = [
   {
     path: '/helper',
     name: 'helper',
-    component: () => import(/* webpackChunkName:"bank/views/helper" */ '@bank_views/helper/index.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"bank/views/helper" */ '@bank_views/helper/index.vue'
+      ),
     meta: { title: '帮助中心' }
     /* children: [
       {
@@ -57,7 +63,10 @@ const commonRoutes = [
   {
     path: '/404',
     name: '404',
-    component: () => import(/* webpackChunkName:"views/404" */ '@bank_views/error-page/404.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName:"views/404" */ '@bank_views/error-page/404.vue'
+      ),
     meta: { title: '404' }
   },
   {

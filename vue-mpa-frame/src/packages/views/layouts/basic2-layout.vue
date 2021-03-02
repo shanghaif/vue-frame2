@@ -1,13 +1,20 @@
 <template>
-  <div :class="$style.container">
+  <div :class="[$style.container, ctCls.box]">
     <base-border-layout v-bind="layout">
       <template v-slot:north>
         <top-view2
           ref="topView2"
           :title="title"
+          :subtitle="subtitle"
           :iconfontUrl="iconfontUrl"
           :collapsed="collapsed"
           :titleClick="titleClick"
+          :renderDropColumnDown="renderDropColumnDown"
+          :renderDropDown="renderDropDown"
+          :renderLoginOut="renderLoginOut"
+          :ctCls="{
+            left: 'my-top-view2'
+          }"
           v-if="renderTopView"
         ></top-view2>
       </template>
@@ -17,6 +24,7 @@
           :menus="menus"
           v-bind="menuProps"
           @select="handleSelect"
+          :svgIcons="svgIcons"
         >
         </base-nav-menu>
       </template>
@@ -46,6 +54,7 @@
 
 <script>
 import TopView2 from './components/top-view2.vue';
+import svgIcons from '@/plugins/icons.js';
 import _last from 'lodash/last';
 import _split from 'lodash/split';
 import _isEmpty from 'lodash/isEmpty';
@@ -57,7 +66,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'Basic2Layout',
-  provide: function () {
+  provide: function() {
     return {
       getBase2Layout: this
     };
@@ -65,9 +74,15 @@ export default {
   components: { TopView2 },
   // title 标题，iconfontUrl 图标，collapsed 侧栏收起状态
   props: {
+    // 顶部栏目标题文字-副标题
     title: {
       type: String,
       default: '项目名称'
+    },
+    // 主标题
+    subtitle: {
+      type: String,
+      default: ''
     },
     iconfontUrl: {
       type: Function,
@@ -92,25 +107,70 @@ export default {
     renderNavMenu: {
       type: Boolean,
       default: true
+    },
+    // 是否渲染 当前应用 下拉面板
+    renderDropColumnDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 消息 图标和下拉面板
+    renderDropDown: {
+      type: Boolean,
+      default: true
+    },
+    // 是否渲染 登出 图标
+    renderLoginOut: {
+      type: Boolean,
+      default: true
+    },
+    // 自定义样式
+    ctCls: {
+      type: Object,
+      default() {
+        return {
+          box: undefined,
+          north: undefined,
+          west: undefined,
+          center: undefined,
+          south: undefined,
+          east: undefined,
+          inner: {
+            north: undefined,
+            west: undefined,
+            center: undefined,
+            south: undefined,
+            east: undefined
+          }
+        };
+      }
     }
   },
   data() {
     return {
+      svgIcons: svgIcons,
       logoutLoading: false,
       isFullscreen: false,
       layout: {
         northHeight: this.renderTopView ? '60px' : '0px',
-        westWidth: 'auto',
+        westWidth: this.renderNavMenu ? 'auto' : '0px', // 设置为定值时，配合 nav-menu 导航菜单收缩菜单面板之后的宽度还是定值所以这里推荐自动
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.northCls
+        northCls: `${this.$style.northCls} ${this.ctCls.north}`,
+        westCls: `${this.ctCls.west}`,
+        eastCls: `${this.ctCls.east}`,
+        southCls: `${this.ctCls.south}`,
+        centerCls: `${this.ctCls.center}`
       },
       innerLayout: {
         northHeight: '30px',
         westWidth: '0px',
         eastWidth: '0px',
         southHeight: '0px',
-        northCls: this.$style.borderBottom
+        northCls: `${this.$style.borderBottom} ${this.ctCls.inner.north}`,
+        westCls: `${this.ctCls.inner.west}`,
+        eastCls: `${this.ctCls.inner.east}`,
+        southCls: `${this.ctCls.inner.south}`,
+        centerCls: `${this.ctCls.inner.center}`
       },
       menus: [],
       menuProps: {
@@ -118,8 +178,10 @@ export default {
         defaultActive: '',
         textColor: '#BFCBD9',
         activeTextColor: '#409EFF',
+        navIcon: 'el-icon-menu',
         backgroundColor: '#304156',
-        collapseText: '收起导航'
+        collapseText: '收起导航',
+        collapsePosition: 'bottom'
       },
       breadCrumbOptions: [],
       buttonGroup: []
@@ -148,7 +210,9 @@ export default {
      */
     handleSelect(key, keyPath) {
       // this.checkedFirstMenu2BlockIndex = this.$refs.topView2.buttonGroupOption.defaultActive;
-      this.$refs.topView2.setCheckedFirstMenu2BlockIndex(this.$refs.topView2.buttonGroupOption.defaultActive);
+      this.$refs.topView2.setCheckedFirstMenu2BlockIndex(
+        this.$refs.topView2.buttonGroupOption.defaultActive
+      );
       const aKeyPathList = _drop(_split(_last(keyPath), '-'), 1);
       let menu = null;
       const menuList = [];
@@ -191,7 +255,13 @@ export default {
       } else {
         // 调用路由对应页面的 routerActivated 方法
         const { matched } = this.$router.currentRoute;
-        if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default.$options.routerActivated)) {
+        if (
+          !_isEmpty(matched) &&
+          !_isNil(
+            matched[matched.length - 1].instances.default.$options
+              .routerActivated
+          )
+        ) {
           const that = matched[matched.length - 1].instances.default;
           that.$options.routerActivated.call(that);
         }
@@ -242,7 +312,10 @@ export default {
      */
     onBreadClick(option, event) {
       const { matched } = this.$router.currentRoute;
-      if (!_isEmpty(matched) && !_isNil(matched[matched.length - 1].instances.default)) {
+      if (
+        !_isEmpty(matched) &&
+        !_isNil(matched[matched.length - 1].instances.default)
+      ) {
         const that = matched[matched.length - 1].instances.default;
         _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }

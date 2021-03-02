@@ -7,7 +7,3 @@ export default {
   name: 'ComponentB'
 };
 </script>
-
-<style>
-
-</style>

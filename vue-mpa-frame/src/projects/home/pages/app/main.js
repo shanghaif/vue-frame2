@@ -23,6 +23,10 @@ import './mock/index.js';
 // 自定义指令
 import VFocus from '@directives/v-focus.js';
 import VAuthority from '@directives/v-authority.js';
+import VEmoji from '@directives/v-emoji.js';
+import VDebounce from '@directives/v-debounce.js';
+import VLazyLoad from '@directives/v-LazyLoad.js';
+import VfRef from '@directives/v-f-ref.js';
 
 // 全局通知 巴士事件
 window.GvBus = {};
@@ -40,6 +44,10 @@ Vue.use(VueTemplateConst);
 Vue.use(frameComponents);
 Vue.use(VFocus);
 Vue.use(VAuthority);
+Vue.use(VEmoji);
+Vue.use(VDebounce);
+Vue.use(VLazyLoad);
+Vue.use(VfRef);
 Vue.config.ignoredElements = []; // 忽略在 Vue 之外的自定义元素
 Vue.config.keyCodes = {}; // 给 v-on 自定义键位别名
 Vue.config.productionTip = false;

@@ -22,7 +22,7 @@ export default new Vuex.Store({
   actions,
   mutations,
   plugins: [
-    function (store) {
+    function(store) {
       // store 现在主要是为了去拿在 localStorage 中的 token
       // 从 localStorage 中去拿 app 项目中的 token，在存放到 bank项目的 store中
       if (_has(window, 'localStorage.appVuex')) {
@@ -31,6 +31,7 @@ export default new Vuex.Store({
         const isLogin = _get(oStorage, 'platform.isLogin', false);
         const userData = _get(oStorage, 'userData', {});
         store.dispatch('setUserData', { data: userData });
+        store.dispatch('platform/updateData', { data: userData });
         store.dispatch('platform/setState', { token, isLogin, data: userData });
       }
     },

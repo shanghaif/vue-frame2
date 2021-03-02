@@ -2,7 +2,7 @@
  * @desc 这个网站的 store
  */
 import _get from 'lodash/get';
-// import { sStorageKey, isClearCache } from '../../../store/index.js';
+import { sStorageKey, isClearCache } from '@app/store/index.js';
 
 const state = {
   data: {}, // 用户信息
@@ -15,7 +15,9 @@ const state = {
   // 角色对应的菜单
   roleMenus: {},
   // 系统用户访问令牌
-  token: ''
+  token: '',
+  // 刷新 token
+  refreshToken: ''
 };
 const getters = {
   getData: state => {
@@ -32,6 +34,9 @@ const getters = {
   },
   getMenus: state => {
     return state.roleMenus;
+  },
+  getRefreshToken: state => {
+    return state.refreshToken;
   }
 };
 const actions = {
@@ -69,6 +74,10 @@ const actions = {
   // 设置通用请求头参数
   setApiHeaderParams({ commit, state }, { token }) {
     Vue.prototype.$loaderApiLibrary.setHeaderOptions({ token });
+  },
+  // 更新用户信息
+  updateData({ commit, state }, resData) {
+    commit('UPDATE_DATA', resData.data);
   },
   // 登出
   handle_exit({ commit, state }) {
@@ -127,6 +136,9 @@ const mutations = {
     if ('token' in data) {
       state.token = data.token;
     }
+    if ('refresh_token' in data) {
+      state.refreshToken = data.refresh_token;
+    }
     state.isLogin = true;
   },
   [GENERATE_ROLE_MENUS](state, aRoleMenuList) {
@@ -139,12 +151,15 @@ const mutations = {
     state.token = null;
     state.isLogin = false;
     state.initedApp = false;
+    state.refreshToken = null;
     setTimeout(() => {
       // 移除全部缓存
-      localStorage.clear();
-      sessionStorage.clear();
-      // localStorage.removeItem(sStorageKey); // 移除这个项目内的缓存
-      // 移除部分缓存请操作对应的 store 中的 Actions，注意 store 中所有的操作必须通过 Actions 来完成
+      if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {
+        localStorage.removeItem(sStorageKey);
+      }
+      if (!_isNil(sessionStorage.getItem(sStorageKey)) && isClearCache) {
+        sessionStorage.removeItem(sStorageKey);
+      }
     }, 0);
   }
 };

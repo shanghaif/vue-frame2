@@ -16,7 +16,7 @@ const Validator = {
   types: {
     // 验证只能为数字
     checkNumber: {
-      validate: function (value) {
+      validate: function(value) {
         return !isNaN(value);
       },
       instructions: '传入的值只能是合法的数字！'
@@ -46,7 +46,7 @@ const Validator = {
    * type types 中的验证函数 'checkNumber'
    * val 外部传入的待验证值
    */
-  validate: function (type, val = '') {
+  validate: function(type, val = '') {
     if (!_has(this.types, type)) {
       return { result: false, msg: '验证函数不存在' };
     }

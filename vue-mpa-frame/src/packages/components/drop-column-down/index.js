@@ -22,6 +22,11 @@ const BaseDropColumnDown = {
     // 子项
     options: {
       type: Array
+    },
+    // 图标的尺寸
+    svgSize: {
+      type: String,
+      default: '16px'
     }
   },
   data() {
@@ -79,7 +84,7 @@ const BaseDropColumnDown = {
                     }
                   }
                 },
-                [this.$createElement('i', { class: row.icon }), row.label]
+                [this.getIconNode(row), row.label]
               );
             });
             oVOption.push(
@@ -105,6 +110,51 @@ const BaseDropColumnDown = {
         },
         vNodes
       );
+    },
+    /**
+     * @desc 转换 menu 菜单中的 icon
+     * @param {Object} item - menu 对象
+     */
+    getIconNode(item = {}) {
+      let iconUrl = _get(item, 'icon', '');
+      if (_includes(iconUrl, 'svg-')) {
+        // svg图
+        const curUrl = iconUrl.replace('svg-', '');
+        const svgObj = _find(this.svgIcons, o => o.name === curUrl);
+        if (!_isNil(svgObj)) {
+          iconUrl = this.$createElement(_get(svgObj, 'component', 'span'), {
+            style: {
+              width: this.svgSize,
+              height: this.svgSize,
+              marginRight: '5px'
+            }
+          });
+        } else {
+          // iconUrl = this.$createElement('i', {}, []);
+        }
+      } else if (/\.(gif|png|jpg|jpeg|webp|svg|psd|bmp|tif)$/.test(iconUrl)) {
+        // 静态资源图
+        iconUrl = this.$createElement('img', {
+          style: { marginRight: '5px' },
+          attrs: { src: iconUrl, width: this.svgSize, height: this.svgSize }
+        });
+      } else if (iconUrl.indexOf('symbol-') !== -1) {
+        // symbol 图
+        iconUrl = this.$createElement(
+          'base-svg-icon',
+          {
+            style: { marginRight: '5px' },
+            props: {
+              size: this.svgSize,
+              iconname: iconUrl.replace('symbol-', '')
+            }
+          },
+          []
+        );
+      } else {
+        iconUrl = this.$createElement('i', { class: iconUrl });
+      }
+      return iconUrl;
     }
   },
   render(h) {

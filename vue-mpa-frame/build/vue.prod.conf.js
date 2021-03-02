@@ -18,7 +18,7 @@ const otherDependencies = utils.arrayRemoveItems(
   Object.keys(packageConfig.dependencies),
   frameConfig.removeOtherDependenciesCacheGroupsLibs || []
 );
-const getNodeVersion = function () {
+const getNodeVersion = function() {
   // 截取 node 的版本号
   var str = process.version; // 'v12.18.3';
   var reg = /(?<=v).+(.)/;

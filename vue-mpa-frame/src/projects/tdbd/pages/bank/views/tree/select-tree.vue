@@ -2,9 +2,9 @@
   <div>
     <base-select-tree
       :width="200"
-      api='common/getTree'
+      api="common/getTree"
       v-model="treeValue1"
-      displayField='label'
+      displayField="label"
       :lazy="false"
       :multiple="true"
       :collapse-tags="false"
@@ -33,5 +33,3 @@ export default {
   }
 };
 </script>
-
-<style></style>
