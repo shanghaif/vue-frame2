@@ -54,6 +54,7 @@ module.exports = {
 	optimization: {
 		minimize: true,
 		minimizer: [
+			// 默认为true，效果就是压缩js代码，使用 `TerserPlugin` 压缩 `TerserPlugin` 对于es6语法的压缩支持比较好
 			new TerserPlugin({
 				include: /\.min\.js$/
 			})
