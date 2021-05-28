@@ -30,6 +30,23 @@
       <!--需要和 config/index,js 中的 processConfig.dev.assetsPublicPath 保持一致-->
     </div>
     <div>
+      <div><h3>子组件用于测试-propsData和props的使用区别：</h3></div>
+      <props-data-view></props-data-view>
+      <div>
+        this.$options.propsData
+        是父组件实际传入到子组件内定义的props参数（是实际值），没有传入的不会有这个
+        props 值
+      </div>
+      <div>
+        this.$options.props 是子组件定义的 props 参数对象，没有实际传入值
+      </div>
+      <span class="in-block  mt-10"
+        >这里是我往子组件内传入了 name 和 remark 两个props参数，所以
+        `this.$options.propsData` 只打印出这两个参数：</span
+      >
+      <pre>{name: "小红", remark: {bz: '这是一段备注信息'}}</pre>
+    </div>
+    <div>
       <div><h3>时间轴组件：</h3></div>
       <p style="color: red">注意：</p>
       <p>
@@ -103,15 +120,17 @@
         <h3>图片懒加载指令：</h3>
         滚动滚动条，图片可见时才会发送请求
       </div>
-      <img class="lazy-img" data-src="/static/images/lazy-test.jpg" v-lazy />
+      <img class="lazy-img" data-src="/static/images/v-lazy.png" v-lazy />
     </div>
   </div>
 </template>
 
 <script>
 import { down } from '@utils/index.js';
+import propsDataView from './props-data/index.vue';
 
 export default {
+  components: { propsDataView },
   data() {
     return {
       bb: '',

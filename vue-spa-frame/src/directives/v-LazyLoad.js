@@ -14,14 +14,14 @@
  */
 const LazyLoad = {
   // install方法
-  install(Vue, options) {
-    // const defaultSrc = options.default;
+  install(Vue, options = { default: '' }) {
+    const defaultSrc = options.default;
     Vue.directive('lazy', {
       bind(el, binding, vnode) {
-        const imgSrc = vnode.data.attrs.src;
-        console.log('aaaaaaaaaaaa', imgSrc);
+        const imgSrc = vnode.data.attrs['data-src'];
+        // console.log('aaaaaaaaaaaa', imgSrc, defaultSrc);
         // LazyLoad.init(el, binding.value, defaultSrc);
-        LazyLoad.init(el, '/static/images/lazy-test.jpg');
+        LazyLoad.init(el, imgSrc, defaultSrc);
       },
       inserted(el) {
         if (IntersectionObserver) {

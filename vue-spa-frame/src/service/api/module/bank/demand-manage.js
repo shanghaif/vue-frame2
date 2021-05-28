@@ -42,5 +42,13 @@ export default [
     desc: '拖拽grid',
     path: '',
     mockPath: '/mock/bank/demandManage/dragGridList'
+  },
+  {
+    name: 'resultsList',
+    method: 'GET',
+    desc: '获取评价结果列表',
+    path: '',
+    mockPath: '/mock/appraisal/results/resultsList',
+    mock: true
   }
 ];

@@ -60,6 +60,9 @@ husky > Failed to install
 | npm run lint:css-fix      | --fix 选项可以指定 stylelint 自动修复不符合可修复规则的代码，暂未配置 scss 类型的检测                                                                  |
 | lint:css-cache-fix        | --fix 选项可以指定 stylelint 自动修复不符合可修复规则的代码（使用缓存），暂未配置 scss 类型的检测                                                      |
 | format                    | 按照 prettierrc 设置的规则格式化指定类型的所有文件                                                                                                     |
+| dev:no-login              | 全局的路由拦截器 beforeEach 里面不走登录逻辑，直接访问 to 的路由                                                                                       |
+| dev-userConfigEnv         | 打包使用自定义环境，环境文件存放在 config/user-config-env，CONFIG_ENV=my 中的 my 对应 config/user-config-env 中的配置文件名的 xx.env.js                |
+| p                         | 自动创建文件，文件会根据创建过程提示进行选择性创建                                                                                                     |
 
 获取 iconfont.css 文件下的 class 名称方法：
 （图标文件放在`css-theme/common/font/iconfont/`）
@@ -80,14 +83,16 @@ http://localhost:8010/spa
 
 ```
 build webpack配置文件目录
- |-create-proxy-self.js
- |-css-loader.conf.js
- |-read-icon.js
+ |-create-proxy-self.js 创建devServer代理配置文件 config/proxy-self.js
+ |-css-loader.conf.js css模块化配置
+ |-read-icon.js 创建图表选择器
  |-utils.js
- |-vue.base.conf.js
+ |-vue.base.conf.js webpack 基础配置
  |-vue.dev.conf.js 开发配置
  |-vue.prod.conf.js 生产配置
 config webpack配置参数
+ |-user-config-js 自定义环境配置目录
+   |-my.env.js
  |-dev.env.js 开发环境变量
  |-index.js 开发和生产配置参数
  |-prod.env.js 生产环境变量

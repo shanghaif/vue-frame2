@@ -77,7 +77,7 @@ requireModule.keys().forEach(filePath => {
         if (_findIndex(loadedFileList, o => o === filePath) === -1) {
           moduleRouter && setRouterChildren(moduleRouter, filePath);
           loadedFileList.push(filePath);
-          commonRoutes && (commonRoutes = moduleRouter.children);
+          commonRoutes && (commonRoutes = _get(moduleRouter, 'children', []));
         } else {
           commonRoutes && (commonRoutes = _get(moduleRouter, 'children', []));
         }

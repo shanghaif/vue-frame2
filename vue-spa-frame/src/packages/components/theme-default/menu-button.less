@@ -1,0 +1,32 @@
+/* 菜单按钮 */
+.base-menu-button {
+  display: inline-block;
+  .el-submenu__title {
+    padding: 0;
+  }
+  .el-menu.el-menu--horizontal {
+    border-bottom: 0;
+  }
+  .el-menu--horizontal > .el-submenu .el-submenu__title {
+    height: 30px;
+    line-height: 30px;
+    color: rgba(96, 98, 102);
+  }
+  .el-menu--horizontal > .el-submenu.is-active .el-submenu__title {
+    border-bottom: 0;
+  }
+  .base-drop-down_prefix {
+    margin-top: -3px;
+    margin-right: 0;
+    font-size: 12px;
+  }
+}
+.base-menu--horizontal_popup {
+  .el-menu--collapse .el-menu .el-submenu,
+  .el-menu--popup {
+    min-width: 120px !important;
+  }
+  .el-submenu .el-menu-item {
+    min-width: 120px !important;
+  }
+}

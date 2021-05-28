@@ -21,6 +21,8 @@
           :filter-node-method="filterNode"
           :default-checked-keys="[12]"
           :disabledNodes="[8]"
+          :check-strictly="true"
+          :checkStrictlyFalseCancelChildChecked="true"
         >
           <!-- 自定义树节点的内容 -->
           <span class="custom-tree-node" slot-scope="{ node }">
@@ -63,6 +65,29 @@
           disabledNodes 属性是禁用节点的配置，数组传递 `valueField`
           所配置的字段值
         </p>
+        <p>
+          如果需要在数据中带有节点选中的数据字段，可以在节点数据中增加一个`check`并且设置为`true`，在树渲染的时候就会自动选中节点
+        </p>
+        <pre>
+          {
+            id: 24,
+            menuCode: 'index',
+            menuName: '对话框',
+            menuUrl: '/index',
+            iconUrl: 'el-icon-s-grid',
+            check: true // 默认选中
+          }
+        </pre>
+        <div class="mt-20 mb-20">
+          <p>
+            父子级联如果是false的情况下，是否需要父子联动（选中一个子节点级联选中对应的所有父级节点，取消某个父节点级联取消该节点下的所有子节点）
+          </p>
+          <p>需要同时设置 :check-strictly: true 表示父子不相关联</p>
+          <pre>
+            :check-strictly="true"
+            :checkStrictlyFalseCancelChildChecked="true"
+          </pre>
+        </div>
       </template>
     </base-border-layout>
   </div>

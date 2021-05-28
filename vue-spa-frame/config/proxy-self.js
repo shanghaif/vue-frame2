@@ -4,7 +4,8 @@ module.exports = {
     '/api': {
       target: 'http://10.1.1.123:8110',
       secure: false,
-      changeOrigin: true
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' }
     }
   }
 };

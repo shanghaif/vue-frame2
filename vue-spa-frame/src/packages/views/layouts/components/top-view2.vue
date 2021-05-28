@@ -22,13 +22,13 @@
       </div>
     </template>
     <template v-slot:middle>
-      <base-block-group
+      <base-horizontal-menu
         :class="$style.buttonGroupCls"
         :defaultActive.sync="buttonGroupOption.defaultActive"
         v-bind="buttonGroupOption"
         :buttonGroup="getLevel1Menus"
         @click="onBlockClick"
-      ></base-block-group>
+      ></base-horizontal-menu>
     </template>
     <template v-slot:right>
       <div :class="[$style.fullY, $style.rightBox, $style.flexCenter]">

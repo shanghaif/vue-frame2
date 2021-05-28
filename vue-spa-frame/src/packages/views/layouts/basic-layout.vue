@@ -23,6 +23,7 @@
           @select="handleSelect"
           :svgIcons="svgIcons"
           navTitle="导航标题"
+          @collapse="onMenuCollapse"
         >
         </base-nav-menu>
       </template>
@@ -53,6 +54,7 @@
 
 <script>
 import TopView from './components/top-view.vue';
+// import aplusMixin from '@plugins/aplus/mixin.js'; // 阿里巴巴 aplus.js 埋点
 import {
   ROOT_PAGE_NAME,
   DEFAULT_SETTINGS,
@@ -74,6 +76,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'BasicLayout',
+  // mixins: [aplusMixin],
   components: { TopView },
   provide() {
     return {
@@ -130,7 +133,7 @@ export default {
           box: '',
           north: '',
           west: this.$style.westBox,
-          center: this.$style.innerCenterCls,
+          center: _get(this.$style, 'innerCenterCls', ''),
           south: '',
           east: '',
           inner: {
@@ -146,7 +149,7 @@ export default {
     // 外围 border 布局的边距
     isPadding: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 内部 border 布局的边距
     innerIsPadding: {
@@ -192,7 +195,8 @@ export default {
         activeTextColor: '#409EFF',
         backgroundColor: '#304156',
         collapseText: '收起导航',
-        collapsePosition: 'bottom'
+        collapsePosition: 'bottom',
+        disabledKeys: [1, 12] // 禁用的节点
       },
       breadCrumbOptions: []
     };
@@ -214,10 +218,10 @@ export default {
     }
   },
   created() {
-    // setTimeout(() => {
-    // this.layout.westWidth = '64px';
-    // this.menuProps.collapsed = false;
-    // }, 3000);
+    setTimeout(() => {
+      // this.menuProps.collapsed = true;
+      this.menuProps.disabledKeys = []; // 取消禁用的导航菜单节点
+    }, 1500);
   },
   methods: {
     getMenus(to, from) {
@@ -440,6 +444,12 @@ export default {
         const that = matched[matched.length - 1].instances.default;
         _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }
+    },
+    /**
+     * @desc 导航栏面板收缩事件
+     */
+    onMenuCollapse(val) {
+      console.log('导航栏面板收缩事件', val);
     }
   }
 };

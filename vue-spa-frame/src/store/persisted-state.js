@@ -13,6 +13,7 @@ const paths = [
   'platform.userDetailData',
   'platform.data',
   'platform.refreshToken',
+  'platform.layout',
   // 'platform.data',
   // 'platform.roleMenus',
   'menus',

@@ -116,6 +116,10 @@ const BaseGrid = {
       type: Function,
       default: data => data
     },
+    loadResponseFilter: {
+      type: Function,
+      default: data => data
+    },
     // 静态数据（api设置为空）
     options: {
       type: Object
@@ -526,6 +530,7 @@ const BaseGrid = {
               indexLabel: this.indexLabel,
               selectMode: this.selectMode,
               loadFilter: this.loadFilter,
+              loadResponseFilter: this.loadResponseFilter,
               slotNode: this.tableAttributes.slotNode,
               tableAttributes: this.tableAttributes,
               options: this.options,

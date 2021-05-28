@@ -2,13 +2,18 @@
  * @desc 公共路由
  */
 import { LOGIN_PAGE_NAME, ROOT_PAGE_NAME } from '@config/index.js';
-import { BasicLayout, Basic4Layout } from '@packages/views/index.js';
+import {
+  BasicLayout,
+  Basic4Layout,
+  BlankLayout
+} from '@packages/views/index.js';
 
 const commonRoutes = [
   {
     path: '/',
     name: ROOT_PAGE_NAME,
-    component: BasicLayout,
+    component: () =>
+      import(/* webpackChunkName:"platform" */ '@views/platform/index.vue'),
     // 控制布局组件的展示
     props: {
       /* renderNavMenu: false,
@@ -25,6 +30,41 @@ const commonRoutes = [
           import(
             /* webpackChunkName:"views/user/development-file" */ '@views/user/development-file.vue'
           )
+      },
+      {
+        path: 'baidu-development-specification',
+        name: 'baidu-development-specification',
+        meta: { title: '百度-开发规范' },
+        component: BlankLayout,
+        children: [
+          {
+            path: 'baidu-javascript',
+            name: 'baidu-javascript',
+            meta: { title: 'javascript 前端规范' },
+            component: () =>
+              import(
+                /* webpackChunkName:"views/baidu-development-specification" */ '@views/user/baidu/javascript.vue'
+              )
+          },
+          {
+            path: 'baidu-html',
+            name: 'baidu-html',
+            meta: { title: 'html 前端规范' },
+            component: () =>
+              import(
+                /* webpackChunkName:"views/baidu-development-specification" */ '@views/user/baidu/html.vue'
+              )
+          },
+          {
+            path: 'baidu-css',
+            name: 'baidu-css',
+            meta: { title: 'css 前端规范' },
+            component: () =>
+              import(
+                /* webpackChunkName:"views/baidu-development-specification" */ '@views/user/baidu/css.vue'
+              )
+          }
+        ]
       },
       {
         path: 'view-collapse',
@@ -115,6 +155,22 @@ const commonRoutes = [
           import(
             /* webpackChunkName:"views/grid" */ '@views/grid/tree-grid/index.vue'
           )
+      },
+      {
+        name: 'media-routes',
+        path: 'media-routes',
+        meta: { title: '媒体属性' },
+        component: () =>
+          import(/* webpackChunkName:"views/user" */ '@views/user/media.vue')
+      },
+      {
+        name: 'splitpane-window',
+        path: 'splitpane-window',
+        meta: { title: '分割窗口' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/user" */ '@views/user/splitpane-window.vue'
+          )
       }
     ]
     // redirect: 'needs/loan'
@@ -198,10 +254,39 @@ const commonRoutes = [
     component: () => import('../../../views/personal/index.vue')
   } */
   {
+    path: '/401',
+    name: '401',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/401.vue'
+      ),
+    meta: { title: '401' }
+  },
+  {
+    path: '/403',
+    name: '403',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/403.vue'
+      ),
+    meta: { title: '403' }
+  },
+  {
+    path: '/500',
+    name: '500',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/500.vue'
+      ),
+    meta: { title: '500' }
+  },
+  {
     path: '/404',
     name: '404',
     component: () =>
-      import(/* webpackChunkName:"views/404" */ '@views/error-page/404.vue'),
+      import(
+        /* webpackChunkName:"views/error-page" */ '@views/error-page/404.vue'
+      ),
     meta: { title: '404' }
   },
   {

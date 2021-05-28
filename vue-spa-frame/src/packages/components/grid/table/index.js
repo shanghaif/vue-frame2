@@ -78,6 +78,9 @@ const BaseGridTable = {
     loadFilter: {
       type: Function
     },
+    loadResponseFilter: {
+      type: Function
+    },
     // 静态数据
     options: {
       type: Object
@@ -174,24 +177,46 @@ const BaseGridTable = {
         //   this.getBaseGrid.reloadGrid();
         // }, 0);
       }
+    },
+    columns(val, oldVal) {
+      if (val.length > 0 && oldVal.length === 0) {
+        if (_has(this.getBaseGrid.$scopedSlots, 'columnTool')) {
+          this.columns.push({
+            ...this.columnTool,
+            slotNode: [
+              {
+                render: (h, row, column, index) => {
+                  return this.getBaseGrid.$scopedSlots.columnTool(
+                    row,
+                    column,
+                    index
+                  );
+                }
+              }
+            ]
+          });
+        }
+      }
     }
   },
   created() {
     if (_has(this.getBaseGrid.$scopedSlots, 'columnTool')) {
-      this.columns.push({
-        ...this.columnTool,
-        slotNode: [
-          {
-            render: (h, row, column, index) => {
-              return this.getBaseGrid.$scopedSlots.columnTool(
-                row,
-                column,
-                index
-              );
+      if (this.columns.length > 0) {
+        this.columns.push({
+          ...this.columnTool,
+          slotNode: [
+            {
+              render: (h, row, column, index) => {
+                return this.getBaseGrid.$scopedSlots.columnTool(
+                  row,
+                  column,
+                  index
+                );
+              }
             }
-          }
-        ]
-      });
+          ]
+        });
+      }
     }
     // 动态设置监听器-监听静态数据
     const resultsField = _get(
@@ -204,7 +229,6 @@ const BaseGridTable = {
         newVal,
         oldVal
       ) {
-        console.log('resultsField ', newVal, oldVal);
         const pageNumField = _get(
           this['$base-global-options'],
           'grid.pageNum',
@@ -365,6 +389,9 @@ const BaseGridTable = {
       );
       this.$api[this.curApi]({ params, data, headers })
         .then(response => {
+          response = _isNil(this.loadResponseFilter)
+            ? response
+            : this.loadResponseFilter(response);
           let data = null;
           if (!_isNil(this.pagingParams)) {
             this.getBaseGrid.setTotal(
@@ -802,7 +829,7 @@ const BaseGridTable = {
         ? this.$createElement('el-table-column', {
             props: {
               type: 'index',
-              width: '50px',
+              width: '60px',
               label: this.indexLabel,
               fixed: this.isFixedIndex,
               index: this.isContinuityIndex

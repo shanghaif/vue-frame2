@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /**
  * @desc 路由拦截器
  */
@@ -9,8 +8,8 @@ import {
   LOGIN_PAGE_NAME,
   ROOT_PAGE_NAME
 } from '../index.js';
-import router from '../../router/index.js';
-import store from '../../store/index.js';
+import router from '@router/index.js';
+import store from '@store/index.js';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 /**
@@ -21,6 +20,11 @@ import _has from 'lodash/has';
  */
 const routerBeforeEachFunc = function(to, from, next) {
   NProgress.start();
+  const bEnvNoLogin = process.env['VUE_APP_NO-LOGIN']; // 环境变量
+  if (bEnvNoLogin && from.name !== LOGIN_PAGE_NAME) {
+    NProgress.done();
+    return next(); // 免登逻辑，直接进from的路由，这样只适合调试页面
+  }
   // 没有匹配到路由项则回退到 from 的路由
   if (_isEmpty(to.matched)) {
     NProgress.done();
@@ -45,6 +49,7 @@ const routerBeforeEachFunc = function(to, from, next) {
   // 未登录状态且要跳转的页面不是登录页
   if (!loginStatus && to.name !== LOGIN_PAGE_NAME) {
     NProgress.done();
+    // 这里需要注意：有个name这个的意思是会在进入一次 beforeEach 钩子，如果next()这样则表示放过这个路由直接进入到路由指定的那个component组件
     return next({ name: LOGIN_PAGE_NAME });
   }
   if (appStatus && _isEmpty(from.matched)) {

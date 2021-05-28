@@ -9,14 +9,22 @@ const index = [
     name: 'nesting-routes',
     meta: { title: '嵌套路由' },
     component: BlankLayout,
+    redirect: { name: 'nesting-routes-test' },
     children: [
       {
         name: 'nesting-routes-test',
         path: 'nesting-routes-test',
-        meta: { title: '示例1' },
         component: () =>
           import(
             /* webpackChunkName:"views/nesting-routes" */ '@views/nesting-routes/index.vue'
+          )
+      },
+      {
+        name: 'nesting-routes-add',
+        path: 'nesting-routes-add',
+        component: () =>
+          import(
+            /* webpackChunkName:"views/nesting-routes" */ '@views/nesting-routes/add.vue'
           )
       }
     ]

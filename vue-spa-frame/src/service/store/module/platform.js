@@ -7,8 +7,8 @@ import _isNil from 'lodash/isNil';
 import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
-import router from '../../../router/index.js';
-import { sStorageKey, isClearCache } from '../../../store/index.js';
+import router from '@router/index.js';
+import { sStorageKey, isClearCache } from '@store/index.js';
 
 const state = {
   // 登录信息
@@ -34,7 +34,8 @@ const state = {
   // 系统用户访问令牌
   token: '',
   // 刷新 token
-  refreshToken: ''
+  refreshToken: '',
+  layout: 1 // 布局风格 1布局风格1 2 布局风格2 3 布局风格3
 };
 const getters = {
   getData: state => {
@@ -63,6 +64,9 @@ const getters = {
   },
   getRefreshToken: state => {
     return state.refreshToken;
+  },
+  getLayout: state => {
+    return state.layout;
   }
 };
 const actions = {
@@ -248,7 +252,7 @@ const actions = {
         _set(router.meta, 'buttons', oMenu.buttons);
       }
     };
-    console.info(state.roleMenus.models);
+    // console.info(state.roleMenus.models);
     for (const value of Object.values(routes)) {
       if (_has(value, 'children') && !_isEmpty(value.children)) {
         const menu2Children = [];
@@ -292,6 +296,9 @@ const actions = {
   // 设置登录用户名和密码
   setLoginInfo({ commit, state }, { username, password, remember }) {
     commit('UPDATE_LOGIN_INFO', { username, password, remember });
+  },
+  setLayout({ commit, state }, { layout }) {
+    commit('UPDATE_LAYOUT', { layout });
   }
 };
 const GENERATE_ROUTES = 'GENERATE_ROUTES';
@@ -300,6 +307,7 @@ const UPDATE_DATA = 'UPDATE_DATA';
 const GET_USER_DATA = 'GET_USER_DATA';
 const HANDLE_EXIT = 'HANDLE_EXIT';
 const UPDATE_LOGIN_INFO = 'UPDATE_LOGIN_INFO';
+const UPDATE_LAYOUT = 'UPDATE_LAYOUT';
 const mutations = {
   [GENERATE_ROUTES](state, roleRouter) {
     state.roleRoutes.push(roleRouter);
@@ -321,14 +329,18 @@ const mutations = {
   [GET_USER_DATA](state, data) {
     state.userDetailData = data;
   },
+  [UPDATE_LAYOUT](state, data) {
+    state.layout = _get(data, 'layout', 1);
+  },
   [HANDLE_EXIT](state) {
-    state.data = null;
-    state.roleMenus = null;
-    state.token = null;
+    state.data = {};
+    state.roleMenus = {};
+    state.token = '';
     state.isLogin = false;
     state.initedApp = false;
     state.userDetailData = {};
-    state.refreshToken = null;
+    state.refreshToken = ''; // 这里必需要重置数据，不然我们在退出到登录页（并且不刷新页面）后虽然 localStarge 中的数据已经被清除了但是内存中 vuex 的数据还是存在的
+    state.layout = 1;
     setTimeout(() => {
       // 移除全部缓存
       if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {

@@ -4,7 +4,7 @@
 import { getTreeMap } from '../helper/tree.js';
 
 const treeAnchor = {
-  name: 'baseTreeAnchor',
+  name: 'BaseTreeAnchor',
   props: {
     // tree数据
     list: {
@@ -242,15 +242,17 @@ const treeAnchor = {
         }
       },
       [
-        h(
-          'div',
-          {
-            class: {
-              'tree-anchor-title': true
-            }
-          },
-          [this.title]
-        ),
+        this.title.length > 0
+          ? h(
+              'div',
+              {
+                class: {
+                  'tree-anchor-title': true
+                }
+              },
+              [this.title]
+            )
+          : null,
         h(
           'div',
           {

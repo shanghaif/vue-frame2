@@ -15,6 +15,36 @@ const getMenu = options => {
       iconUrl: 'svg-update-log'
     },
     {
+      id: 109,
+      menuCode: 'baidu-development-specification',
+      menuName: '百度-开发规范',
+      menuUrl: 'baidu-development-specification',
+      iconUrl: '/static/images/baidu/baidu.png',
+      children: [
+        {
+          id: 110,
+          menuCode: 'baidu-javascript',
+          menuName: 'js规范',
+          menuUrl: 'baidu-javascript',
+          iconUrl: '/static/images/baidu/javascript.png'
+        },
+        {
+          id: 111,
+          menuCode: 'baidu-html',
+          menuName: 'html规范',
+          menuUrl: 'baidu-html',
+          iconUrl: '/static/images/baidu/html.png'
+        },
+        {
+          id: 112,
+          menuCode: 'baidu-css',
+          menuName: 'css-规范',
+          menuUrl: 'baidu-css',
+          iconUrl: '/static/images/baidu/css.png'
+        }
+      ]
+    },
+    {
       id: 69,
       menuCode: 'development-specification',
       menuName: '开发规范',
@@ -107,38 +137,6 @@ const getMenu = options => {
           menuUrl: '/open-out-view',
           iconUrl: 'el-icon-document-copy',
           hrefType: 'out' // out 外部打开（会以新窗口的形式打开），in 内部打开（普通路由形式）
-        }
-      ]
-    },
-    {
-      id: 16,
-      menuCode: 'echarts',
-      menuName: '图表展示',
-      menuUrl: '',
-      iconUrl: 'el-icon-s-data',
-      children: [
-        {
-          id: 17,
-          menuCode: 'line',
-          menuName: '折线',
-          menuUrl: '/line',
-          iconUrl: 'svg-chart-line',
-          children: [
-            {
-              id: 18,
-              menuCode: 'one',
-              menuName: '示例1',
-              menuUrl: '/one',
-              iconUrl: ''
-            },
-            {
-              id: 19,
-              menuCode: 'two',
-              menuName: '示例2',
-              menuUrl: '/two',
-              iconUrl: ''
-            }
-          ]
         }
       ]
     },
@@ -252,6 +250,36 @@ const getMenu = options => {
           menuName: '多表头',
           menuUrl: 'more-header-grid',
           iconUrl: 'el-icon-document-remove'
+        },
+        {
+          id: 99,
+          menuCode: 'roll-load-grid',
+          menuName: '滚动加载-grid',
+          menuUrl: 'roll-load-grid',
+          iconUrl: 'el-icon-d-caret'
+        }
+      ]
+    },
+    {
+      id: 94,
+      menuCode: 'complex-grid',
+      menuName: 'Grid 复杂示例',
+      menuUrl: 'complex-grid',
+      iconUrl: 'el-icon-s-grid',
+      children: [
+        {
+          id: 95,
+          menuCode: 'tree-expand-grid',
+          menuName: 'tree-grid',
+          menuUrl: 'tree-expand-grid',
+          iconUrl: ''
+        },
+        {
+          id: 96,
+          menuCode: 'dynamic-grid',
+          menuName: '动态grid',
+          menuUrl: 'dynamic-grid',
+          iconUrl: ''
         }
       ]
     },
@@ -345,6 +373,13 @@ const getMenu = options => {
           menuName: '锚点-tree',
           menuUrl: 'anchor-tree',
           iconUrl: 'el-icon-paperclip'
+        },
+        {
+          id: 100,
+          menuCode: 'anchor-tree-two',
+          menuName: '锚点-tree-2',
+          menuUrl: 'anchor-tree-two',
+          iconUrl: 'el-icon-paperclip'
         }
       ]
     },
@@ -354,6 +389,13 @@ const getMenu = options => {
       menuName: '下拉菜单',
       menuUrl: '/dropdown',
       iconUrl: 'svg-down-select'
+    },
+    {
+      id: 106,
+      menuCode: 'tabs',
+      menuName: 'tabs-标签页',
+      menuUrl: '/tabs',
+      iconUrl: '/static/images/menus/tabs.svg'
     },
     {
       id: 28,
@@ -474,13 +516,6 @@ const getMenu = options => {
           iconUrl: ''
         },
         {
-          id: 78,
-          menuCode: 'anchor-layout',
-          menuName: '锚点布局',
-          menuUrl: '/anchor-layout',
-          iconUrl: ''
-        },
-        {
           id: 79,
           menuCode: 'v-box-layout',
           menuName: '垂直布局',
@@ -507,6 +542,13 @@ const getMenu = options => {
           menuName: '绝对定位布局',
           menuUrl: 'absolute-layout',
           iconUrl: ''
+        },
+        {
+          id: 114,
+          menuCode: 'fit-layout',
+          menuName: 'fit布局',
+          menuUrl: 'fit-layout',
+          iconUrl: ''
         }
       ]
     },
@@ -519,9 +561,9 @@ const getMenu = options => {
     },
     {
       id: 59,
-      menuCode: 'cut-window',
+      menuCode: 'splitpane-window',
       menuName: '分割窗口',
-      menuUrl: 'cut-window',
+      menuUrl: 'splitpane-window',
       iconUrl: 'el-icon-refrigerator'
     },
     {
@@ -591,6 +633,29 @@ const getMenu = options => {
       menuUrl: 'visualization',
       children: [
         {
+          id: 18,
+          menuCode: 'echarts',
+          menuName: 'echarts 基础示例',
+          menuUrl: 'echarts',
+          iconUrl: ''
+        },
+        {
+          id: 92,
+          menuCode: 'echarts-map',
+          menuName: 'echarts 基础-地图',
+          menuUrl: 'echarts-map',
+          iconUrl: '',
+          children: [
+            {
+              id: 93,
+              menuCode: 'administration-map',
+              menuName: '行政图',
+              menuUrl: 'administration-map',
+              iconUrl: ''
+            }
+          ]
+        },
+        {
           id: 84,
           menuCode: 'history-time-scroll',
           menuName: '时间历程轮播组件',
@@ -616,7 +681,79 @@ const getMenu = options => {
           menuCode: 'map-bar',
           menuName: '地图柱状图',
           menuUrl: 'map-bar',
-          iconUrl: ''
+          iconUrl: '/static/images/gd-map.svg'
+        },
+        {
+          id: 98,
+          menuCode: 'gd-map',
+          menuName: '高德地图',
+          menuUrl: 'gd-map',
+          iconUrl: '/static/images/gd-map.svg',
+          children: [
+            {
+              id: 101,
+              menuCode: 'gd-map-normal',
+              menuName: '普通地图',
+              menuUrl: 'gd-map-normal',
+              iconUrl: ''
+            },
+            {
+              id: 102,
+              menuCode: 'gd-map-marker',
+              menuName: '地图点标记',
+              menuUrl: 'gd-map-marker',
+              iconUrl: ''
+            },
+            {
+              id: 107,
+              menuCode: 'gd-circle-map-marker',
+              menuName: '地图点圆形标记',
+              menuUrl: 'gd-circle-map-marker',
+              iconUrl: ''
+            },
+            {
+              id: 103,
+              menuCode: 'gd-map-district',
+              menuName: '简易行政区',
+              menuUrl: 'gd-map-district',
+              iconUrl: ''
+            },
+            {
+              id: 104,
+              menuCode: 'gd-map-district-explorer',
+              menuName: '行政区',
+              menuUrl: 'gd-map-district-explorer',
+              iconUrl: ''
+            },
+            {
+              id: 105,
+              menuCode: 'gd-map-info-window',
+              menuName: '信息窗口',
+              menuUrl: 'gd-map-info-window',
+              iconUrl: ''
+            },
+            {
+              id: 108,
+              menuCode: 'gd-map-mass-marks',
+              menuName: '海量点',
+              menuUrl: 'gd-map-mass-marks',
+              iconUrl: ''
+            },
+            {
+              id: 113,
+              menuCode: 'gd-map-text',
+              menuName: '纯文本标记',
+              menuUrl: 'gd-map-text',
+              iconUrl: ''
+            },
+            {
+              id: 116,
+              menuCode: 'gd-marker-clusterer',
+              menuName: '点聚合',
+              menuUrl: 'gd-marker-clusterer',
+              iconUrl: ''
+            }
+          ]
         }
       ]
     },
@@ -625,16 +762,35 @@ const getMenu = options => {
       menuName: '嵌套路由',
       iconUrl: '/static/images/123.jpg',
       menuCode: 'nesting-routes',
-      menuUrl: 'nesting-routes',
-      children: [
-        {
-          id: 87,
-          menuCode: 'nesting-routes-test',
-          menuName: '示例',
-          menuUrl: 'nesting-routes-test',
-          iconUrl: ''
-        }
-      ]
+      menuUrl: 'nesting-routes'
+    },
+    {
+      id: 97,
+      menuName: '媒体属性',
+      iconUrl: '/static/images/media.png',
+      menuCode: 'media-routes',
+      menuUrl: 'media-routes'
+    },
+    {
+      id: 999,
+      menuCode: 'pdf',
+      menuName: 'pdf下载',
+      menuUrl: '/pdf',
+      iconUrl: 'el-icon-c-scale-to-original'
+    },
+    {
+      id: 115,
+      menuCode: 'scrollbar',
+      menuName: '滚动组件',
+      menuUrl: '/scrollbar',
+      iconUrl: 'el-icon-d-caret'
+    },
+    {
+      id: 117,
+      menuCode: 'route-transition-view',
+      menuName: '路由转场动画',
+      menuUrl: '/route-transition-view',
+      iconUrl: 'el-icon-reading'
     }
     // ]
   ];

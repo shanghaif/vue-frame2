@@ -54,14 +54,19 @@
         ></base-carousel-progress>
       </div>
     </div>
+    <div style="margin-top: 100px;">
+      <upload-form-view></upload-form-view>
+    </div>
   </div>
 </template>
 
 <script>
 import validatorField from '@plugins/validator-field.js';
 import { mapGetters } from 'vuex';
+import uploadFormView from './upload-form.vue';
 
 export default {
+  components: { uploadFormView },
   // 常量对象
   const: {
     NAME_OF_CONSTANT: [{ name: '123' }, { age: 16 }],
@@ -170,7 +175,9 @@ export default {
 <style lang="less" module>
 // @import url('../../assets/font/style/font.css'); // 载入自定义字体库，已移动到 static/plugins/font/style/font.css
 .container {
+  height: 100%;
   margin-left: 20px;
+  overflow: auto;
   .my-font-style {
     span {
       font-family: 'pmzd';

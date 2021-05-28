@@ -3,16 +3,13 @@
     <div class="time-axios-history">
       <h3>时间历程轮播组件</h3>
       <div class="time-axios-history-main">
-        <timeAxios :dataMap="datamap"></timeAxios>
+        <base-time-axios-history :dataMap="datamap" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import timeAxios from '@packages/components/time-axios-history';
-
 export default {
-  components: { timeAxios },
   data() {
     return {
       datamap: {

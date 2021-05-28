@@ -310,6 +310,7 @@ export default {
       const geoCoordMap = this.getGeoCoordMap(geoJson);
       const labelStatus = this.isShowBarLable;
       const barStyle = this.barConfig;
+      const mapDataMax = this.getMaxValue(this.mapData);
       echarts.util.each(this.mapData, function(item, idx) {
         if (geoCoordMap[item.name]) {
           var geoCoord = geoCoordMap[item.name];
@@ -361,6 +362,8 @@ export default {
                 color: '#1C70B6'
               }
             },
+            min: 0,
+            max: mapDataMax,
             z: 100
           });
           option.grid.push({
@@ -448,6 +451,19 @@ export default {
         }
       });
       myChart.setOption(option);
+    },
+    getMaxValue(data) {
+      const values = [];
+      if (data.length) {
+        for (const item of data) {
+          values.push(item.value);
+        }
+      }
+      let max = 0;
+      if (values) {
+        max = Math.max.apply(null, values);
+      }
+      return max;
     },
     /**
      * @description 地图叠加效果

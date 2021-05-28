@@ -3,8 +3,11 @@ const _isEmpty = require('lodash/isEmpty');
 const _findIndex = require('lodash/findIndex');
 const frameConfig = require('./frame.config.js');
 const autoprefixer = require('autoprefixer');
+const tailwindcss = require('tailwindcss');
 const cssnano = require('cssnano');
 const px2rem = require('postcss-pxtorem');
+const postcssCustomMedia = require('postcss-custom-media');
+const minmax = require('postcss-media-minmax');
 const isProd = process.env.NODE_ENV === 'production';
 function resolve(dir) {
   return path.join(__dirname, '.', dir);
@@ -60,11 +63,26 @@ const px2remConfig = {
 };
 module.exports = {
   plugins: [
+    // 一个功能类优先的 CSS 框架
+    tailwindcss,
     // 根据 .browserslistrc 自动添加浏览器厂商前缀（webkit、moz、ms）
     autoprefixer,
     // 去除空格、注释、智能压缩代码（注意：postcssSprites 会把 css 代码中已经注释的背景图也进行雪碧图合成，所以要提前把 css 去除注释）
     cssnano,
     // px转rem
-    px2rem(px2remConfig)
+    px2rem(px2remConfig),
+    // media 媒体属性插件
+    postcssCustomMedia({
+      importFrom: [
+        {
+          customMedia: {
+            // 媒体属性区间定义在这里
+            '--small-viewport': '(width >= 500px) and (width <= 1440px)',
+            '--big-viewport': '(width > 1440px) and (width <= 1920px)'
+          }
+        }
+      ]
+    }),
+    minmax() // 解析上面 `postcssCustomMedia` 中的 > >= < <=
   ]
 };

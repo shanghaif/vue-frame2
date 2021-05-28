@@ -88,6 +88,24 @@ const index = [
           import(
             /* webpackChunkName:"views/grid" */ '@views/grid/more-header-grid/index.vue'
           )
+      },
+      {
+        name: 'roll-load-grid',
+        path: 'roll-load-grid',
+        meta: { title: '滚动加载-grid' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/grid" */ '@views/grid/roll-load-grid/index.vue'
+          )
+      },
+      {
+        name: 'property-grid',
+        path: 'property-grid',
+        meta: { title: '属性-grid' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/grid" */ '@views/grid/property-grid/index.vue'
+          )
       }
     ]
   }

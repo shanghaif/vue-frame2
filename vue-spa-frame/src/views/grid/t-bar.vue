@@ -83,8 +83,8 @@ export default {
         return;
       }
       const b = [
-        { field: 'id', value: 101 },
-        { field: 'id', value: 98 }
+        { field: 'id', value: '1-3' },
+        { field: 'id', value: '1-9' }
       ];
       this.getBaseGrid.selectRows(b);
     },

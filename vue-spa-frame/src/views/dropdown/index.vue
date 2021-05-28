@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div>
-      <p>默认下拉菜单</p>
+    <div class="mb-10">
+      <h4>1：&nbsp;&nbsp;默认下拉菜单</h4>
       <base-drop-down
         size="mini"
         title="更多以用"
         :options="options"
       ></base-drop-down>
     </div>
-    <div>
-      <p>插槽下拉菜单</p>
+    <div class="mb-10">
+      <h4>2：&nbsp;&nbsp;插槽下拉菜单</h4>
       <base-drop-down
         icon
         :item-ct-cls="$style.topViewItemCtCls"
@@ -42,13 +42,13 @@
         </template>
       </base-drop-down>
     </div>
-    <div>
-      <p>多层级下拉框一级动态绑定传参</p>
+    <div class="mb-10">
+      <h4>3：&nbsp;&nbsp;两个层级下拉框一级动态绑定传参&nbsp;&nbsp;点击展示</h4>
 
       <base-drop-down
         size="mini"
         titleColor="#000"
-        title="多层级下拉"
+        title="两个层级下拉"
         icon="el-icon-caret-bottom"
         :hide-on-click="false"
         :item-ct-cls="$style.topViewItemCtCls"
@@ -58,36 +58,76 @@
       ></base-drop-down>
     </div>
     <div>
-      <h4>Menu（菜单）</h4>
-      <el-menu
-        :default-active="activeIndex"
-        class="el-menu-demo"
-        mode="horizontal"
-        menu-trigger="click"
-        @select="handleSelect"
-      >
-        <el-submenu index="2">
-          <template slot="title">我的工作台</template>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-          <el-menu-item index="2-3">选项3</el-menu-item>
-          <el-submenu index="2-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="2-4-1">选项1</el-menu-item>
-            <el-menu-item index="2-4-2">选项2</el-menu-item>
-            <el-menu-item index="2-4-3">选项3</el-menu-item>
+      <h4>4：&nbsp;&nbsp;Menu（菜单）&nbsp;&nbsp;点击展示-多级级联菜单</h4>
+      <div class="mb-10">{{ fourValue }}</div>
+      <div class="base-el-menu-button">
+        <el-menu
+          :default-active="activeIndex"
+          class="el-menu-demo"
+          mode="horizontal"
+          menu-trigger="click"
+          :unique-opened="true"
+          @select="handleSelect"
+          v-if="false"
+        >
+          <el-submenu
+            index="2"
+            :popper-append-to-body="true"
+            popper-class="aaaaaaaaaaaaaaaaa"
+          >
+            <template slot="title">我的工作台</template>
+            <el-menu-item index="2-1">选项1</el-menu-item>
+            <el-menu-item index="2-3">选项3</el-menu-item>
+            <el-submenu index="2-2">
+              <template slot="title">食物</template>
+              <el-menu-item index="2-2-1">大米</el-menu-item>
+              <el-menu-item index="2-2-2">小米</el-menu-item>
+            </el-submenu>
+            <el-submenu index="2-4">
+              <template slot="title">选项4</template>
+              <el-menu-item index="2-4-1">选项1</el-menu-item>
+              <el-menu-item index="2-4-2">选项2</el-menu-item>
+              <el-submenu index="3-1">
+                <template slot="title">水果</template>
+                <el-menu-item index="3-1-1">苹果</el-menu-item>
+                <el-menu-item index="3-1-2">香蕉</el-menu-item>
+              </el-submenu>
+              <el-menu-item index="2-4-3">选项3</el-menu-item>
+            </el-submenu>
           </el-submenu>
-        </el-submenu>
-      </el-menu>
+        </el-menu>
+        <div class="mb-10">{{ fourValue }}</div>
+        <base-menu-button
+          :options="fourOptions"
+          :fourValue="fourValue"
+          :svgIcons="svgIcons"
+          @select="onMenuButtonSelect"
+          prefixIcon="el-icon-eleme"
+        />
+      </div>
+    </div>
+
+    <div class="m-20 chromeMark">
+      <div
+        class="chromeMark-item"
+        v-for="(item, index) of menuList"
+        :key="index"
+        :id="'chromeMark' + index"
+      >
+        <base-svg-icon :iconname="item.iconUrl"></base-svg-icon>
+        <span>{{ item.menuName }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import svgIcons from '@/plugins/icons.js';
 export default {
   data() {
+    this.svgIcons = svgIcons;
     return {
-      activeIndex: '1',
+      activeIndex: '2-1',
       options: [
         {
           text: '个人中心',
@@ -145,11 +185,110 @@ export default {
             );
           }
         }
-      ]
+      ],
+      fourOptions: [
+        {
+          value: 'shejiyuanze',
+          label: '设计原则',
+          icon: 'svg-table-transfer',
+          children: [
+            {
+              value: 'yizhi',
+              label: '一致'
+            },
+            {
+              value: 'fankui',
+              label: '反馈'
+            },
+            {
+              value: 'xiaolv',
+              label: '效率'
+            },
+            {
+              value: 'kekong',
+              label: '可控'
+            }
+          ]
+        },
+        {
+          value: 'zhinan',
+          label: '指南',
+          icon: 'el-icon-share',
+          childrenL: []
+        },
+        {
+          value: 'daohang',
+          label: '导航',
+          icon: '/static/images/tree.png',
+          children: [
+            {
+              value: 'cexiangdaohang',
+              label: '侧向导航',
+              disabled: true
+            },
+            {
+              value: 'dingbudaohang',
+              label: '顶部导航'
+            },
+            {
+              value: 'foods',
+              label: '水果',
+              icon: '/static/images/menus/tabs.svg',
+              children: [
+                { value: 'apple', label: '苹果' },
+                { value: 'banana', label: '香蕉' }
+              ]
+            }
+          ]
+        },
+        {
+          value: 'zujian',
+          label: '组件',
+          icon: 'el-icon-star-off',
+          children: [
+            {
+              value: 'basic',
+              label: 'Basic',
+              children: [
+                {
+                  value: 'layout',
+                  label: 'Layout 布局'
+                },
+                {
+                  value: 'color',
+                  label: 'Color 色彩'
+                },
+                {
+                  value: 'typography',
+                  label: 'Typography 字体'
+                },
+                {
+                  value: 'icon',
+                  label: 'Icon 图标'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      fourValue: '',
+      menuList: []
     };
+  },
+  computed: {
+    isInclient() {
+      return function(id) {
+        // eslint-disable-next-line no-unused-vars
+        const currentWidth = document.getElementById(id).offsetWidth;
+      };
+    }
   },
   created() {
     this.addEvent();
+    this.menuList = this.$store.getters.getLevel1Menus;
+    this.clientWidth = document.getElementsByClassName(
+      'chromeMark'
+    )[0].offsetWidth;
   },
   methods: {
     /**
@@ -216,11 +355,16 @@ export default {
       ];
 
       this.$nextTick(() => {
-        this.$refs.userNameDropdown.updateDropdown();
+        if (!_isNil(this.$refs.userNameDropdown)) {
+          this.$refs.userNameDropdown.updateDropdown();
+        }
       });
     },
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
+    },
+    onMenuButtonSelect(option) {
+      console.log('option', option);
     }
   }
 };
@@ -286,8 +430,35 @@ export default {
 }
 </style>
 
-<style lang="less" scoped>
-/deep/ .el-menu-demo {
+<style lang="less">
+.base-el-menu-button {
+  display: inline-block;
+  .el-submenu__title {
+    padding: 0;
+  }
+  .el-menu.el-menu--horizontal {
+    border-bottom: 0;
+  }
+  .el-menu--horizontal > .el-submenu .el-submenu__title {
+    height: 30px;
+    line-height: 30px;
+    color: rgba(96, 98, 102);
+  }
+  .el-menu--horizontal > .el-submenu.is-active .el-submenu__title {
+    border-bottom: 0;
+  }
+}
+.aaaaaaaaaaaaaaaaa {
+  .el-menu--collapse .el-menu .el-submenu,
+  .el-menu--popup {
+    min-width: 120px !important;
+  }
+  .el-submenu .el-menu-item {
+    min-width: 120px !important;
+  }
+}
+
+/* /deep/ .el-menu-demo {
   display: flex;
   flex-direction: column;
   width: 160px;
@@ -295,7 +466,7 @@ export default {
 /deep/ .el-menu--horizontal > .el-submenu .el-submenu__title {
   height: 30px;
   line-height: 30px;
-}
+} */
 </style>
 
 <style lang="less" module>
@@ -308,5 +479,21 @@ export default {
   color: rgba(66, 147, 244, 100);
   .t-center;
   .pointer;
+}
+</style>
+
+<style lang="less" scoped>
+.chromeMark {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  &-item {
+    display: inline-block;
+    width: 10%;
+    margin-right: 10px;
+    span {
+      writing-mode: horizontal-tb;
+    }
+  }
 }
 </style>

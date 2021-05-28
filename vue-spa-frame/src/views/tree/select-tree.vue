@@ -7,8 +7,11 @@
         nodeKey，如：valueField="code" nodeKey="code"
       </p>
       <p>disabledNodes 用于禁用节点的配置</p>
+      <p>isRenderSearchInput 是否生成下拉框中树的搜索框组件</p>
       <div style="margin: 10px 0;">
-        <el-button type="primary" @click="onClear">清空</el-button>
+        <el-button type="primary" @click="onClear">清空选择项</el-button>
+        <el-button type="primary" @click="onClearTree">清空树组件</el-button>
+        <el-button type="primary" @click="onRemove">移除一个选中项</el-button>
       </div>
       <base-select-tree
         ref="select-tree-1-ref"
@@ -21,8 +24,9 @@
         :collapse-tags="false"
         prefixLabel="--"
         :default-expanded-keys="[10, 6]"
-        :default-checked-keys="[10, 6]"
+        :default-checked-keys="[10, 6, 3, 2]"
         :disabledNodes="[4]"
+        :isRenderSearchInput="true"
       ></base-select-tree>
       {{ treeValue1 }}
     </div>
@@ -187,6 +191,39 @@
       ></base-select-tree>
       <div>{{ industry }}</div>
     </div>
+    <div>
+      <p>
+        11：某一层级下最多只能选中几个节点，当前层级下的子节点仍旧可以选择，但处于这一层级的同级别点就不能进行选择。
+      </p>
+      <p>
+        多选-树的父子级联设置为 false
+        ，但是勾选一个子节点需要同时选中上层未选中的父节点，如果父节点取消那么里面的所有子节点都同时取消
+      </p>
+      <p>
+        有时候我们选中了树的节点但是又不想把选中节点的v-model值显示在对应的文本框中
+      </p>
+      <div>
+        所有一级节点的第二层节点最多只能选中两个
+        <pre>:maxItemObj="{ level: 1, max: 2 }"</pre>
+        <pre>:checkStrictlyFalseCancelChildChecked="true"</pre>
+      </div>
+      <p>使用时最好两个参数配合使用</p>
+      <base-select-tree
+        ref="select-tree-11-ref"
+        :width="200"
+        api="common/getTree"
+        v-model="treeValue11"
+        displayField="label"
+        :lazy="false"
+        :multiple="true"
+        :isRenderRoot="false"
+        :default-expand-all="true"
+        :collapse-tags="false"
+        :checkStrictlyFalseCancelChildChecked="true"
+        :maxItemObj="{ level: 1, max: 2 }"
+      ></base-select-tree>
+      {{ treeValue11 }}
+    </div>
   </div>
 </template>
 
@@ -199,13 +236,14 @@ export default {
       value: 'id'
     };
     return {
-      treeValue1: [10, 6], // 默认选中
+      treeValue1: [10, 6, 3], // 默认选中
       treeValue2: 10, // 单选（单选其实在树上面没有选中效果）
       treeValue3: [10, 6],
       treeValue4: '',
       treeValue5: '',
       treeValue6: [26, 28, 18],
       treeValue7: [],
+      treeValue11: [],
       data: [
         /* {
           label: '一级 1',
@@ -250,7 +288,8 @@ export default {
           }
         ];
         this.$nextTick(() => {
-          this.$refs['store-select-tree'].getTree().refreshAll();
+          this.$refs['store-select-tree'] &&
+            this.$refs['store-select-tree'].getTree().refreshAll();
         });
       }, 2000);
     });
@@ -274,10 +313,28 @@ export default {
       this.$refs.bbb.handOpenTree();
     },
     onClear() {
+      // this.$refs['select-tree-1-ref'].getTree().clearData();
+      this.treeValue1 = [];
+    },
+    onClearTree() {
       this.$refs['select-tree-1-ref'].getTree().clearData();
     },
     onSearch1(nodes) {
       console.log('nodes', nodes);
+    },
+    selectTreeChange(curSelectValueList) {
+      console.log('树的选中取消事件', curSelectValueList);
+    },
+    onRemove() {
+      this.treeValue1.splice(0, 1); // splice 移除也可以
+      // this.treeValue1 = [6, 3];
+    },
+    // 外部搜索过滤函数
+    filterNodeMethodHandle(value, data) {
+      return ~_get(data, 'label').indexOf(value);
+    },
+    onFirstTreeCheck(node, treeCheckedNode) {
+      console.log('tree check', node, treeCheckedNode);
     }
   }
 };

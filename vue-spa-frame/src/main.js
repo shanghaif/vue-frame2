@@ -24,6 +24,12 @@ import VfRef from './directives/v-f-ref.js';
 // iconfont
 import '@/assets/font/iconfont/iconfont.css';
 import '@/assets/font/iconfont/iconfont.js';
+// 高德地图
+import { BaseAmap } from './packages/components/index.js';
+// 阿里巴巴aplus埋点插件
+// import '@plugins/aplus/index.js';
+// tailwind
+// import '@assets/css/tailwind.css';
 
 // 全局通知 巴士事件
 window.GvBus = {};
@@ -48,6 +54,26 @@ Vue.config.ignoredElements = []; // 忽略在 Vue 之外的自定义元素
 Vue.config.keyCodes = {}; // 给 v-on 自定义键位别名
 Vue.config.productionTip = false;
 
+// 高德地图
+Vue.use(BaseAmap);
+BaseAmap.initAMapApiLoader({
+  key: 'f7ac15a8687e70001f0d8f9e65007f09', // 密钥
+  plugin: [
+    'Map3D',
+    'DistrictSearch',
+    'Loca',
+    'DistrictLayer',
+    'SimpleMarker',
+    'DistrictExplorer',
+    'AMap.MarkerClusterer' // 聚合点
+    // 'ToolBar',
+    // 'MapType',
+    // 'OverView'
+  ], // 插件
+  v: '1.4.15', // JSAPI 版本号
+  uiVersion: '1.0' // UI组件库 版本号
+});
+
 window.vm = new Vue({
   router,
   store,
@@ -56,12 +82,14 @@ window.vm = new Vue({
     // 载入远程字典
     // this.$dict.import(this.$api['dict/getDictDataByTypeList']());
     // 模块常量
-    console.info(this.$constant);
+    /* console.info(this.$constant);
     console.info(
       '测试环境：',
       process.env.VUE_APP_TEST,
       process.env.VUE_APP_ENV
     );
+    console.log('自定义环境：', process.env.USER_CONFIG_ENV); */
+    $log.success('项目启动成功');
   },
   render: h => h(App)
 }).$mount('#app');

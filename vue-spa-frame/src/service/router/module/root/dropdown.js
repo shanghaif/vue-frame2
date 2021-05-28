@@ -10,6 +10,15 @@ const index = [
       import(
         /* webpackChunkName:"views/dropdown" */ '@views/dropdown/index.vue'
       )
+  },
+  {
+    path: 'tabs',
+    name: 'tabs',
+    meta: { title: '标签页' },
+    component: () =>
+      import(
+        /* webpackChunkName:"views/dropdown" */ '@views/pbank/tabs/index.vue'
+      )
   }
 ];
 

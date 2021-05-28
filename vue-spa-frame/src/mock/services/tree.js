@@ -20,6 +20,7 @@ const treeList = options => {
     {
       id: 1,
       label: '一级 1',
+      disabled: false, // 如果需要通过 base-tree 的属性 disabledNodes 来达到禁用节点的效果，那么在源数据中就要添加 disabled 字段，让数据是响应式的
       children: [
         {
           id: 4,
@@ -28,7 +29,8 @@ const treeList = options => {
           children: [
             {
               id: 9,
-              label: '三级 1-1-1'
+              label: '三级 1-1-1',
+              disabled: false
             }
           ]
         }
@@ -37,24 +39,46 @@ const treeList = options => {
     {
       id: 2,
       label: '一级 2',
+      disabled: false,
       children: [
         {
           id: 5,
           label: '二级 2-1',
+          disabled: false,
           children: [
             {
               id: 10,
-              label: '三级 2-1-1'
+              label: '三级 2-1-1',
+              disabled: false
             }
           ]
         },
         {
           id: 6,
           label: '二级 2-2',
+          disabled: false,
           children: [
             {
               id: 11,
-              label: '三级 2-2-1'
+              label: '三级 2-2-1',
+              disabled: false
+            }
+          ]
+        },
+        {
+          id: 14,
+          label: '二级 2-3',
+          disabled: false,
+          children: [
+            {
+              id: 15,
+              label: '三级 2-3-1',
+              disabled: false
+            },
+            {
+              id: 16,
+              label: '三级 2-3-2',
+              disabled: false
             }
           ]
         }
@@ -63,24 +87,34 @@ const treeList = options => {
     {
       id: 3,
       label: '一级 3',
+      disabled: false,
       children: [
         {
           id: 7,
           label: '二级 3-1',
+          disabled: false,
           children: [
             {
               id: 12,
-              label: '三级 3-1-1'
+              label: '三级 3-1-1',
+              disabled: false
             }
           ]
         },
         {
           id: 8,
           label: '二级 3-2',
+          disabled: false,
           children: [
             {
               id: 13,
-              label: '三级 3-2-1'
+              label: '三级 3-2-1',
+              disabled: false
+            },
+            {
+              id: 17,
+              label: '三级 3-2-2',
+              disabled: false
             }
           ]
         }
@@ -197,7 +231,8 @@ const complicateTreeList = options => {
           menuCode: 'index',
           menuName: '对话框',
           menuUrl: '/index',
-          iconUrl: 'el-icon-s-grid'
+          iconUrl: 'el-icon-s-grid',
+          check: true // 默认选中
         },
         {
           id: 25,
@@ -221,6 +256,7 @@ const complicateTreeList = options => {
           menuName: '基础-grid',
           menuUrl: '/base-grid',
           iconUrl: 'el-icon-s-grid',
+          check: true, // 默认选中
           buttons: [
             { id: 10, name: '添加', code: 'add', status: 0 },
             { id: 11, name: '删除', code: 'delete', status: 1 }

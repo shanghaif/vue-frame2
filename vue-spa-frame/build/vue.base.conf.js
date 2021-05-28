@@ -132,6 +132,10 @@ const baseConfig = {
               ? processConfig.dev.assetsSubDirectory
               : processConfig.build.assetsSubDirectory,
             ignore: isDev ? [] : ['**/prod-ignored-directory/**'] // 忽略哪些文件或目录不拷贝到最终的构建包中，如：[ '**/file.*' ， '**/prod-ignored-directory/**' ]
+          },
+          {
+            from: path.resolve(__dirname, '../static/dist'), // dist 目录内的文件都会被拷贝到打包输出 dist 的根路径这一层
+            to: ''
           }
         ])
     );
@@ -220,7 +224,7 @@ const baseConfig = {
     config.module
       .rule('js')
       .exclude.add(file =>
-        /[\\/]static[\\/]plugins[\\/]lib-flexible[\\/]/.test(file)
+        /[\\/]static[\\/]plugins[\\/](lib-flexible|exclude)[\\/]/.test(file)
       );
   },
   css: {

@@ -7,13 +7,12 @@ import _includes from 'lodash/includes';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 import _isNil from 'lodash/isNil';
-import _isFunction from 'lodash/isFunction';
-import router from '../../router/index.js';
-import store from '../../store/index.js';
+import router from '@router/index.js';
+import store from '@store/index.js';
 import { LOGIN_PAGE_NAME, USER_API_CONFIG } from '@config/index.js';
 import filterExpand from '@plugins/axios/filter.js';
 
-let unTokenExpireWatch = null; // 动态监听器 watch
+// const unTokenExpireWatch = null; // 动态监听器 watch
 
 // 请求开始发送
 const apiRequestStartHandler = function() {
@@ -26,48 +25,24 @@ const apiRequestStartHandler = function() {
 const apiRequestEndHandler = function(response = {}) {
   const code = _get(response, 'data.code', '-100');
   // token 过期或无效
-  if (code === Vue.prototype.$constant.apiServeCode.TOKEN_EXPIRE_CODE) {
-    /* ------- start 没有 refresh_token 的处理，如果 token 过期则跳转到 登录页 ------ */
-    if (unTokenExpireWatch === null) {
-      unTokenExpireWatch = window.vm.$watch('$route', function(val, oldVal) {
-        // this 指向 Vue 实例
-        this.$message({
-          showClose: false,
-          message: '错误：抱歉，登录状态已失效，请重新登录！',
-          type: 'error',
-          duration: 2000
-        });
-        unTokenExpireWatch(); // 之后取消观察
-      });
-      setTimeout(() => {
-        // 销毁缓存和临时变量
-        store.dispatch('handlerDestroy').then(() => {
+  if (code === USER_API_CONFIG.api_server_code.TOKEN_EXPIRE_CODE) {
+    // 清空缓存并且替换刷新当前页面到登录页
+    store.dispatch('handlerDestroy').then(() => {
+      Vue.prototype.$message({
+        showClose: false,
+        message: '错误：抱歉，您的登录状态已失效，请重新登录~！',
+        type: 'error',
+        duration: 1500,
+        onClose: () => {
+          // 关闭时的回调函数
+          // window.location.replace(`/${LOGIN_PAGE_NAME}`);
           router.push({ name: LOGIN_PAGE_NAME });
-        });
-      }, 0);
-      /* Vue.prototype.tokenExpireTipFn = (function () {
-        Vue.prototype.$message({
-          showClose: false,
-          message: '错误：抱歉，您的登录状态已失效，请重新登录！',
-          type: 'error',
-          duration: 1000,
-          onClose: function () {
-            // 销毁缓存和临时变量
-            store.dispatch('handlerDestroy');
-            setTimeout(() => {
-              router.push({ name: LOGIN_PAGE_NAME });
-            }, 0);
-          }
-        });
-      })(); */
-      /* ------- end ------ */
-      /* ------ start 有 refresh_token 的处理，调用刷新 token 接口，保存过期之后待发送的接口，刷新 token 成功后用新的 token 继续发送保存的接口 ----- */
-
-      /* ------- end ------ */
-    }
+        }
+      });
+    });
   }
   // 其它异常 code
-  if (_includes(Vue.prototype.$constant.apiServeCode.WRONG_CODE, code)) {
+  if (_includes(USER_API_CONFIG.api_server_code.WRONG_CODE, code)) {
     const result = _get(
       response,
       'config.request_error_callback',
@@ -100,14 +75,14 @@ const apiRequestEndHandler = function(response = {}) {
     }
   }
   // 登录接口
-  if (_get(response, 'config.headers.isLogin', false)) {
-    if (unTokenExpireWatch !== null) {
-      unTokenExpireWatch = null;
-    }
-    /* if (_has(Vue, 'prototype.tokenExpireTipFn')) {
-      delete Vue.prototype.tokenExpireTipFn;
-    } */
-  }
+  // if (_get(response, 'config.headers.isLogin', false)) {
+  //   if (unTokenExpireWatch !== null) {
+  //     unTokenExpireWatch = null;
+  //   }
+  //   /* if (_has(Vue, 'prototype.tokenExpireTipFn')) {
+  //     delete Vue.prototype.tokenExpireTipFn;
+  //   } */
+  // }
   if (USER_API_CONFIG.isShowNProgress) {
     NProgress.done();
   }
@@ -146,10 +121,10 @@ const requestErrorCallback = function(
   if (!_isEmpty(error.config)) {
     console.info(
       error.config.url,
-      Vue.prototype.$constant.apiServeCode.AUTH_REFRESH_API,
+      USER_API_CONFIG.api_server_code.AUTH_REFRESH_API,
       _includes(
         error.config.url,
-        Vue.prototype.$constant.apiServeCode.AUTH_REFRESH_API
+        USER_API_CONFIG.api_server_code.AUTH_REFRESH_API
       )
     );
     console.info(
@@ -158,28 +133,34 @@ const requestErrorCallback = function(
       data,
       !_isEmpty(data),
       _has(data, 'code'),
-      // data.code === Vue.prototype.$constant.apiServeCode.TOKEN_EXPIRE_CODE &&
+      // data.code === USER_API_CONFIG.api_server_code.TOKEN_EXPIRE_CODE &&
       _get(data, 'mesg', '') === '无效token',
       _get(data, 'data', '') === '无效token',
       _get(data, 'data', '') === 'token过期',
       _get(data, 'mesg', '') === 'token过期',
+      _get(data, 'message', '') === 'token过期',
+      _get(data, 'message', '') === '无效token',
+      _get(data, 'code', '') ===
+        USER_API_CONFIG.api_server_code.TOKEN_EXPIRE_CODE,
       !_includes(
         error.config.url,
-        Vue.prototype.$constant.apiServeCode.AUTH_REFRESH_API
+        USER_API_CONFIG.api_server_code.AUTH_REFRESH_API
       )
     );
   }
   if (
     !_isEmpty(data) &&
-    _has(data, 'code') &&
-    // data.code === Vue.prototype.$constant.apiServeCode.TOKEN_EXPIRE_CODE &&
     (_get(data, 'mesg', '') === '无效token' ||
       _get(data, 'data', '') === '无效token' ||
       _get(data, 'data', '') === 'token过期' ||
-      _get(data, 'mesg', '') === 'token过期') &&
+      _get(data, 'mesg', '') === 'token过期' ||
+      _get(data, 'message', '') === 'token过期' ||
+      _get(data, 'message', '') === '无效token' ||
+      _get(data, 'code', '') ===
+        USER_API_CONFIG.api_server_code.TOKEN_EXPIRE_CODE) &&
     !_includes(
       error.config.url,
-      Vue.prototype.$constant.apiServeCode.AUTH_REFRESH_API
+      USER_API_CONFIG.api_server_code.AUTH_REFRESH_API
     )
   ) {
     // 返回的是 token 过期
@@ -188,7 +169,7 @@ const requestErrorCallback = function(
       return filterExpand
         .refreshToken(
           error.instance,
-          Vue.prototype.$constant.apiServeCode.AUTH_REFRESH_API
+          USER_API_CONFIG.api_server_code.AUTH_REFRESH_API
         )
         .then(res => {
           filterExpand.setToken(res);
@@ -220,29 +201,20 @@ const requestErrorCallback = function(
             });
         })
         .catch(err => {
-          if (unTokenExpireWatch === null) {
-            unTokenExpireWatch = window.vm.$watch('$route', function(
-              val,
-              oldVal
-            ) {
-              // this 指向 Vue 实例
-              Vue.prototype.$message({
-                showClose: false,
-                message: '错误：抱歉，您的登录状态已失效，请重新登录！',
-                type: 'error',
-                duration: 2000
-              });
-              if (_isFunction(unTokenExpireWatch)) {
-                unTokenExpireWatch(); // 之后取消观察
+          // 清空缓存并且替换刷新当前页面到登录页
+          store.dispatch('handlerDestroy').then(() => {
+            Vue.prototype.$message({
+              showClose: false,
+              message: '错误：抱歉，您的登录状态已失效，请重新登录~！',
+              type: 'error',
+              duration: 1500,
+              onClose: () => {
+                // 关闭时的回调函数
+                // window.location.replace(`/${LOGIN_PAGE_NAME}`);
+                router.push({ name: LOGIN_PAGE_NAME });
               }
             });
-            setTimeout(() => {
-              // 销毁缓存和临时变量
-              store.dispatch('handlerDestroy').then(() => {
-                router.push({ name: LOGIN_PAGE_NAME });
-              });
-            }, 0);
-          }
+          });
           return Promise.reject(err);
         })
         .finally(() => {

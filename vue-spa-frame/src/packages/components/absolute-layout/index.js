@@ -12,7 +12,34 @@ const BaseAbsoluteLayout = {
   methods: {
     createNodes() {
       const childSlots = this.$slots.default;
-      return childSlots;
+      const h = this.$createElement;
+      const nodes = [];
+      for (let i = 0, len = childSlots.length; i < len; i++) {
+        const oAttrs = _get(childSlots[i], 'data.attrs', {});
+        const x = _get(oAttrs, 'x', 0);
+        const y = _get(oAttrs, 'y', 0);
+        delete oAttrs.x;
+        delete oAttrs.y;
+        nodes.push(
+          h(
+            {
+              render(h) {
+                return this.$scopedSlots.default();
+              }
+            },
+            {
+              style: {
+                position: 'absolute',
+                top: y + 'px',
+                left: x + 'px'
+              },
+              scopedSlots: { default: props => childSlots[i] }
+            },
+            []
+          )
+        );
+      }
+      return nodes;
     }
   },
   render(h) {

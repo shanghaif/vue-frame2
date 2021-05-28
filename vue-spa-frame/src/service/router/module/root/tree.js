@@ -61,6 +61,24 @@ const index = [
           import(
             /* webpackChunkName:"views/tree" */ '@views/tree/tree-anchor.vue'
           )
+      },
+      {
+        name: 'anchor-tree-two',
+        path: 'anchor-tree-two',
+        meta: { title: '锚点双向绑定-tree' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/tree" */ '@views/tree/anchor-tree-two.vue'
+          )
+      },
+      {
+        name: 'cascader-tree',
+        path: 'cascader-tree',
+        meta: { title: '级联-tree' },
+        component: () =>
+          import(
+            /* webpackChunkName:"views/tree" */ '@views/tree/cascader-tree/index.vue'
+          )
       }
     ]
   }

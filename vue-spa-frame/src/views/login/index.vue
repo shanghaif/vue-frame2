@@ -30,6 +30,13 @@
         <el-form-item label="">
           <el-checkbox v-model="form.remember">记住密码</el-checkbox>
         </el-form-item>
+        <el-form-item label="">
+          <el-radio-group v-model="radio">
+            <el-radio :label="1">布局风格1</el-radio>
+            <el-radio :label="2">布局风格2</el-radio>
+            <el-radio :label="3">布局风格3</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="onSubmit"
             >登录</el-button
@@ -39,6 +46,11 @@
           >
         </el-form-item>
       </el-form>
+    </div>
+    <div class=" vvv tw-justify-start">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
     </div>
   </div>
 </template>
@@ -64,7 +76,8 @@ export default {
         name: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         pswd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
-      flag: false
+      flag: false,
+      radio: 1
     };
   },
   created() {
@@ -75,7 +88,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['platform/handleLogin']),
+    ...mapActions(['platform/handleLogin', 'platform/setLayout']),
     onSubmit(event) {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -90,6 +103,7 @@ export default {
             remember: this.form.remember
           })
             .then(resData => {
+              this['platform/setLayout']({ layout: this.radio });
               this.$router.push({ name: ROOT_PAGE_NAME });
             })
             .catch(error => {
@@ -113,7 +127,11 @@ export default {
   }
 };
 </script>
-
+<style>
+.vvv {
+  transition: transform 1s;
+}
+</style>
 <style lang="less" module>
 .container {
   height: 100%;

@@ -63,6 +63,20 @@ const index = [
           import(
             /* webpackChunkName:"views/layout" */ '@views/layout/column.vue'
           )
+      },
+      {
+        path: 'form-layout',
+        name: 'form-layout',
+        meta: { title: '列布局' },
+        component: () =>
+          import(/* webpackChunkName:"views/layout" */ '@views/layout/form.vue')
+      },
+      {
+        path: 'fit-layout',
+        name: 'fit-layout',
+        meta: { title: 'fit布局' },
+        component: () =>
+          import(/* webpackChunkName:"views/layout" */ '@views/layout/fit.vue')
       }
     ]
   }

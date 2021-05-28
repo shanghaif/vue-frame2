@@ -68,9 +68,11 @@
             <!-- 这里不能再写 el-dropdown，因为内部已经用掉了这个元素 -->
             <template v-if="node.level !== 1">
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="a">{{
-                  node.label
-                }}</el-dropdown-item>
+                <el-dropdown-item command="a"
+                  ><span @click="onOtherClick">{{
+                    node.label
+                  }}</span></el-dropdown-item
+                >
                 <el-dropdown-item command="edit" divided>编辑</el-dropdown-item>
                 <el-dropdown-item command="add">新增</el-dropdown-item>
                 <el-dropdown-item command="delete" divided :isClose="false">
@@ -307,6 +309,9 @@ export default {
      */
     onGetData() {
       this.$refs['tree-ref'].refreshAll();
+    },
+    onOtherClick() {
+      alert('bbbbbb');
     }
   }
 };

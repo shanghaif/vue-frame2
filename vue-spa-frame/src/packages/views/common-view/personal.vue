@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.box">
     <!-- 用于放置公共页面 -->
     个人中心
   </div>
@@ -16,3 +16,8 @@ export default {
   methods: {}
 };
 </script>
+<style lang="less" module>
+.box {
+  height: 100px;
+}
+</style>

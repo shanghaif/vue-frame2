@@ -34,8 +34,8 @@ export default {
   data() {
     return {
       mapData: [
-        { name: '广州市', value: 300 },
-        { name: '深圳市', value: 200 },
+        { name: '广州市', value: 10 },
+        { name: '深圳市', value: 90 },
         { name: '佛山市', value: 1200 },
         { name: '中山市', value: 390 },
         { name: '云浮市', value: 380 },
@@ -58,9 +58,9 @@ export default {
         { name: '东莞市', value: 300 }
       ],
       chinaMapData: [
-        { name: '广东省', value: 300 },
-        { name: '山西省', value: 200 },
-        { name: '北京市', value: 1200 },
+        { name: '广东省', value: 80 },
+        { name: '山西省', value: 20 },
+        { name: '北京市', value: 100 },
         { name: '广西省', value: 390 },
         { name: '河北省', value: 390 },
         { name: '辽宁省', value: 390 }
