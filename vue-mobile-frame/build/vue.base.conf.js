@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const utils = require('./utils.js');
 const merge = require('webpack-merge');
 const createCssLoaderConfig = require('./css-loader.conf.js');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const _get = require('lodash/get');
 const _set = require('lodash/set');
 const _has = require('lodash/has');
@@ -94,7 +95,18 @@ const baseConfig = {
       // 忽略解析三方包里插件（非中文语言包排除掉）
       new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),
       // 提供全局的变量，自动加载模块，而不必到处 import 或 require（如果有 eslint 需要在 .eslintrc.js 中配置 globals 否则代码中 eslint 校验会报错）
-      new webpack.ProvidePlugin(frameConfig.providePlugin)
+      new webpack.ProvidePlugin(frameConfig.providePlugin),
+      new StyleLintPlugin({
+        // config: {
+        //   // 你的lint扩展自刚刚安装的 stylelint-config-standard
+        //   extends: 'stylelint-config-standard'
+        // },
+        config: require('../stylelint.config.js'),
+        files: 'src/**/*.l?(e|c)ss', // 正则匹配想要lint监测的文件，忽略的文件请在 .stylelintignore 中配置
+        // failOnError: false,
+        cache: true, // cache 选项可以指定使用缓存，默认生成的 .stylelintcache 文件放置于执行目录中
+        fix: true // 如果为true，stylelint则将修复尽可能多的错误
+      })
     ]
   },
   chainWebpack: config => {
@@ -107,6 +119,10 @@ const baseConfig = {
               ? processConfig.dev.assetsSubDirectory
               : processConfig.build.assetsSubDirectory,
             ignore: isDev ? [] : ['**/prod-ignored-directory/**'] // 忽略哪些文件或目录不拷贝到最终的构建包中，如：[ '**/file.*' ， '**/prod-ignored-directory/**' ]
+          },
+          {
+            from: path.resolve(__dirname, '../static/dist'), // dist 目录内的文件都会被拷贝到打包输出 dist 的根路径这一层
+            to: ''
           }
         ])
     );
@@ -190,12 +206,13 @@ const baseConfig = {
       .rule('js')
       .include.add([
         resolve('src'),
-        resolve('test')
+        resolve('test'),
+        resolve('static/plugins/babel-modules')
       ]); */
     config.module
       .rule('js')
       .exclude.add(file =>
-        /[\\/]static[\\/]plugins[\\/]lib-flexible[\\/]/.test(file)
+        /[\\/]static[\\/]plugins[\\/](lib-flexible|exclude)[\\/]/.test(file)
       );
   },
   css: {

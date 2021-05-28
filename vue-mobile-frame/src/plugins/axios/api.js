@@ -1,5 +1,4 @@
 import { apiDefaultConfig, axiosDefaultConfig } from './options.js';
-import ApiFilterExpand from './filter.js';
 
 import qs from 'querystring';
 import axios from './axios';
@@ -9,6 +8,7 @@ import _pick from 'lodash/pick';
 import _omit from 'lodash/omit';
 // import _isPlainObject from 'lodash/isPlainObject'
 import _has from 'lodash/has';
+import _hasIn from 'lodash/hasIn';
 import _replace from 'lodash/replace';
 import _isString from 'lodash/isString';
 import _get from 'lodash/get';
@@ -56,6 +56,7 @@ import _isNil from 'lodash/isNil';
  * @prop {object} userAxiosConfig.defaults - 配置的默认值
  * @prop {string} userAxiosConfig.responseType='json' - 服务器响应的数据类型
  * @prop {object} userAxiosConfig.proxy - 定义代理服务器的主机名称和端口
+ * @param { {} } [ApiFilterExpand={}] - 自定义拦截器类的实例对象
  * @example
  * userApiConfigModuleList：{'goods': [{'read':{'name':'',desc: ''}, 'get': {}}]}
  * userApiConfig：{'mockBasePath': 'mock/test/goods/read', 'mock': true}
@@ -66,8 +67,10 @@ const Loader = class Api {
   constructor(
     userApiConfigModuleList = {},
     userApiConfig = {},
-    userAxiosConfig = {}
+    userAxiosConfig = {},
+    ApiFilterExpand = null
   ) {
+    this.ApiFilterExpand = ApiFilterExpand; // 自定义拦截器类
     /**
      * @desc 请求头参数
      * @access public
@@ -354,6 +357,14 @@ const Loader = class Api {
           validator,
           restfulValidator
         });
+        // 拦截过滤函数处理
+        if (_hasIn(this.ApiFilterExpand, 'threeOuterFilter')) {
+          this.ApiFilterExpand.threeOuterFilter(
+            this.headerOptions,
+            baseURL,
+            pickHeaders
+          );
+        }
         // 自定义扩展过虑
         isWhite && this.whiteFilter(pickHeaders);
         // 是否登录接口
@@ -444,7 +455,9 @@ const Loader = class Api {
    * @param { Object } pickHeaders={} - Request Headers 请求头参数
    */
   whiteFilter(pickHeaders = {}) {
-    ApiFilterExpand.isWhite(pickHeaders);
+    if (_hasIn(this.ApiFilterExpand, 'isWhite')) {
+      this.ApiFilterExpand.isWhite(pickHeaders);
+    }
   }
 
   /**

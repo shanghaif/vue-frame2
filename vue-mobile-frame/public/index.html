@@ -14,7 +14,18 @@
   <body>
     <div id="app"></div>
     <% for(var i=0,len=htmlWebpackPlugin.options.outsideJs.length;i<len;i++ ){ %>
-      <script src="<%= htmlWebpackPlugin.options.outsideJs[i] %>"></script>
+      <% if(htmlWebpackPlugin.options.outsideJs[i].async && htmlWebpackPlugin.options.outsideJs[i].defer){ %>
+        <script src="<%= htmlWebpackPlugin.options.outsideJs[i].path %>" async="<%= htmlWebpackPlugin.options.outsideJs[i].async %>" defer="<%= htmlWebpackPlugin.options.outsideJs[i].defer %>"></script>
+      <% } %>
+      <% if(htmlWebpackPlugin.options.outsideJs[i].async && !htmlWebpackPlugin.options.outsideJs[i].defer){ %>
+        <script src="<%= htmlWebpackPlugin.options.outsideJs[i].path %>" async="<%= htmlWebpackPlugin.options.outsideJs[i].async %>"></script>
+      <% } %>
+      <% if(!htmlWebpackPlugin.options.outsideJs[i].async && htmlWebpackPlugin.options.outsideJs[i].defer){ %>
+        <script src="<%= htmlWebpackPlugin.options.outsideJs[i].path %>" defer="<%= htmlWebpackPlugin.options.outsideJs[i].defer %>"></script>
+      <% } %>
+      <% if(!htmlWebpackPlugin.options.outsideJs[i].async && !htmlWebpackPlugin.options.outsideJs[i].defer){ %>
+        <script src="<%= htmlWebpackPlugin.options.outsideJs[i].path %>"></script>
+      <% } %>
     <% } %>
   </body>
 </html>

@@ -45,7 +45,6 @@ const configObj = {
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'generator-star-spacing': 'off',
     // semi: 'off',
     quotes: ['error', 'single'],
     'object-curly-spacing': ['error', 'always']
@@ -54,6 +53,9 @@ const configObj = {
     $: true,
     Vue: true,
     jQuery: true,
+    AMap: true,
+    aplus_queue: true,
+    $log: true,
     _get: true,
     _set: true,
     _map: true,

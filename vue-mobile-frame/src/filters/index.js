@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import _toString from 'lodash/toString';
 /**
  * @desc 将整数部分逢三一断
  * @example
@@ -69,4 +69,17 @@ Vue.filter('dayjs', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
 
 Vue.filter('moment', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dataStr).format(pattern);
+});
+
+/**
+ * @desc 转换 888888888 -> ∞，-888888888 -> -∞
+ */
+Vue.filter('infiniteNum2Char', function(val) {
+  if (_toString(val) === '888888888') {
+    return '∞';
+  } else if (_toString(val) === '-888888888') {
+    return '-∞';
+  } else {
+    return val;
+  }
 });

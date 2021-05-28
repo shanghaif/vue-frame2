@@ -20,6 +20,7 @@ module.exports = {
      */
     devtool: 'cheap-module-eval-source-map',
     // 服务器代理设置
+    devServerIndex: 'index.html', // 主页面，设置 index 文件的文件名（这里是为什么我直接用 http://localhost:8010/ 访问的时候使用的html页面是 index.html）
     proxyTable: proxyTableConfig.proxyTable,
     host: '0.0.0.0', // 服务器（默认值），可以通过 dev.env.js 设置 HOST 参数来改写
     port: 8010, // 端口号（默认值），可以通过 dev.env.js 设置 PORT 参数来改写
@@ -38,7 +39,8 @@ module.exports = {
       // 不轮询（如果在使用NFS[网络文件系统]或Vagrant[虚拟化]环境下，监视文件可能不起作用，可以修改为 true 轮询）
       poll: false
     },
-    progress: true // 将运行进度输出到控制台
+    progress: true, // 将运行进度输出到控制台
+    writeToDisk: false // 告诉 devServer 将产生的文件写入硬盘，位置为 output.path 配置的目录
     // headers: {} // 在所有响应中添加首部内容
     // headers: { 'Access-Control-Allow-Origin': '*' } // 在所有响应中添加首部内容，比如：跨域，比如本地的时候 127.0.0.1 和 localhost 不设置 * 也会认为是不同域导致热更新的 hot-update.json 加载失败
   },

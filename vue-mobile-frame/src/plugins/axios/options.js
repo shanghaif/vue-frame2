@@ -6,9 +6,9 @@
  * @desc
  * api接口插件全局应该提供的统一参数
  * @type {object}
- * @property {string } mockBasePath mock-url请求地址(可以是相对 URL), 应该外部传入
+ * @property {string} mockBasePath mock-url请求地址(可以是相对 URL), 应该外部传入
  * @property {boolean} mock=false mock全局控制开关
- * @property {ob ject} gParams={} URL全局自定义参数
+ * @property {object} gParams={} URL全局自定义参数
  * @property {boolean} cache=false 缓存控制开关在URL路径后面添加一个时间戳参数 _=1571825001570
  * @property {number} reconnectMaxNum=0 请求失败允许的最大重连次数 - 未做开发
  * @property {string} seq=/ api接口命名空间分隔符
@@ -33,8 +33,8 @@ export const apiDefaultConfig = {
   seq: '/',
   // 进行特殊字符过滤的字符
   invalidChar:
-    // eslint-disable-next-line prettier/prettier
-    '[`~!@#$^&*()=|{}\':;\',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“\'。，、？]',
+    // eslint-disable-next-line quotes
+    "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]",
   // 前端 response 返回状态码提示短语 https://blog.csdn.net/chuxuan0215/article/details/90676692
   statusMessage: {
     400: '错误请求', // Bad Request

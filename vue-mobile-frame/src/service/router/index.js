@@ -55,11 +55,38 @@ const routes = [
     component: () => import('../../views/personal/index.vue')
   },
   {
+    path: '/401',
+    name: '401',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/401.vue'
+      ),
+    meta: { title: '401' }
+  },
+  {
+    path: '/403',
+    name: '403',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/403.vue'
+      ),
+    meta: { title: '403' }
+  },
+  {
+    path: '/500',
+    name: '500',
+    component: () =>
+      import(
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/500.vue'
+      ),
+    meta: { title: '500' }
+  },
+  {
     path: '/404',
     name: '404',
     component: () =>
       import(
-        /* webpackChunkName:"views/404" */ '@packages/views/error-page/404.vue'
+        /* webpackChunkName:"views/error-page" */ '@packages/views/error-page/404.vue'
       ),
     meta: { title: '404' }
   },

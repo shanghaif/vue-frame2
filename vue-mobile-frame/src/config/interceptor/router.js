@@ -18,6 +18,10 @@ import _isEmpty from 'lodash/isEmpty';
  */
 const routerBeforeEachFunc = function(to, from, next) {
   NProgress.start();
+  const bEnvNoLogin = process.env['VUE_APP_NO-LOGIN']; // 环境变量
+  if (bEnvNoLogin && from.name !== LOGIN_PAGE_NAME) {
+    return next(); // 免登逻辑，直接进from的路由，这样只适合调试页面
+  }
   // 没有匹配到路由项则回退到 from 的路由
   if (_isEmpty(to.matched)) {
     NProgress.done();
@@ -41,9 +45,10 @@ const routerBeforeEachFunc = function(to, from, next) {
   // 未登录状态且要跳转的页面不是登录页
   if (!loginStatus && to.name !== LOGIN_PAGE_NAME) {
     NProgress.done();
+    // 这里需要注意：有个name这个的意思是会在进入一次 beforeEach 钩子，如果next()这样则表示放过这个路由直接进入到路由指定的那个component组件
     return next({ name: `${LOGIN_PAGE_NAME}` });
   }
-  if (_isEmpty(from.matched)) {
+  if (loginStatus && _isEmpty(from.matched)) {
     // 已登录并且应用已经初始化完成，刷新页面-载入字典数据
     // 页面刷新重新设置 request.headers
     store.dispatch('platform/setApiHeaderParams', {

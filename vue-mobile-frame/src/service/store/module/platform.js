@@ -120,7 +120,7 @@ const mutations = {
     state.data = {};
     state.token = '';
     state.isLogin = false;
-    state.refreshToken = null;
+    state.refreshToken = null; // 这里必需要重置数据，不然我们在退出到登录页（并且不刷新页面）后虽然 localStarge 中的数据已经被清除了但是内存中 vuex 的数据还是存在的
     setTimeout(() => {
       // 移除全部缓存
       if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {

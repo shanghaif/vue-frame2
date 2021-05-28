@@ -43,7 +43,8 @@ module.exports = {
       'vh',
       'deg',
       'pr',
-      'rpx'
+      'rpx',
+      'fr'
     ],
     'unit-no-unknown': [
       true,

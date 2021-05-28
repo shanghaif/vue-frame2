@@ -40,6 +40,7 @@
 </template>
 
 <script>
+// import aplusMixin from '@plugins/aplus/mixin.js'; // 阿里巴巴 aplus.js 埋点
 import { LOGIN_PAGE_NAME } from '@config/index.js';
 import { mapActions } from 'vuex';
 import validatorField from '@plugins/validator-field.js';
@@ -47,6 +48,7 @@ import { down } from '@utils/index.js';
 import { Toast, Dialog } from 'vant';
 
 export default {
+  // mixins: [aplusMixin],
   data() {
     return {
       id: 1,

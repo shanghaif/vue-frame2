@@ -25,6 +25,8 @@ import VLazyLoad from './directives/v-LazyLoad.js';
 import VfRef from './directives/v-f-ref.js';
 // iconfont
 import '@/assets/font/iconfont/iconfont.css';
+// 阿里巴巴aplus埋点插件
+// import '@plugins/aplus/index.js';
 
 // ios延迟关闭 300ms延迟
 // fastClick.attach(document.body);
@@ -76,6 +78,7 @@ window.vm = new Vue({
     // 模块常量
     console.info(this.$constant);
     console.info(process.env.VUE_APP_TEST, process.env.VUE_APP_ENV);
+    console.info(process.env.USER_CONFIG_ENV);
   },
   render: h => h(App)
 }).$mount('#app');

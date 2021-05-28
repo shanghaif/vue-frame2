@@ -8,20 +8,22 @@ import { USER_API_CONFIG, USER_AXIOS_CONFIG } from '../config/index.js';
 import {
   apiRequestStartHandler,
   apiRequestEndHandler,
-  apiRequestInterceptErrorHandler,
-  requestErrorCallback
+  apiRequestInterceptErrorHandler
 } from '../config/interceptor/api.js';
 import DataDictFilter from '@plugins/data-dict-filter/index.js';
 import vBus from '@plugins/v-bus.js';
 import moduleConst from './constant.js';
+import ApiFilterExpand from './axios/filter.js';
+// 彩色 log
+import log from '@/plugins/log.js';
 
 export default {
   install: (Vue, options = {}) => {
-    USER_API_CONFIG.request_error_callback = requestErrorCallback;
     const Loader = new LoaderApiLibrary(
       ApiConfig,
       USER_API_CONFIG,
-      USER_AXIOS_CONFIG
+      USER_AXIOS_CONFIG,
+      ApiFilterExpand // 设置自定义扩展拦截器类
     );
     window.apiRequestStartHandler = apiRequestStartHandler;
     window.apiRequestEndHandler = apiRequestEndHandler;
@@ -37,5 +39,6 @@ export default {
     });
     Object.defineProperty(Vue.prototype, '$vBus', { value: vBus });
     Object.defineProperty(Vue.prototype, '$constant', { value: moduleConst });
+    Object.defineProperty(window, '$log', { value: log });
   }
 };
