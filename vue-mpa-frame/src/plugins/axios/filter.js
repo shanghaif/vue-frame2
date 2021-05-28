@@ -11,5 +11,8 @@ const Expand = class Filter {
     }
     return options;
   }
+
+  // 外部过滤器处理
+  threeOuterFilter(headerOptions, baseURL, pickHeaders) {}
 };
 export default new Expand();

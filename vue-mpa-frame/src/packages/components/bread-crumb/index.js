@@ -4,6 +4,8 @@
 import _assign from 'lodash/assign';
 import _isNil from 'lodash/isNil';
 import _omit from 'lodash/omit';
+import _has from 'lodash/has';
+import _findLastIndex from 'lodash/findLastIndex';
 
 const BaseBreadCrumb = {
   name: 'BaseBreadCrumb',

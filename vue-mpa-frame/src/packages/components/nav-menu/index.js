@@ -12,6 +12,7 @@ import _last from 'lodash/last';
 import _isNil from 'lodash/isNil';
 import _includes from 'lodash/includes';
 import _find from 'lodash/find';
+import _omit from 'lodash/omit';
 
 const BaseNavMenu = {
   name: 'BaseNavMenu',
@@ -101,6 +102,25 @@ const BaseNavMenu = {
       default: 'rgb(191, 203, 217)'
     }
   },
+  watch: {
+    collapsed(val, oldVal) {
+      if (val !== oldVal) {
+        this.isCollapse = val;
+      }
+    },
+    isCollapse(val, oldVal) {
+      this.$nextTick(() => {
+        this.$emit('collapse', val); // 收缩事件
+      });
+    }
+    /* menus: { // 监听的对象
+       handler: function (newV, oldV) {
+         console.info('------------------------------------------');
+         this.firstSubMenuIndex = '';
+         this.firstElMenuItem = '';
+       }
+     } */
+  },
   data() {
     this.defaultRouterPath = []; // 默认打开的第一个路由
     this.defaultBreadCrumbPath = []; // 默认打开的第一个路由对应的面包屑地址
@@ -112,26 +132,18 @@ const BaseNavMenu = {
       collapseIcon: 'el-icon-s-fold', // 折叠图表
       isCollapse: this.collapsed, // 是否水平折叠收起菜单 （仅在 mode 为 vertical 时可用）
       collapsePanelWidth: 'auto'
+      // westWidth: '280px'
     };
   },
-  watch: {
-    collapsed(val, oldVal) {
-      if (val !== oldVal) {
-        this.isCollapse = val;
-      }
-    }
-    /* menus: { // 监听的对象
-      handler: function (newV, oldV) {
-        console.info('------------------------------------------');
-        this.firstSubMenuIndex = '';
-        this.firstElMenuItem = '';
-      }
-    } */
-  },
   created() {
-    /* setTimeout(() => {
-      this.$emit('update:width', '64px');
-    }, 3000); */
+    // setTimeout(() => {
+    //  this.$emit('update:width', '64px');
+    // console.log(this.$refs[`${this._uid}-base-nav-menu-ref`]);
+    // this.$refs[`${this._uid}-base-nav-menu-ref`].$el.style.width = '240px';
+    // }, 3000);
+    // setTimeout(() => {
+    // this.$refs[`${this._uid}-base-nav-menu-ref`].$el.style.width = '240px';
+    // }, 0);
   },
   mounted() {
     this.$nextTick(function() {
@@ -260,12 +272,13 @@ const BaseNavMenu = {
       }
       const style = {
         'background-color': this.$attrs.backgroundColor,
-        height: this.titleBlockHeight,
+        // height: '100%'
+        // height: this.titleBlockHeight,
         'line-height': this.titleBlockHeight
       };
-      if (this.collapsePosition === 'top') {
-        _assign(style, { position: 'absolute', bottom: '0px' });
-      }
+      // if (this.collapsePosition === 'top') {
+      //   _assign(style, { position: 'absolute', bottom: '0px' });
+      // }
       vNode.push(
         this.$createElement(
           'div',
@@ -296,15 +309,16 @@ const BaseNavMenu = {
       ) {
         const style = {
           'background-color': this.$attrs.backgroundColor,
-          height: this.titleBlockHeight
+          height: '100%'
+          // height: this.titleBlockHeight
         };
-        if (this.collapsePosition === 'bottom') {
-          _assign(style, { position: 'absolute', bottom: '0px' });
-        } else {
-          _assign(style, {
-            'border-bottom': '1px solid rgba(236, 236, 236, 0.5)'
-          });
-        }
+        // if (this.collapsePosition === 'bottom') {
+        //   _assign(style, { position: 'absolute', bottom: '0px' });
+        // } else {
+        //   _assign(style, {
+        //     'border-bottom': '1px solid rgba(236, 236, 236, 0.5)'
+        //   });
+        // }
         vNode.push(
           // this.$createElement('template', { slot: 'default' }, [
           this.$createElement(
@@ -318,6 +332,9 @@ const BaseNavMenu = {
                   this.collapseIcon = this.isCollapse
                     ? 'el-icon-s-unfold'
                     : 'el-icon-s-fold';
+                  if (!this.isCollapse) {
+                    // this.westWidth = '60px';
+                  }
                 }
               }
             },
@@ -376,12 +393,16 @@ const BaseNavMenu = {
 
           menuVNode = this.$createElement(
             'el-submenu',
-            { key: subMenuIndex, props: { index: subMenuIndex }, style },
+            {
+              key: subMenuIndex,
+              props: { 'popper-append-to-body': true, index: subMenuIndex },
+              style
+            },
             [
               this.$createElement('template', { slot: 'title' }, [
                 /* this.$createElement('i', {
-                  class: _get(menu, 'iconUrl', '')
-                }), */
+                   class: _get(menu, 'iconUrl', '')
+                 }), */
                 iconUrl,
                 // _get(menu, this.props.menuName, '')
                 this.$createElement(
@@ -485,12 +506,16 @@ const BaseNavMenu = {
           vNodes.push(
             this.$createElement(
               'el-submenu',
-              { key: subMenuIndex, props: { index: subMenuIndex }, style },
+              {
+                key: subMenuIndex,
+                props: { 'popper-append-to-body': true, index: subMenuIndex },
+                style
+              },
               [
                 this.$createElement('template', { slot: 'title' }, [
                   /* this.$createElement('i', {
-                    class: _get(children[i], 'iconUrl', '')
-                  }), */
+                     class: _get(children[i], 'iconUrl', '')
+                   }), */
                   iconUrl,
                   _get(children[i], this.props.menuName)
                 ]),
@@ -528,8 +553,8 @@ const BaseNavMenu = {
               },
               [
                 /* this.$createElement('i', {
-                  class: _get(children[i], 'iconUrl', '')
-                }), */
+                   class: _get(children[i], 'iconUrl', '')
+                 }), */
                 iconUrl,
                 _get(children[i], this.props.menuName, '')
               ]
@@ -586,77 +611,84 @@ const BaseNavMenu = {
     }
   },
   render(h) {
-    const style = {
-      height: '100%',
-      paddingBottom: _isNil(this.navTitle)
-        ? this.titleBlockHeight
-        : `${parseInt(this.titleBlockHeight) * 2}px`
-    };
+    const style = {};
     if (_has(this.$attrs, 'mode') && this.$attrs.mode === 'horizontal') {
       style.width = '100%';
     }
     return h(
-      'div',
+      'base-border-layout',
       {
-        style: {
-          height: '100%',
-          'overflow-y': 'hidden',
-          'background-color': this.$attrs.backgroundColor
+        props: {
+          northHeight: this.titleBlockHeight,
+          southHeight: this.titleBlockHeight,
+          eastWidth: '0px',
+          westWidth: '0px',
+          isPadding: false,
+          ctCls: 'base-nav-menu-box'
         },
-        class: { 'base-nav-menu-box': true }
+        style: {
+          'background-color': this.$attrs.backgroundColor // 兼容QQ浏览器
+        }
       },
       [
-        this.collapsePosition === 'top'
-          ? this.isRenderCollapsed
-            ? this.createContractBlock()
-            : h()
-          : this.createNavTitle(),
-        h(
-          'el-menu',
-          {
-            ref: `${this._uid}-base-nav-menu-ref`,
-            style,
-            attrs: {
-              id: this.$attrs.id
+        h('template', { slot: 'north' }, [
+          this.collapsePosition === 'top'
+            ? this.isRenderCollapsed
+              ? this.createContractBlock()
+              : h()
+            : this.createNavTitle()
+        ]),
+        h('template', { slot: 'center' }, [
+          h(
+            'div',
+            {
+              style: {
+                'background-color': this.$attrs.backgroundColor,
+                height: '100%'
+              }
             },
-            class: { 'base-nav-menu': true },
-            props: _assign({}, this.$attrs, {
-              'default-active': this.$attrs.defaultActive,
-              collapse: this.isCollapse
-            }),
-            on: this.$listeners
-          },
-          [this.createSubMenu()]
-        ),
-        this.collapsePosition === 'bottom'
-          ? this.isRenderCollapsed
-            ? this.createContractBlock()
-            : h()
-          : this.createNavTitle()
+            [
+              h('el-scrollbar', { style: { height: '100%' } }, [
+                h(
+                  'el-menu',
+                  {
+                    ref: `${this._uid}-base-nav-menu-ref`,
+                    attrs: {
+                      id: this.$attrs.id
+                    },
+                    class: { 'base-nav-menu': true },
+                    props: _assign(
+                      {},
+                      _omit(this.$attrs, [
+                        'backgroundColor',
+                        'collapseText',
+                        'collapsePosition',
+                        'navIcon',
+                        'defaultActive'
+                      ]),
+                      {
+                        'default-active': this.$attrs.defaultActive,
+                        collapse: this.isCollapse,
+                        'background-color': this.$attrs.backgroundColor
+                      }
+                    ),
+                    on: this.$listeners
+                  },
+                  [this.createSubMenu()]
+                )
+              ])
+            ]
+          )
+        ]),
+        h('template', { slot: 'south' }, [
+          this.collapsePosition === 'bottom'
+            ? this.isRenderCollapsed
+              ? this.createContractBlock()
+              : h()
+            : this.createNavTitle()
+        ])
       ]
     );
-    /* return h(
-      'el-menu',
-      {
-        ref: `${this._uid}-base-nav-menu-ref`,
-        style,
-        attrs: {
-          id: this.$attrs.id
-        },
-        class: { 'base-nav-menu': true },
-        props: _assign({}, this.$attrs, {
-          'default-active': this.$attrs.defaultActive,
-          collapse: this.isCollapse
-        }),
-        on: this.$listeners
-      },
-      [
-        this.navTitle && this.createNavTitle(),
-        this.collapsePosition === 'top' && this.createContractBlock(),
-        this.createSubMenu(),
-        this.collapsePosition === 'bottom' && this.createContractBlock()
-      ]
-    ); */
   }
 };
 

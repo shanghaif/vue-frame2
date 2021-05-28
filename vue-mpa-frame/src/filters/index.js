@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import _toString from 'lodash/toString';
 /**
  * @desc 将整数部分逢三一断
  * @example
@@ -77,4 +77,17 @@ Vue.filter('stringify2', function(content) {
     return '';
   }
   return JSON.stringify(JSON.parse(content), null, 2);
+});
+
+/**
+ * @desc 转换 888888888 -> ∞，-888888888 -> -∞
+ */
+Vue.filter('infiniteNum2Char', function(val) {
+  if (_toString(val) === '888888888') {
+    return '∞';
+  } else if (_toString(val) === '-888888888') {
+    return '-∞';
+  } else {
+    return val;
+  }
 });

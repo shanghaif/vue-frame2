@@ -22,6 +22,9 @@ import VDebounce from '@directives/v-debounce.js';
 import VLazyLoad from '@directives/v-LazyLoad.js';
 import VfRef from '@directives/v-f-ref.js';
 
+// 阿里巴巴aplus埋点插件
+// import '@plugins/aplus/index.js';
+
 // 全局通知 巴士事件
 window.GvBus = {};
 window.GvBus.vBus = new Vue({

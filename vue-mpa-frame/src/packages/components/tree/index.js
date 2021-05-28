@@ -17,6 +17,9 @@ import _forEach from 'lodash/forEach';
 import _join from 'lodash/join';
 import _reverse from 'lodash/reverse';
 import _includes from 'lodash/includes';
+import _uniq from 'lodash/uniq';
+import _concat from 'lodash/concat';
+import _isArray from 'lodash/isArray';
 
 const BaseTree = {
   name: 'BaseTree',
@@ -182,6 +185,12 @@ const BaseTree = {
       default() {
         return [];
       }
+    },
+    // 父子级联如果是false的情况下，是否需要父子联动（选中一个子节点级联选中对应的所有父级节点，取消某个父节点级联取消该节点下的所有子节点）
+    // 需要同时设置 :check-strictly: true 表示父子不相关联
+    checkStrictlyFalseCancelChildChecked: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -202,6 +211,7 @@ const BaseTree = {
     this.editingNode = null; // 当前处于编辑状态的节点
     this.isFirst = true; // 是否第一次加载，主要用于判断 `懒加载` 时是不是第一次请求
     this.rootData = { [this.nodeKey]: 0 }; // 根节点 { [this.nodeKey]: 0 }
+    this.checkedNodes = [];
     return {
       nodeKey: '',
       curDefaultExpandedKeys: [],
@@ -213,11 +223,11 @@ const BaseTree = {
   created() {
     this.nodeKey = this.valueField;
     /* this.$nextTick(() => {
-      var btn = document.getElementsByTagName('body');
-      btn.onclick = function () {
-        console.info('这是第一种点击方式');
-      };
-    }); */
+        var btn = document.getElementsByTagName('body');
+        btn.onclick = function () {
+          console.info('这是第一种点击方式');
+        };
+      }); */
   },
   mounted() {
     if (!this.lazy && this.isReloadTree) {
@@ -249,6 +259,20 @@ const BaseTree = {
             this.$nextTick(() => {
               // 设置需要禁用的节点
               this.setDisabledNodes(this.disabledNodes);
+              if (this.$attrs['show-checkbox']) {
+                setTimeout(() => {
+                  // 多选情况下默认勾选的节点 Array
+                  if (_has(this.$attrs, 'default-checked-keys')) {
+                    this.checkedNodes = _concat(
+                      this.checkedNodes,
+                      this.$attrs['default-checked-keys']
+                    );
+                  }
+                  if (this.checkedNodes.length > 0) {
+                    this.getTree().setCheckedKeys(_uniq(this.checkedNodes));
+                  }
+                }, 0);
+              }
             });
             // 自动展开第一行
             if (
@@ -291,6 +315,20 @@ const BaseTree = {
           this.$nextTick(() => {
             // 设置需要禁用的节点
             this.setDisabledNodes(this.disabledNodes);
+            if (this.$attrs['show-checkbox']) {
+              setTimeout(() => {
+                // 多选情况下默认勾选的节点 Array
+                if (_has(this.$attrs, 'default-checked-keys')) {
+                  this.checkedNodes = _concat(
+                    this.checkedNodes,
+                    this.$attrs['default-checked-keys']
+                  );
+                }
+                if (this.checkedNodes.length > 0) {
+                  this.getTree().setCheckedKeys(_uniq(this.checkedNodes));
+                }
+              }, 0);
+            }
           });
           // 自动展开第一行
           if (
@@ -334,7 +372,7 @@ const BaseTree = {
               resList = this.loadFilter(resList);
             }
             const resData = [];
-            const checkedNodes = [];
+            // const checkedNodes = [];
             if (this.isFirst) {
               this.isFirst = false;
               if (resList.data.length > 0) {
@@ -346,18 +384,18 @@ const BaseTree = {
               element[this.props.label] = element[this.displayField];
               element[this.props.value] = element[this.valueField];
               // 设置需要默认选中的节点
-              if (_has(element, 'check') && element.check) {
-                const node = _set({}, this.nodeKey, element[this.nodeKey]);
-                checkedNodes.push(node);
-              }
+              // if (_has(element, 'check') && element.check) {
+              //   const node = _set({}, this.nodeKey, element[this.nodeKey]);
+              //   checkedNodes.push(node);
+              // }
               resData.push(element);
             }
-            if (checkedNodes.length > 0) {
-              setTimeout(() => {
-                // 默认勾选的节点 Array
-                this.getTree().setCheckedNodes(checkedNodes);
-              }, 0);
-            }
+            // if (checkedNodes.length > 0) {
+            //   setTimeout(() => {
+            //     // 默认勾选的节点 Array
+            //     this.getTree().setCheckedNodes(checkedNodes);
+            //   }, 0);
+            // }
             resolve(resData);
           })
           .catch(error => {
@@ -481,10 +519,10 @@ const BaseTree = {
     expandedNode(node = {}) {
       // node.expanded = true;
       /* if (!_isEmpty(node) && _has(node, this.valueField)) {
-        this.$refs[`${this._uid}-el-tree-ref`].store.nodesMap[
-          node.data[this.valueField]
-        ].expanded = true; // 默认展开指定的1个节点，如果是3层节点，第3层设置展开那么上面的2层还是没有展开看起来还是关闭的样子
-      } */
+          this.$refs[`${this._uid}-el-tree-ref`].store.nodesMap[
+            node.data[this.valueField]
+          ].expanded = true; // 默认展开指定的1个节点，如果是3层节点，第3层设置展开那么上面的2层还是没有展开看起来还是关闭的样子
+        } */
       if (
         !_isEmpty(node) &&
         !_isNil(node.data) &&
@@ -562,11 +600,11 @@ const BaseTree = {
      */
     setCheckedKeys(keys = []) {
       /* const defaultCheckNodes = this.getCheckedNodes();
-      if (!_isEmpty(defaultCheckNodes)) {
-        for (let i = 0; i < defaultCheckNodes.length; i++) {
-          keys.push(_get(defaultCheckNodes[i], this.nodeKey));
-        }
-      } */
+        if (!_isEmpty(defaultCheckNodes)) {
+          for (let i = 0; i < defaultCheckNodes.length; i++) {
+            keys.push(_get(defaultCheckNodes[i], this.nodeKey));
+          }
+        } */
       this.getTree().setCheckedKeys(keys);
     },
     /**
@@ -593,8 +631,8 @@ const BaseTree = {
             }
           });
           /* this.getTree().remove(1);
-          this.getTree().remove(2);
-          this.getTree().remove(3); */
+            this.getTree().remove(2);
+            this.getTree().remove(3); */
         }
       } else {
         this.curData = [];
@@ -646,6 +684,50 @@ const BaseTree = {
         ? 'checkChange'
         : 'check-change';
       this.$emit(eventName, record, checked, childCheckNodes);
+      if (
+        this.checkStrictlyFalseCancelChildChecked &&
+        (_has(this.$attrs, 'check-strictly') || this.$attrs['check-strictly'])
+      ) {
+        if (checked) {
+          this.setCheckedParentTreeNodes(record);
+        } else {
+          this.setCancelChildTreeNodes(record);
+        }
+      }
+    },
+    /**
+     * @desc 勾选该节点以上的所有未选中父级节点
+     */
+    setCheckedParentTreeNodes(record) {
+      const treeNode = this.getTree().getNode(record[this.nodeKey]);
+      const parentNodes = this.getNodeParentNodes(treeNode);
+      for (let i = 0, len = parentNodes.length; i < len; i++) {
+        const parentNode = parentNodes[i];
+        const parentNodeData = _get(parentNode, 'data', {});
+        if (!parentNode.checked) {
+          this.$nextTick(() => {
+            this.getTree().setChecked(
+              _get(parentNodeData, this.nodeKey, ''),
+              true
+            );
+          });
+        }
+      }
+    },
+    /**
+     * @desc 取消勾选该节点以下的所有选中子级节点
+     */
+    setCancelChildTreeNodes(record) {
+      const treeNode = this.getTree().getNode(record[this.nodeKey]);
+      const childCheckedValues = this.getNodeCheckedChild(treeNode);
+      for (let i = 0, len = childCheckedValues.length; i < len; i++) {
+        const value = childCheckedValues[i];
+        const treeNode = this.getTree().getNode(value);
+        this.getTree().setChecked(
+          _get(treeNode, 'data.' + this.nodeKey, ''),
+          false
+        );
+      }
     },
     /**
      * @desc 当复选框被点击的时候触发
@@ -1023,9 +1105,9 @@ const BaseTree = {
           `item-${this._uid}-${this.editingNode.data[this.valueField]}`
         )[0].childNodes;
         /* const aNode = document.getElementsByClassName(
-          `item-${this._uid}-${this.editingNode.data[this.valueField]}`
-        )[0];
-        aNode.style.width = 'auto'; */
+            `item-${this._uid}-${this.editingNode.data[this.valueField]}`
+          )[0];
+          aNode.style.width = 'auto'; */
         aNodeList[0].style.display = model ? 'none' : 'inline-block';
         aNodeList[1].style.display = model ? 'inline-block' : 'none';
         const offsetLeft = aNodeList[1].offsetLeft; // 距离左侧容器的间距
@@ -1084,6 +1166,159 @@ const BaseTree = {
           this.editingNode = null;
         }
       }
+    },
+    /**
+     * @desc 获取指定树节点下所有子节点的 valueField 值
+     * @returns Array
+     */
+    getNodeChildNodeKeys(treeNode) {
+      const valueFields = [];
+      const that = this;
+      const whileHandle = function(nodes) {
+        for (let i = 0, len = nodes.length; i < len; i++) {
+          const node = nodes[i];
+          valueFields.push(node.data[that.valueField]);
+          if (_has(node, 'childNodes') && !_isEmpty(node, 'childNodes')) {
+            whileHandle(node.childNodes);
+          }
+        }
+      };
+      if (_isArray(treeNode)) {
+        for (let n = 0, len = treeNode.length; n < len; n++) {
+          if (
+            _has(treeNode[n], 'childNodes') &&
+            !_isEmpty(treeNode[n], 'childNodes')
+          ) {
+            for (let i = 0, len = treeNode[n].childNodes.length; i < len; i++) {
+              const childNode = treeNode[n].childNodes[i];
+              valueFields.push(childNode.data[this.valueField]);
+              if (
+                _has(childNode, 'childNodes') &&
+                !_isEmpty(childNode, 'childNodes')
+              ) {
+                whileHandle(childNode.childNodes);
+              }
+            }
+          }
+        }
+      } else {
+        if (_has(treeNode, 'childNodes') && !_isEmpty(treeNode, 'childNodes')) {
+          for (let i = 0, len = treeNode.childNodes.length; i < len; i++) {
+            const childNode = treeNode.childNodes[i];
+            valueFields.push(childNode.data[this.valueField]);
+            if (
+              _has(treeNode, 'childNodes') &&
+              !_isEmpty(treeNode, 'childNodes')
+            ) {
+              whileHandle(childNode);
+            }
+          }
+        }
+      }
+
+      return valueFields;
+    },
+    /**
+     * @desc 获取当前节点下的所有选中节点
+     */
+    getNodeCheckedChild(treeNode) {
+      if (_has(treeNode, 'childNodes') && _isEmpty(treeNode, 'childNodes')) {
+        return [];
+      }
+      const valueFields = [];
+      const childNodes = treeNode.childNodes;
+      const that = this;
+      const whileHandle = function(nodes) {
+        for (let i = 0, len = nodes.length; i < len; i++) {
+          const node = nodes[i];
+          if (node.checked) {
+            valueFields.push(node.data[that.valueField]);
+          }
+          if (_has(node, 'childNodes') && !_isEmpty(node, 'childNodes')) {
+            whileHandle(node.childNodes);
+          }
+        }
+      };
+      for (let i = 0, len = childNodes.length; i < len; i++) {
+        const childNode = childNodes[i];
+        if (childNode.checked) {
+          valueFields.push(childNode.data[this.valueField]);
+        }
+        if (
+          _has(childNode, 'childNodes') &&
+          !_isEmpty(childNode, 'childNodes')
+        ) {
+          whileHandle(childNode.childNodes);
+        }
+      }
+      return valueFields;
+    },
+    /**
+     * @desc 获取当前节点以上的所有父级节点，根节点除外
+     */
+    getNodeParentNodes(treeNode) {
+      const parentNodes = [];
+      if (treeNode.level === 0) {
+        return parentNodes;
+      }
+      if (
+        !_has(treeNode, 'data') &&
+        !_has(treeNode.data, this.nodeKey) &&
+        !_has(treeNode.data, this.valueField)
+      ) {
+        return parentNodes;
+      }
+      const whileFn = curNode => {
+        if (curNode.level !== 0) {
+          parentNodes.push(curNode);
+        }
+        if (_has(curNode, 'parent') && !_isNil(curNode.parent)) {
+          whileFn(curNode.parent);
+        }
+      };
+      if (_has(treeNode, 'parent') && !_isNil(treeNode.parent)) {
+        whileFn(treeNode.parent);
+      }
+      return parentNodes;
+    },
+    /**
+     * @desc 判断某个节点是否位于传入的某几个树节点内也就是在childNodes中
+     * @returns Boolean
+     */
+    isTreeNodesIncludeNode(treeNodes, treeNode) {
+      const that = this;
+      let isInclude = false;
+      const whileHandle = nodes => {
+        for (let i = 0, len = nodes.length; i < len; i++) {
+          if (
+            treeNode.data[that.valueField] === nodes[i].data[that.valueField]
+          ) {
+            isInclude = true;
+            break;
+          }
+          if (
+            _has(nodes[i], 'childNodes') &&
+            !_isEmpty(nodes[i], 'childNodes')
+          ) {
+            whileHandle(nodes[i].childNodes);
+          }
+        }
+      };
+      for (let i = 0, len = treeNodes.length; i < len; i++) {
+        const checkedNode = treeNodes[i];
+        if (
+          checkedNode.data[this.valueField] === treeNode.data[this.valueField]
+        ) {
+          continue;
+        }
+        if (
+          _has(checkedNode, 'childNodes') &&
+          !_isEmpty(checkedNode, 'childNodes')
+        ) {
+          whileHandle(checkedNode.childNodes);
+        }
+      }
+      return isInclude;
     }
   },
   render(h) {
@@ -1104,13 +1339,28 @@ const BaseTree = {
     ) {
       scopedSlotVNode = {
         default: ({ node, data }) => {
+          if (data.check) {
+            this.checkedNodes.push(_get(data, this.valueField));
+          }
           return this.createHandleMenu({ node, data });
         }
       };
     } else if (_isEmpty(this.$scopedSlots) && !_isNil(this.handleMenu)) {
       scopedSlotVNode = {
         default: ({ node, data }) => {
+          if (data.check) {
+            this.checkedNodes.push(_get(data, this.valueField));
+          }
           return this.createHandleMenu({ node, data });
+        }
+      };
+    } else if (_isEmpty(this.$scopedSlots) && _isNil(this.handleMenu)) {
+      scopedSlotVNode = {
+        default: ({ node, data }) => {
+          if (data.check) {
+            this.checkedNodes.push(_get(data, this.valueField));
+          }
+          return h('span', {}, [_get(data, this.displayField, '')]);
         }
       };
     }

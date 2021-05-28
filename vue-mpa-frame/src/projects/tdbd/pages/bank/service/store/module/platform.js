@@ -229,12 +229,12 @@ const mutations = {
     state.isLogin = true;
   },
   [HANDLE_EXIT](state) {
-    state.data = null;
-    state.roleMenus = null;
-    state.token = null;
+    state.data = {};
+    state.roleMenus = {};
+    state.token = '';
     state.isLogin = false;
     state.initedApp = false;
-    state.refreshToken = null;
+    state.refreshToken = '';
     setTimeout(() => {
       // 移除全部缓存
       if (!_isNil(localStorage.getItem(sStorageKey)) && isClearCache) {

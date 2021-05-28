@@ -9,6 +9,12 @@ import _toNumber from 'lodash/toNumber';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
 import _omit from 'lodash/omit';
+import _isArray from 'lodash/isArray';
+import _isEqual from 'lodash/isEqual';
+import _difference from 'lodash/difference';
+import _filter from 'lodash/filter';
+import _map from 'lodash/map';
+import _isString from 'lodash/isString';
 
 const BaseSelectTree = {
   name: 'BaseSelectTree',
@@ -29,9 +35,16 @@ const BaseSelectTree = {
     maxItem: {
       type: Number
     },
+    // 最多只能选择几个数量-对象形配置
+    maxItemObj: {
+      type: Object
+      // default() {
+      //   return { level: 1, max: 3 }; // 第一层最多选中3个节点，第一层下面的节点仍旧可以选中，其余第一层节点下的节点无法选中
+      // }
+    },
     // 输入框宽度
     width: {
-      type: Number,
+      type: [Number, String],
       default: 160
     },
     // tree面板宽度
@@ -87,6 +100,25 @@ const BaseSelectTree = {
     showAllLevels: {
       type: Boolean,
       default: false
+    },
+    // 是否显示搜索框
+    isRenderSearchInput: {
+      type: Boolean,
+      default: false
+    },
+    // 自定义过滤函数
+    filterNodeMethodHandle: {
+      type: Function
+    },
+    // 是否显示下拉树选中的值到select的框中
+    isShowCheckSelectValue: {
+      type: Boolean,
+      default: true
+    },
+    // 父子级联如果是false的情况下，是否需要父子联动（选中一个子节点级联选中对应的所有父级节点，取消某个父节点级联取消该节点下的所有子节点）
+    checkStrictlyFalseCancelChildChecked: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -94,6 +126,34 @@ const BaseSelectTree = {
       if (!_isNil(val) && val.length === 0) {
         this.clear();
       } else {
+        const checkedKeys = this.$refs[this.treeUserRef]
+          .getTree()
+          .getCheckedKeys();
+        if (_isArray(val) && this.multiple && !_isEqual(val, checkedKeys)) {
+          if (val.length < checkedKeys.length) {
+            // 多选
+            const aDifferenceList = _difference(
+              this.$refs[this.treeUserRef].getTree().getCheckedKeys(),
+              val
+            ); // 删除了哪几个值
+            this.outValueRemove(aDifferenceList);
+            this.$refs[this.treeUserRef].setCheckedKeys(
+              this.curSelectValueList
+            );
+          } else {
+            const aDifferenceList = _difference(
+              val,
+              this.$refs[this.treeUserRef].getTree().getCheckedKeys()
+            ); // 添加哪几个值
+            this.outValueAdd(aDifferenceList);
+            for (let i = 0, len = aDifferenceList.length; i < len; i++) {
+              this.getTree()
+                .getTree()
+                .setChecked(aDifferenceList[i], true);
+            }
+          }
+          return;
+        }
         // 单选
         if (val !== this.curSelectValue) {
           this.setSingleNode();
@@ -117,7 +177,8 @@ const BaseSelectTree = {
       curSelectValue: '',
       curDefaultCheckedKeys: [...this.defaultCheckedKeys],
       treeValue: [],
-      options: [] // [{ value: '', label: '' }]
+      options: [], // [{ value: '', label: '' }]
+      filterText: ''
     };
   },
   created() {},
@@ -134,6 +195,14 @@ const BaseSelectTree = {
     handOpenTree() {
       setTimeout(() => {
         this.popoverVisible = true;
+      }, 0);
+    },
+    /**
+     * @desc 手动隐藏tree下拉面板
+     */
+    handCloseTree() {
+      setTimeout(() => {
+        this.popoverVisible = false;
       }, 0);
     },
     /**
@@ -163,6 +232,24 @@ const BaseSelectTree = {
             }
           },
           [
+            this.isRenderSearchInput
+              ? h('el-input', {
+                  attrs: {
+                    placeholder: '请输入内容',
+                    maxlength: '30',
+                    clearable: true
+                  },
+                  props: { value: this.filterText, showWordLimit: true },
+                  on: {
+                    input: val => {
+                      this.filterText = val;
+                      this.getTree()
+                        .getTree()
+                        .filter(val);
+                    }
+                  }
+                })
+              : h(),
             this.createTree(),
             h(
               'div',
@@ -189,7 +276,9 @@ const BaseSelectTree = {
           this.prefixLabel
         );
       }
-      const style = { width: `${this.width}px` }; // 文本框控件宽度
+      const style = {
+        width: _isString(this.width) ? this.width : `${this.width}px`
+      }; // 文本框控件宽度
       const vNode = h(
         'el-select',
         {
@@ -203,9 +292,14 @@ const BaseSelectTree = {
           props: _assign(
             {},
             {
-              value: this.multiple
+              value: !this.isShowCheckSelectValue
+                ? []
+                : this.multiple
                 ? this.curSelectValueList
                 : this.curSelectValue,
+              // value: this.multiple
+              //   ? this.curSelectValueList
+              //   : this.curSelectValue,
               clearable: true, // 有清除按钮
               multiple: this.multiple, // 设置多选，value对应为数组
               'collapse-tags': true // 合并多选
@@ -317,11 +411,11 @@ const BaseSelectTree = {
         return h('el-option', {
           style: {
             /* width: `${this.treeWidth}px`,
-            height: 'auto',
-            'max-height': `${this.treeHeight}px`,
-            'background-color': this.backgroundColor,
-            padding: '0px',
-            overflow: 'auto', */
+              height: 'auto',
+              'max-height': `${this.treeHeight}px`,
+              'background-color': this.backgroundColor,
+              padding: '0px',
+              overflow: 'auto', */
             display: 'absolute',
             top: '0px',
             left: '0px',
@@ -363,7 +457,14 @@ const BaseSelectTree = {
             'defaultCheckedKeys',
             'checkStrictly',
             'showCheckbox'
-          ])
+          ]),
+          'filter-node-method': (value, data) => {
+            if (!value) return true;
+            if (!_isNil(this.filterNodeMethodHandle)) {
+              return this.filterNodeMethodHandle(value, data);
+            }
+            return ~_get(data, this.displayField).indexOf(value);
+          }
         },
         props: _assign(
           {},
@@ -435,6 +536,10 @@ const BaseSelectTree = {
                       });
                       if (that.multiple) {
                         that.curSelectValueList.push(nodes[i][that.valueField]);
+                        that.curSelectLabelList.push(
+                          nodes[i][that.displayField]
+                        );
+                        that.curSelectNodeList.push(nodes[i]);
                       }
                     }
                     if (!that.multiple) {
@@ -449,6 +554,7 @@ const BaseSelectTree = {
             }
           },
           check: (node, treeCheckedNode) => {
+            this.$emit('check', node, treeCheckedNode);
             // 多选-点击复选框
             this.$refs.bbb.click(); // 防止下拉树面板在点击后隐藏
             this.setSelectPanel2InputOffsetTop();
@@ -458,10 +564,53 @@ const BaseSelectTree = {
                 .getCheckedKeys();
               // 操作最大的选中数量
               if (!_isNil(this.maxItem) && checkedKeys.length > this.maxItem) {
-                this.$refs[this.treeUserRef].setCheckedKeys(
-                  this.curSelectValueList
-                );
+                this.$refs[this.treeUserRef]
+                  .getTree()
+                  .setChecked(node[this.valueField], false);
                 return;
+              }
+              if (!_isNil(this.maxItemObj)) {
+                const treeNode = this.$refs[this.treeUserRef]
+                  .getTree()
+                  .getNode(_get(node, this.valueField));
+                const level = _get(this.maxItemObj, 'level');
+                const max = _get(this.maxItemObj, 'max');
+                const checkedNodes = _map(checkedKeys, v =>
+                  this.$refs[this.treeUserRef].getTree().getNode(v)
+                );
+                const levelNodes = _filter(
+                  checkedNodes,
+                  v => v.level === level
+                );
+                if (levelNodes.length > max) {
+                  this.$refs[this.treeUserRef]
+                    .getTree()
+                    .setChecked(node[this.valueField], false);
+                  return;
+                }
+                if (levelNodes.length === max && treeNode.level > level) {
+                  const isInclude = this.getTree().isTreeNodesIncludeNode(
+                    levelNodes,
+                    treeNode
+                  ); // 选中的节点是否在指定大类的小类中，如果是则选中否则取消选中
+                  // 不包含在里面取消当前选中的节点
+                  if (!isInclude) {
+                    this.cancelChecked(node);
+                    return;
+                  }
+                }
+                if (treeNode.level > level && levelNodes.length === max) {
+                  const isInclude = this.getTree().isTreeNodesIncludeNode(
+                    levelNodes,
+                    treeNode
+                  ); // 选中的节点是否在指定大类的小类中，如果是则选中否则取消选中
+                  console.log('isInclude', isInclude);
+                  // 不包含在里面取消当前选中的节点
+                  if (!isInclude) {
+                    this.cancelChecked(node);
+                    return;
+                  }
+                }
               }
               if (!_get(this.$attrs, 'check-strictly', this.multiple)) {
                 // 多选，父子级联
@@ -496,16 +645,97 @@ const BaseSelectTree = {
                 }
                 this.options = options;
               } else {
+                const treeNode = this.getTree()
+                  .getTree()
+                  .getNode(node[this.valueField]);
+                // 父子不级联
+                if (
+                  this.checkStrictlyFalseCancelChildChecked &&
+                  !treeNode.checked
+                ) {
+                  // 取消选中
+                  const childCheckNodes = this.getTree().getNodeCheckedChild(
+                    treeNode
+                  );
+                  for (let i = 0, len = childCheckNodes.length; i < len; i++) {
+                    this.getTree()
+                      .getTree()
+                      .setChecked(childCheckNodes[i], false);
+                    const index = _findIndex(
+                      this.curSelectValueList,
+                      v => v === childCheckNodes[i]
+                    );
+                    if (index !== -1) {
+                      this.curSelectNodeList.splice(index, 1);
+                      this.curSelectLabelList.splice(index, 1);
+                      this.curSelectValueList.splice(index, 1);
+                      this.options.splice(index, 1);
+                    }
+                  }
+                }
+                if (
+                  this.checkStrictlyFalseCancelChildChecked &&
+                  treeNode.checked
+                ) {
+                  // 级联选中
+                  const parentTreeNodes = this.getTree().getNodeParentNodes(
+                    treeNode
+                  );
+                  const checkedHandle = () => {
+                    for (
+                      let i = 0, len = parentTreeNodes.length;
+                      i < len;
+                      i++
+                    ) {
+                      const node = parentTreeNodes[i];
+                      if (!node.checked) {
+                        this.$nextTick(() => {
+                          this.$refs[this.treeUserRef]
+                            .getTree()
+                            .setChecked(node.data[this.valueField], true);
+                        });
+                        this.curSelectNodeList.push(node.data);
+                        this.curSelectLabelList.push(
+                          node.data[this.displayField]
+                        );
+                        this.curSelectValueList.push(
+                          node.data[this.valueField]
+                        );
+                        this.options.push({
+                          [this.displayField]: this.showAllLevels
+                            ? this.getTree().getNodeParentLevel(node)
+                            : node.data[this.displayField],
+                          [this.valueField]: node.data[this.valueField]
+                        });
+                      }
+                    }
+                  };
+                  if (_isEmpty(this.maxItemObj)) {
+                    checkedHandle();
+                  } else {
+                    const level = _get(this.maxItemObj, 'level');
+                    const max = _get(this.maxItemObj, 'max');
+                    const checkedNodes = _map(checkedKeys, v =>
+                      this.$refs[this.treeUserRef].getTree().getNode(v)
+                    );
+                    const levelNodes = _filter(
+                      checkedNodes,
+                      v => v.level === level
+                    );
+                    if (levelNodes.length < max) {
+                      checkedHandle();
+                    }
+                  }
+                }
                 if (!_includes(checkedKeys, node[this.valueField])) {
+                  this.$emit('selectTreeChange', this.curSelectValueList);
                   this.change(this.curSelectNodeList);
                   return;
                 }
                 this.curSelectNodeList.push(node);
                 this.curSelectLabelList.push(node[this.displayField]);
                 this.curSelectValueList.push(node[this.valueField]);
-                const treeNode = this.getTree()
-                  .getTree()
-                  .getNode(node[this.valueField]);
+
                 const levelStr = this.getTree().getNodeParentLevel(treeNode);
                 this.options.push({
                   [this.displayField]: this.showAllLevels
@@ -591,7 +821,9 @@ const BaseSelectTree = {
                 return this.$scopedSlots.default(props);
               },
               handleIconScope: props => {
-                return this.$scopedSlots.handleMenuScope(props);
+                return _has(this.$scopedSlots, 'handleMenuScope')
+                  ? this.$scopedSlots.handleMenuScope(props)
+                  : h();
               }
             }
           : undefined
@@ -666,13 +898,13 @@ const BaseSelectTree = {
       }, 100);
       // console.info('abc ', this.$refs.bbb.offsetTop);
       /* console.info(this.$refs[this.treeUserRef].$el.parentNode.style.top.replace('px', ''));
-        console.info('33333333 ', this.$refs[`${this._uid}-base-select-tree-popover`].$el.childNodes[0].offsetTop);
-        console.info('4444 ', this.$refs[this.treeUserRef].$el.parentNode); */
+         console.info('33333333 ', this.$refs[`${this._uid}-base-select-tree-popover`].$el.childNodes[0].offsetTop);
+          console.info('4444 ', this.$refs[this.treeUserRef].$el.parentNode); */
     },
     /**
      * @desc 清空
      */
-    clear: function() {
+    clear() {
       this.curSelectNodeList = [];
       this.curSelectLabelList = [];
       this.curSelectValueList = [];
@@ -682,6 +914,52 @@ const BaseSelectTree = {
       this.curDefaultCheckedKeys = [];
       this.treeValue = [];
       this.options = [];
+      if (
+        this.multiple &&
+        this.$refs[this.treeUserRef].getTree().getCheckedKeys().length > 0
+      ) {
+        this.$refs[this.treeUserRef].getTree().setCheckedKeys([]);
+      }
+    },
+    /**
+     * @desc 外部 v-model 直接操作值
+     */
+    outValueRemove(aDifferenceList) {
+      for (let i = 0, len = aDifferenceList.length; i < len; i++) {
+        const aDifferenceVal = aDifferenceList[i];
+        const index = _findIndex(
+          this.curSelectValueList,
+          v => v === aDifferenceVal
+        );
+        if (index !== -1) {
+          this.curSelectValueList.splice(index, 1);
+          this.curSelectLabelList.splice(index, 1);
+          this.curSelectNodeList.splice(index, 1);
+          this.options.splice(index, 1);
+        }
+      }
+    },
+    /**
+     * @desc 外部 v-model 直接操作值
+     */
+    outValueAdd(aDifferenceList) {
+      for (let i = 0, len = aDifferenceList.length; i < len; i++) {
+        const aDifferenceVal = aDifferenceList[i];
+        const treeNode = this.getTree()
+          .getTree()
+          .getNode(aDifferenceVal);
+        const data = _get(treeNode, 'data', {});
+        this.curSelectNodeList.push(data);
+        this.curSelectLabelList.push(data[this.displayField]);
+        this.curSelectValueList.push(data[this.valueField]);
+        const levelStr = this.getTree().getNodeParentLevel(treeNode);
+        this.options.push({
+          [this.valueField]: data[this.valueField],
+          [this.displayField]: this.showAllLevels
+            ? levelStr
+            : data[this.displayField]
+        });
+      }
     },
     /**
      * @desc 自定义change事件
@@ -689,6 +967,24 @@ const BaseSelectTree = {
      */
     change(val) {
       'change' in this.listeners && this.listeners.change(val);
+    },
+    /**
+     * @desc 某个树节点（data对象）取消选中
+     */
+    cancelChecked(treeNodeData) {
+      this.$refs[this.treeUserRef]
+        .getTree()
+        .setChecked(treeNodeData[this.valueField], false);
+      const index = _findIndex(
+        this.curSelectValueList,
+        v => v === treeNodeData[this.valueField]
+      );
+      if (index !== -1) {
+        this.curSelectNodeList.splice(index, 1);
+        this.curSelectLabelList.splice(index, 1);
+        this.curSelectValueList.splice(index, 1);
+        this.options.splice(index, 1);
+      }
     }
   },
   render(h) {
@@ -696,7 +992,9 @@ const BaseSelectTree = {
       'div',
       {
         ref: `${this._uid}-base-select-panel`,
-        style: { width: `${this.width}px` },
+        style: {
+          width: _isString(this.width) ? this.width : `${this.width}px`
+        },
         class: { 'base-select-tree': true, [this.ctCls]: this.ctCls }
       },
       [this.createSelect(), this.createPopover()]

@@ -3,7 +3,7 @@ import {
   requestSuccessFunc,
   responseSuccessFunc,
   responseErrorFunc
-} from '../../config/interceptor/axios.js';
+} from '@config/interceptor/axios.js';
 import axios from 'axios';
 
 /**

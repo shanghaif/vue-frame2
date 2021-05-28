@@ -6,6 +6,7 @@ module.exports = {
   // 网站名称
   sys_app_title: 'vue-mpa-frame', // 网站名称，html 的 title 标签
   prodConsoleType: ['error', 'warn'], // 生产环境，则自动清理掉打印的日志，但保留 error 与 warn
+  compact: 'auto', // 可选值 boolean | "auto" 打包构建时是否检测构建文件的体积，体积 max 为 500000 字节，有的 npm 资源包体积较大（如`gojs`）构件时会error报错（go.js as it exceeds the max of 500kb）这时可把这个值改为 false 放弃检测，不会报错了但因为资源包大会导致打包速度变慢
   //  如果需要使用相对单位那么设置为 true（会自动使用 vw+rem+postcss 方案，css中的单位就要使用 pr 而不是 px ），mobile 中的 pages 的 plan 属性如果是 pr2rem 才会启用
   pr2RemRootValue: 750, // 设计图为750px（默认值为750px对应移动端设计图）
   isBundleAnalyzer: false, // 是否使用 webpack-bundle-analyzer 进行打包分析
@@ -55,7 +56,9 @@ module.exports = {
     echarts: 'echarts',
     axios: 'axios',
     nprogress: 'NProgress',
-    jquery: 'jQuery'
+    jquery: 'jQuery',
+    d3: 'd3',
+    cloud: 'd3-cloud'
   },
   // 默认后缀
   extensions: ['.js', '.vue'],
@@ -94,15 +97,35 @@ module.exports = {
     // 直接放入到 html 文件中，不用和 externals 匹配，开发和生产都会放入
     outsideJs: [
       // 'https://webapi.amap.com/maps?key=f7ac15a8687e70001f0d8f9e65007f09&v=1.4.15&plugin=Map3D,AMap.DistrictSearch,Loca,AMap.DistrictLayer,SimpleMarker,DistrictExplorer,' // 高德地图
+      // 'https://cdn.bootcdn.net/ajax/libs/d3/5.16.0/d3.min.js', // d3
+      // 'https://cdn.bootcdn.net/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js'
+      {
+        path:
+          'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js',
+        async: true,
+        defer: true
+      },
+      {
+        path: 'https://cdn.bootcdn.net/ajax/libs/jspdf/1.5.3/jspdf.min.js',
+        async: true,
+        defer: true
+      },
+      {
+        path: 'https://cdn.bootcdn.net/ajax/libs/d3/5.16.0/d3.min.js'
+      },
+      {
+        path:
+          'https://cdn.bootcdn.net/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js'
+      }
     ],
     outsideCss: [],
-    // 公共的一些js，会注入到所有项目的 html 页面中
+    // 公共的一些js，会注入到所有项目的 html 页面中，externals 需要同步配置，HtmlWebpackTagsPlugin插件
     js: [
       '/static/plugins/axios/0.18.0/axios.min.js',
       '/static/plugins/nprogress/0.2.0/nprogress.min.js'
       // '/static/plugins/echarts/4.7.0/echarts.min.js' // 看项目内是否有使用到 echarts.min.js
     ],
-    css: [], // 可以在这里配置，也可以在 public/link.html 中维护
+    css: [], // 可以在这里配置，也可以在 public/link.html 中维护，HtmlWebpackTagsPlugin插件
     // css: ['//libs.cdnJs.net/normalize/8.0.1/normalize.min.css']
     /* css: [
       '/static/plugins/css/normalize.min.css',

@@ -7,10 +7,10 @@ import store from '@bank/store/index.js';
 const Expand = class Filter {
   // 白名单扩展
   isWhite(options = {}) {
-    console.info('bank 端的 api 过滤器');
     if (_has(options, 'token')) {
       delete options.token;
     }
+    options.isWhite = true;
     return options;
   }
 
@@ -38,6 +38,13 @@ const Expand = class Filter {
         }
       })
         .then(resData => {
+          if (
+            resData.code !== Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
+          ) {
+            console.warn('刷新token的返回结果-catch：', resData);
+            reject(new Error(JSON.stringify(resData)));
+            return;
+          }
           resolve(resData);
         })
         .catch(error => {
@@ -61,5 +68,8 @@ const Expand = class Filter {
     store.dispatch('platform/updateData', { data: res.data });
     store.dispatch('platform/setApiHeaderParams', { token: accessToken });
   }
+
+  // 外部过滤器处理
+  threeOuterFilter(headerOptions, baseURL, pickHeaders) {}
 };
 export default new Expand();

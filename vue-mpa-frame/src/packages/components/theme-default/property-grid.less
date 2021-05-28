@@ -1,1 +1,14 @@
 /* 属性grid */
+.base-property-grid {
+}
+.base-property-grid_form {
+  .el-form-item--mini.el-form-item,
+  .el-form-item--small.el-form-item {
+    margin-bottom: 0 !important;
+  }
+  .el-form-item__error {
+    top: 20% !important;
+    right: 3% !important;
+    left: unset !important; /* ie11 不支持 */
+  }
+}

@@ -16,6 +16,11 @@ import _has from 'lodash/has';
  */
 const routerBeforeEachFunc = function(to, from, next) {
   NProgress.start();
+  const bEnvNoLogin = process.env['VUE_APP_NO-LOGIN']; // 环境变量
+  if (bEnvNoLogin && !store.getters['platform/getLoginStatus']) {
+    NProgress.done();
+    return next(); // 免登逻辑，直接进from的路由，这样只适合调试页面
+  }
   // 没有匹配到路由项则回退到 from 的路由
   if (_isEmpty(to.matched)) {
     NProgress.done();

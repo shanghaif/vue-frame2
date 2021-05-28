@@ -23,6 +23,7 @@
           ref="menu"
           :menus="menus"
           v-bind="menuProps"
+          :navTitle="navTitle"
           @select="handleSelect"
           :svgIcons="svgIcons"
         >
@@ -35,6 +36,7 @@
               <base-bread-crumb
                 separator-class="el-icon-arrow-right"
                 :options="breadCrumbOptions"
+                @bread-click="onBreadClick"
               ></base-bread-crumb>
             </div>
           </template>
@@ -172,6 +174,7 @@ export default {
         southCls: `${this.ctCls.inner.south}`,
         centerCls: `${this.ctCls.inner.center}`
       },
+      navTitle: '示例平台',
       menus: [],
       menuProps: {
         collapsed: this.collapsed, // 侧栏收起状态

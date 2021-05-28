@@ -8,7 +8,10 @@ import { builder, getBody } from '../util';
 const username = ['admin', 'super'];
 const password = [
   '21232f297a57a5a743894a0e4a801fc3',
-  '1b3231655cebb7a1f783eddf27d254ca'
+  '1b3231655cebb7a1f783eddf27d254ca',
+  'e10adc3949ba59abbe56e057f20f883e',
+  'aed3bef2994e9cb1dd5aae7e01eac9d3',
+  'e8142efcb737a3b391cf4b40b7775f56'
 ]; // admin, super
 
 const login = options => {

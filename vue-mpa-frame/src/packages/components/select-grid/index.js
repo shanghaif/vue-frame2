@@ -9,6 +9,10 @@ import _find from 'lodash/find';
 import _get from 'lodash/get';
 import _isNil from 'lodash/isNil';
 import _isEmpty from 'lodash/isEmpty';
+import _isString from 'lodash/isString';
+import _isArray from 'lodash/isArray';
+import _difference from 'lodash/difference';
+import _isEqual from 'lodash/isEqual';
 
 const BaseSelectGrid = {
   name: 'BaseSelectGrid',
@@ -25,7 +29,7 @@ const BaseSelectGrid = {
     },
     // 输入框宽度
     width: {
-      type: Number,
+      type: [Number, String],
       default: 160
     },
     // grid 面板宽度
@@ -99,6 +103,15 @@ const BaseSelectGrid = {
       if (!_isNil(val) && val.length === 0) {
         this.clear();
       } else {
+        if (_isArray(val) && this.multiple && !_isEqual(val, oldVal)) {
+          if (val.length < oldVal.length) {
+            const aDifferenceList = _difference(oldVal, val); // 删除哪几个值
+            this.outValueRemove(aDifferenceList);
+          } else {
+            const aDifferenceList = _difference(val, oldVal); // 添加哪几个值
+            this.outValueAdd(aDifferenceList);
+          }
+        }
         // 单选
         this.setSingleNode();
       }
@@ -196,7 +209,7 @@ const BaseSelectGrid = {
         {
           ref: this.elSelectRef,
           style: {
-            width: `${this.width}px` // 文本框控件宽度
+            width: _isString(this.width) ? this.width : `${this.width}px` // 文本框控件宽度
           },
           attrs: {
             id: this.$attrs.id,
@@ -229,7 +242,6 @@ const BaseSelectGrid = {
               this.setSelectPanel2InputOffsetTop();
             },
             'remove-tag': tag => {
-              console.info('tag', tag);
               const index = _findIndex(
                 this.curSelectValueList,
                 value => value === tag
@@ -515,10 +527,17 @@ const BaseSelectGrid = {
             field: this.valueField,
             value: this.selectGridValue[i]
           });
-          const defaultCheckedRow = _find(
-            this.defaultCheckedRows,
+          const aRows = data;
+          let defaultCheckedRow = _find(
+            aRows,
             o => _get(o, this.valueField) === this.selectGridValue[i]
           );
+          if (_isNil(defaultCheckedRow) && !_isEmpty(this.defaultCheckedRows)) {
+            defaultCheckedRow = _find(
+              this.defaultCheckedRows,
+              o => _get(o, this.valueField) === this.selectGridValue[i]
+            );
+          }
           if (this.multiple) {
             if (
               _isNil(
@@ -529,10 +548,10 @@ const BaseSelectGrid = {
               )
             ) {
               this.curSelectValueList.push(this.selectGridValue[i]);
-              this.curSelectLabelList = _get(
-                defaultCheckedRow,
-                this.displayField
+              this.curSelectLabelList.push(
+                _get(defaultCheckedRow, this.displayField, '')
               );
+              this.curSelectRowList.push(defaultCheckedRow);
             }
           } else {
             // 单选
@@ -630,6 +649,65 @@ const BaseSelectGrid = {
      */
     change(val) {
       'change' in this.listeners && this.listeners.change(val);
+    },
+    /**
+     * @desc 外部 v-model 直接操作值
+     */
+    outValueRemove(aDifferenceList) {
+      const rows = this.getGrid().getData();
+      const tableEl = this.getGrid().getElTable();
+      for (let i = 0, len = aDifferenceList.length; i < len; i++) {
+        const aDifferenceVal = aDifferenceList[i];
+        const index = _findIndex(
+          this.curSelectValueList,
+          v => v === aDifferenceVal
+        );
+        if (index !== -1) {
+          const row = _find(
+            rows,
+            v => _get(v, this.valueField, '') === aDifferenceVal
+          );
+          tableEl.toggleRowSelection(row, false); // 取消选中
+          this.curSelectRowList.splice(index, 1);
+          this.curSelectLabelList.splice(index, 1);
+          this.curSelectValueList.splice(index, 1);
+          this.options.splice(index, 1);
+        }
+      }
+    },
+    /**
+     * @desc 外部 v-model 直接操作值
+     */
+    outValueAdd(aDifferenceList) {
+      const rows = this.getGrid().getData();
+      const tableEl = this.getGrid().getElTable();
+      for (let i = 0, len = aDifferenceList.length; i < len; i++) {
+        const aDifferenceVal = aDifferenceList[i];
+        const index = _findIndex(
+          this.curSelectValueList,
+          v => v === aDifferenceVal
+        );
+        if (index === -1) {
+          let row = _find(
+            rows,
+            v => _get(v, this.valueField, '') === aDifferenceVal
+          );
+          if (_isNil(row) && !_isEmpty(this.defaultCheckedRows)) {
+            row = _find(
+              this.defaultCheckedRows,
+              v => _get(v, this.valueField, '') === aDifferenceVal
+            );
+          }
+          tableEl.toggleRowSelection(row, true); // 取消选中
+          this.curSelectRowList.push(row);
+          this.curSelectLabelList.push(_get(row, this.displayField));
+          this.curSelectValueList.push(_get(row, this.valueField));
+          this.options.push({
+            [this.displayField]: _get(row, this.displayField),
+            [this.valueField]: _get(row, this.valueField)
+          });
+        }
+      }
     }
   },
   render(h) {
@@ -637,7 +715,9 @@ const BaseSelectGrid = {
       'div',
       {
         ref: `${this._uid}-base-grid-panel`,
-        style: { width: `${this.width}px` },
+        style: {
+          width: _isString(this.width) ? this.width : `${this.width}px`
+        },
         class: { 'base-select-grid': true, [this.ctCls]: this.ctCls }
       },
       [this.createSelect(), this.createPopover()]

@@ -1,6 +1,7 @@
 /**
  * @desc 项目配置
  */
+import { requestErrorCallback } from './interceptors/api.js';
 export const WINDOW_TITLE_UPDATE = true; // 是否允许在路由 BeforeEach 钩子中修改标题
 export const HOST_PLATFORM = 'WEB'; // 当前的宿主平台
 // 登陆路由名称
@@ -30,7 +31,7 @@ export const DEFAULT_SETTINGS = {
   }
 };
 // 路由白名单
-export const ROUTER_WHITE_LIST = ['404'];
+export const ROUTER_WHITE_LIST = ['404', '401', '403', '500', 'helper'];
 // 路由默认配置
 export const ROUTER_DEFAULT_CONFIG = {
   mode: 'history', // 路由模式 hash、history
@@ -44,7 +45,13 @@ export const USER_API_CONFIG = {
   mockBasePath: '/', // mock 为 true 时使用的地址，如：https://yapi.tianli.shop/mock/438/
   mock: true, // mock 总开关
   console_request_enable: false,
-  console_response_enable: true
+  console_response_enable: true,
+  request_error_callback: requestErrorCallback, // 请求出现后置拦截器错误进入的方法
+  api_server_code: {
+    WRONG_CODE: ['9999', '-1', '040003', '020000', '020001'], // 异常-会被插件拦截器拦截
+    TOKEN_EXPIRE_CODE: '4785848583', // token 过期 `020001`这里的token我是随意写了一个目的是不让进`interceptor/api.js`逻辑，（后端标准版无法提供一个唯一的 code 值，所以`interceptor/api.js`这里不用这个来做判断，先用返回 `mesg` 的`无效token`来做判断）
+    AUTH_REFRESH_API: '/api/authentication-server/oauth/token' // 刷新 token 的接口名称 `/mock/user/refresh`
+  } // 请求服务码
 };
 // axios实例配置参数
 export const USER_AXIOS_CONFIG = {

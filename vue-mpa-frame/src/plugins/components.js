@@ -17,8 +17,8 @@ export default {
         size: 'size',
         total: 'data.totalRecord',
         data: 'data.results',
-        pageNum: 'current',
-        pageSize: 'size'
+        pageNum: 'pageNum',
+        pageSize: 'pageSize'
       },
       checkboxGroup: {
         data: 'data'

@@ -39,7 +39,8 @@ requireModule.keys().forEach(filePath => {
       }
       const requireModuleList = requireModule(path).default;
       for (let i = 0, len = requireModuleList.length; i < len; i++) {
-        moduleRouter.children.push(requireModule(path).default[i]);
+        const oRouterConfig = requireModule(path).default[i];
+        moduleRouter.children.push(oRouterConfig);
       }
     };
     for (let i = 0, len = aDropRightArray.length; i < len; i++) {
@@ -76,7 +77,7 @@ requireModule.keys().forEach(filePath => {
         if (_findIndex(loadedFileList, o => o === filePath) === -1) {
           moduleRouter && setRouterChildren(moduleRouter, filePath);
           loadedFileList.push(filePath);
-          commonRoutes && (commonRoutes = moduleRouter.children);
+          commonRoutes && (commonRoutes = _get(moduleRouter, 'children', []));
         } else {
           commonRoutes && (commonRoutes = _get(moduleRouter, 'children', []));
         }

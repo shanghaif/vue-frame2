@@ -63,6 +63,7 @@ new Vue({
     // 模块常量
     console.info(this.$constant);
     console.info(process.env.VUE_APP_TEST, process.env.VUE_APP_ENV);
+    console.info(process.env.USER_CONFIG_ENV);
   },
   render: h => h(App)
 }).$mount('#app');

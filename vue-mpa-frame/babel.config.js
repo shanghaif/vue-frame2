@@ -11,8 +11,10 @@ if (process.env.NODE_ENV === 'production') {
     }
   ]);
 }
+
 module.exports = {
   presets: ['@vue/cli-plugin-babel/preset'],
+  compact: frameConfig.compact, // https://babeljs.io/docs/en/options#compact
   plugins: [...prodPlugin]
   /* plugins: [
     // elementUI 按需加载

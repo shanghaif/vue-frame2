@@ -13,6 +13,28 @@ npm install
 cnpm install
 ```
 
+项目初始 git 仓库注意：
+
+1、在 clone 项目后先进行 git add 和 git commit 的提交不执行 `npm install`命令，如果先进行`npm install`在进行 git add 和 git commit 的提交可能会出现文件过多导致`lint-staged`校验失败。
+
+注意：
+
+1、clone 后并且在 `npm i` 之前删除 patches 目录，这个目录是用于展示修改源码的示例
+
+2、在 clone 项目后先执行 git init 命令，将目录初始化为 git 仓库，为后续 npm install 时 husky 可以安装成功。
+如果先执行 npm install 在执行 git init 会出现 husky 的错误：
+
+```
+can't find .git directory, skipping Git hooks installation
+
+> husky@4.3.7 install E:\vue-local\vue-test-spa\node_modules\husky
+> node husky install
+
+husky > Setting up git hooks
+fatal: not a git repository (or any of the parent directories): .git
+husky > Failed to install
+```
+
 运行：
 
 | 指令                      | 说明                                                                                                                                                   |
@@ -38,6 +60,9 @@ cnpm install
 | npm run lint:css-fix      | --fix 选项可以指定 stylelint 自动修复不符合可修复规则的代码，暂未配置 scss 类型的检测                                                                  |
 | lint:css-cache-fix        | --fix 选项可以指定 stylelint 自动修复不符合可修复规则的代码（使用缓存），暂未配置 scss 类型的检测                                                      |
 | format                    | 按照 prettierrc 设置的规则格式化指定类型的所有文件                                                                                                     |
+| dev:no-login              | 全局的路由拦截器 beforeEach 里面不走登录逻辑，直接访问 to 的路由                                                                                       |
+| dev-userConfigEnv         | 打包使用自定义环境，环境文件存放在 config/user-config-env，CONFIG_ENV=my 中的 my 对应 config/user-config-env 中的配置文件名的 xx.env.js                |
+| p                         | 自动创建文件，文件会根据创建过程提示进行选择性创建                                                                                                     |
 
 获取 iconfont.css 文件下的 class 名称方法：
 （图标文件放在`css-theme/common/font/iconfont/`）
@@ -66,6 +91,8 @@ build webpack配置文件目录
  |-vue.dev.conf.js 开发配置
  |-vue.prod.conf.js 生产配置
 config webpack配置参数
+ |-user-config-js 自定义环境配置目录
+   |-my.env.js
  |-dev.env.js 开发环境变量
  |-index.js 开发和生产配置参数
  |-prod.env.js 生产环境变量

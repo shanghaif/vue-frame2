@@ -25,7 +25,8 @@
           v-bind="menuProps"
           @select="handleSelect"
           :svgIcons="svgIcons"
-          navTitle="导航菜单"
+          navTitle="导航标题"
+          @collapse="onMenuCollapse"
         >
         </base-nav-menu>
       </template>
@@ -55,6 +56,7 @@
 </template>
 
 <script>
+// import aplusMixin from '@plugins/aplus/mixin.js'; // 阿里巴巴 aplus.js 埋点
 import { ROUTER_OPEN_TYPE, ROOT_PAGE_NAME } from '@config/index.js';
 import TopView from './components/top-view.vue';
 import svgIcons from '@/plugins/icons.js';
@@ -66,11 +68,15 @@ import _join from 'lodash/join';
 import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _get from 'lodash/get';
+import _isArray from 'lodash/isArray';
+import _concat from 'lodash/concat';
 import _has from 'lodash/has';
 import _cloneDeep from 'lodash/cloneDeep';
 
 export default {
   name: 'BasicLayout',
+  // mixins: [aplusMixin],
+  components: { TopView },
   provide() {
     return {
       getBaseLayout: () => {
@@ -78,7 +84,6 @@ export default {
       }
     };
   },
-  components: { TopView },
   // title 顶部栏目标题文字，iconfontUrl 图标，collapsed 侧栏收起状态
   props: {
     // 菜单id，传递值则值显示这个值对应的菜单数据
@@ -142,7 +147,7 @@ export default {
           box: '',
           north: '',
           west: this.$style.westBox,
-          center: this.$style.innerCenterCls,
+          center: _get(this.$style, 'innerCenterCls', ''),
           south: '',
           east: '',
           inner: {
@@ -158,7 +163,7 @@ export default {
     // 外围 border 布局的边距
     isPadding: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 内部 border 布局的边距
     innerIsPadding: {
@@ -200,11 +205,12 @@ export default {
         collapsed: this.collapsed, // 侧栏收起状态
         defaultActive: '',
         textColor: '#BFCBD9',
-        activeTextColor: '#409EFF',
         navIcon: 'el-icon-menu',
+        activeTextColor: '#409EFF',
         backgroundColor: '#304156',
         collapseText: '收起导航',
-        collapsePosition: 'bottom'
+        collapsePosition: 'bottom',
+        disabledKeys: [1, 12] // 禁用的节点
       },
       breadCrumbOptions: []
     };
@@ -226,10 +232,10 @@ export default {
     }
   },
   created() {
-    // setTimeout(() => {
-    // this.layout.westWidth = '64px';
-    // this.menuProps.collapsed = false;
-    // }, 3000);
+    setTimeout(() => {
+      // this.menuProps.collapsed = true;
+      this.menuProps.disabledKeys = []; // 取消禁用的导航菜单节点
+    }, 1500);
   },
   methods: {
     getMenus(to, from) {
@@ -452,6 +458,12 @@ export default {
         const that = matched[matched.length - 1].instances.default;
         _has(that, 'breadClickEvent') && that.breadClickEvent(option);
       }
+    },
+    /**
+     * @desc 导航栏面板收缩事件
+     */
+    onMenuCollapse(val) {
+      console.log('导航栏面板收缩事件', val);
     }
   }
 };

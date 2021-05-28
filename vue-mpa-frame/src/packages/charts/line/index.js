@@ -1,34 +1,34 @@
-/* eslint-disable no-unused-vars */
 /**
  * @desc 折线
  */
 import echarts from 'echarts';
 import baseOptions from './options.js';
-import _merge from 'lodash/merge';
 import _mergeWith from 'lodash/mergeWith';
 import _isArray from 'lodash/isArray';
 import _has from 'lodash/has';
-import _keys from 'lodash/keys';
 import _assign from 'lodash/assign';
 import _map from 'lodash/map';
 import _omit from 'lodash/omit';
 import _set from 'lodash/set';
+// import _isNil from 'lodash/isNil';
 
 const Line = class Line {
-  constructor(
-    container,
-    options = {
+  constructor(container, options = {}) {
+    // 自定义配置参数
+    const outOptions = {
       xData: [],
-      isShowTooltip: true,
+      isShowTooltip: true, // 显示提示框组件
       listeners: {}, // 事件对象
       isShowLegend: true, // 是否创建图例
       legendPosition: 'top-center', // 图例的位置
       isCancelLegendSelectChanged: false, // 是否关闭图例的切换事件
       isCancelLegendSelectChangedDefaultAction: false, // 是否关闭切换图例默认的点击行为
-      dataDecimals: 2 // 小数点位数（不做向上和向下转换）
-    }
-  ) {
-    this.baseOptions = baseOptions(); // 折线图基础配置对象
+      dataDecimals: 2, // 小数点位数（不做向上和向下转换）
+      tooltipUnit: [], // tooltip 提示框浮层内容的单位
+      isShowXAxis: true // 是否显示 x 轴
+    };
+    options = _assign(outOptions, options);
+    this.baseOptions = baseOptions(options); // 折线图基础配置对象
     this.myChart = null; // 图表对象
     this.init(container, options);
   }
@@ -38,20 +38,13 @@ const Line = class Line {
    */
   createLegend(mergeOptions = {}) {
     const legendData = [];
-    console.info('mergeOptions ', mergeOptions.series);
     if (_isArray(mergeOptions.series)) {
       _map(mergeOptions.series, function(value, key) {
-        console.info(value, key);
         _has(value, 'name') && legendData.push(value.name);
       });
       mergeOptions.legend.data = legendData;
     }
   }
-
-  /**
-   * @desc 数据精确度小数点位数
-   */
-  setDataDecimals() {}
 
   /**
    * @desc 获取原始对象
@@ -105,7 +98,13 @@ const Line = class Line {
     // 递归合并配置项
     const mergeOptions = _mergeWith(
       this.baseOptions,
-      _omit(options, ['listeners', 'isShowLegend', '']),
+      _omit(options, [
+        'listeners',
+        'isShowLegend',
+        'tooltipUnit',
+        'dataDecimals',
+        'isShowXAxis'
+      ]),
       function(objValue, srcValue) {
         if (_isArray(srcValue)) {
           for (let i = 0, len = srcValue.length; i < len; i++) {
@@ -114,23 +113,29 @@ const Line = class Line {
         }
       }
     );
+    // x轴
+    if (!options.isShowXAxis) {
+      this.baseOptions.xAxis.show = false;
+    }
     // 图例
     if (!options.isShowLegend) {
       this.baseOptions.legend.show = false;
     } else {
       this.createLegend(mergeOptions);
     }
-    // 数据精确度小数点位数
-    this.setDataDecimals(mergeOptions);
+    // 显示提示框组件
+    if (!options.isShowTooltip) {
+      this.baseOptions.tooltip.show = true;
+    }
     // 标题栏点击事件
     if (_has(options, 'listeners.titleClick')) {
       // const b = Math.ceil(Math.random() * 10);
-      console.info(Line.getUID());
-      const bbb = 'b0f43a76';
+      // console.info(Line.getUID());
+      // const bbb = 'b0f43a76';
       const b = Line.getUID() + '';
       // window[b] = options.listeners.titleClick;
       _set(window, b, options.listeners.titleClick);
-      console.info(b);
+      // console.info(b);
       mergeOptions.title.link = `javascript: window['${b}']()`;
     }
     // 取消图例切换事件
@@ -141,7 +146,19 @@ const Line = class Line {
     this.myChart.setOption(mergeOptions, true);
     // 绑定事件
     for (const [key, value] of Object.entries(options.listeners)) {
-      this.myChart.on(key, value);
+      if (key === 'legendselectchanged') {
+        // 图例点击事件
+        this.myChart.on(key, event => {
+          if (options.isCancelLegendSelectChangedDefaultAction) {
+            this.myChart.setOption({
+              legend: { selected: { [event.name]: true } }
+            });
+          }
+          value(event);
+        });
+      } else {
+        this.myChart.on(key, value);
+      }
     }
   }
 };

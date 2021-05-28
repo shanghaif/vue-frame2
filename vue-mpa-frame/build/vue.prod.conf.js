@@ -13,11 +13,24 @@ const utils = require('./utils.js');
 const packageConfig = require('../package.json');
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
 const buildDate = JSON.stringify(new Date().toLocaleString());
+const _includes = require('lodash/includes');
+const _replace = require('lodash/replace');
+const _isNil = require('lodash/isNil');
 // 需要 splitChunks 分割出的第三方依赖包
 const otherDependencies = utils.arrayRemoveItems(
   Object.keys(packageConfig.dependencies),
   frameConfig.removeOtherDependenciesCacheGroupsLibs || []
 );
+for (let n = 0, len = otherDependencies.length; n < len; n++) {
+  const sDependency = otherDependencies[n];
+  // 在正则表达式中需要对 / 就行转义
+  if (_includes(sDependency, '/')) {
+    otherDependencies[n] = _replace(sDependency, '/', '\\/');
+  }
+  if (_includes(sDependency, '.')) {
+    otherDependencies[n] = _replace(sDependency, '.', '\\.');
+  }
+}
 const getNodeVersion = function() {
   // 截取 node 的版本号
   var str = process.version; // 'v12.18.3';
@@ -116,7 +129,12 @@ const webpackConfig = merge(baseVueConfig, {
           ...require('../config/prod.env.js'),
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           APP_VERSION: `"${require('../package.json').version}"`,
-          BUILD_DATE: buildDate
+          BUILD_DATE: buildDate,
+          USER_CONFIG_ENV: _isNil(process.env.CONFIG_ENV)
+            ? '{}'
+            : JSON.stringify(
+                require(`../config/user-config-env/${process.env.CONFIG_ENV}.env.js`)
+              ) // 自定义打包环境变量
         }
       })
     ]

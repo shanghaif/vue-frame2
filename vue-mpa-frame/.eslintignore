@@ -5,6 +5,8 @@ public
 dist
 node_modules
 vue.config.js
+abc.js
 iconfont.js
 iconfont-classname.js
 flexible.js
+static

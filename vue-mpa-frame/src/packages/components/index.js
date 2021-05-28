@@ -45,6 +45,22 @@ import BaseVBoxLayout from './v-box-layout/index.js';
 import BaseHBoxLayout from './h-box-layout/index.js';
 import BaseColumnLayout from './column-layout/index.js';
 import BaseSelectIconPicker from './select-icon-picker/index.js';
+import BaseAmap from './panel/ux/gd-map/index.js';
+import BaseTabs from './tabs/index.js';
+import BaseAbsoluteLayout from './absolute-layout/index.js';
+import BaseFitLayout from './fit-layout/index.js';
+import BaseCascaderTree from './cascader-tree/index.js';
+import BaseScrollbar from './scrollbar/index.js';
+import BaseBarChart from './v-chart/bar/index.js';
+import BaseLineChart from './v-chart/line/index.js';
+import BasePieChart from './v-chart/pie/index.js';
+import BaseMixtureChart from './v-chart/mixture/index.js';
+import BaseFormLayout from './form-layout/index.js';
+import BasePropertyGrid from './property-grid/index.js';
+import BaseMenuButton from './menu-button/index.js';
+import BaseRenderSelf from './render-self/index.js';
+import BaseTimeAxiosHistory from './time-axios-history/index.vue';
+import BaseHorizontalMenu from './horizontal-menu/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
@@ -60,6 +76,8 @@ if (!_has(window, '$BaseDragDialog')) {
 if (!_has(window, '$baseDrawer')) {
   Object.defineProperty(Vue.prototype, '$baseDrawer', { value: BaseDrawer });
 }
+// 高德地图
+export { BaseAmap };
 
 export default {
   BaseSelect,
@@ -101,5 +119,20 @@ export default {
   BaseVBoxLayout,
   BaseHBoxLayout,
   BaseColumnLayout,
-  BaseSelectIconPicker
+  BaseSelectIconPicker,
+  BaseTabs,
+  BaseAbsoluteLayout,
+  BaseFitLayout,
+  BaseCascaderTree,
+  BaseScrollbar,
+  BaseBarChart,
+  BaseLineChart,
+  BasePieChart,
+  BaseFormLayout,
+  BasePropertyGrid,
+  BaseMenuButton,
+  BaseRenderSelf,
+  BaseTimeAxiosHistory,
+  BaseHorizontalMenu,
+  BaseMixtureChart
 };

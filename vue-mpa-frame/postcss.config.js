@@ -1,5 +1,7 @@
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
+const postcssCustomMedia = require('postcss-custom-media');
+const minmax = require('postcss-media-minmax');
 const frameConfig = require('./frame.config.js');
 const pr2rem = require('postcss-plugin-pr2rem');
 const pr2remPlugin = [];
@@ -31,7 +33,17 @@ if (isHavePr2rem !== -1) {
       'border-bottom',
       'border-left',
       'border-right',
-      'border-top'
+      'border-top',
+      'padding',
+      'padding-left',
+      'padding-right',
+      'padding-bottom',
+      'padding-top',
+      'margin',
+      'margin-left',
+      'margin-right',
+      'margin-top',
+      'margin-bottom'
     ], // 黑名单 （font-size 我们可能需要直接设置 rem、vw或者px）
     selectorBlackList: [], // 要忽略的选择器，保留为px 比如：['body'] 将匹配 .body-class
     // ignoreIdentifier: '00',
@@ -46,7 +58,20 @@ module.exports = {
     // 根据 .browserslistrc 自动添加浏览器厂商前缀（webkit、moz、ms）
     autoprefixer,
     // 去除空格、注释、智能压缩代码（注意：postcssSprites 会把 css 代码中已经注释的背景图也进行雪碧图合成，所以要提前把 css 去除注释）
-    cssnano
+    cssnano,
     // pr2rem(pr2remConfig)
+    // media 媒体属性插件
+    postcssCustomMedia({
+      importFrom: [
+        {
+          customMedia: {
+            // 媒体属性区间定义在这里
+            '--small-viewport': '(width >= 500px) and (width <= 1440px)',
+            '--big-viewport': '(width > 1440px) and (width <= 1920px)'
+          }
+        }
+      ]
+    }),
+    minmax() // 解析上面 `postcssCustomMedia` 中的 > >= < <=
   ].concat(pr2remPlugin)
 };

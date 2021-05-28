@@ -32,6 +32,11 @@ const BaseSelect = {
         return {};
       }
     },
+    // 第一次载入时是否自动刷新列表数据
+    isReloadGrid: {
+      type: Boolean,
+      default: true
+    },
     options: {
       type: Array
     },
@@ -150,7 +155,9 @@ const BaseSelect = {
       }
     },
     api: {
-      handler: '_fetchList',
+      handler: function() {
+        this.isReloadGrid && this._fetchList();
+      },
       immediate: true
     }
   },

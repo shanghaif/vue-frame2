@@ -14,6 +14,8 @@ import {
 import DataDictFilter from '@plugins/data-dict-filter/index.js';
 import vBus from '@plugins/v-bus.js';
 import moduleConst from './constant.js';
+// 彩色 log
+import log from '@plugins/log.js';
 
 export default {
   install: (Vue, options = {}) => {
@@ -37,5 +39,6 @@ export default {
     Object.defineProperty(Vue.prototype, '$dict', { value: dictInstance });
     Object.defineProperty(Vue.prototype, '$vBus', { value: vBus });
     Object.defineProperty(Vue.prototype, '$constant', { value: moduleConst });
+    Object.defineProperty(window, '$log', { value: log });
   }
 };

@@ -4,6 +4,7 @@ const processConfig = require('../config/index.js');
 const merge = require('webpack-merge');
 const baseVueConfig = require('./vue.base.conf.js');
 const path = require('path');
+const _isNil = require('lodash/isNil');
 const buildDate = JSON.stringify(new Date().toLocaleString());
 // 在 scripts 指令指定
 // cross-env NODE_ENV=development PORT=9099 webpack-dev-server --progress --config ./build/webpack.dev.js
@@ -38,12 +39,18 @@ const devConfig = merge(baseVueConfig, {
           ...require('../config/dev.env.js'),
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           APP_VERSION: `"${require('../package.json').version}"`,
-          BUILD_DATE: buildDate
+          BUILD_DATE: buildDate,
+          USER_CONFIG_ENV: _isNil(process.env.CONFIG_ENV)
+            ? '{}'
+            : JSON.stringify(
+                require(`../config/user-config-env/${process.env.CONFIG_ENV}.env.js`)
+              ) // 自定义打包环境变量
         }
       })
     ]
   },
   devServer: {
+    index: processConfig.dev.devServerIndex,
     host: HOST || processConfig.dev.host,
     port: PORT || processConfig.dev.port,
     clientLogLevel: processConfig.dev.clientLogLevel,
@@ -62,7 +69,8 @@ const devConfig = merge(baseVueConfig, {
     // 配置如果找不到页面就默认显示的页面
     historyApiFallback: {
       rewrites: rewritesPages
-    }
+    },
+    writeToDisk: processConfig.dev.writeToDisk
   }
 });
 

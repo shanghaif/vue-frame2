@@ -26,12 +26,16 @@
               <base-bread-crumb
                 separator-class="el-icon-arrow-right"
                 :options="breadCrumbOptions"
+                @bread-click="onBreadClick"
               ></base-bread-crumb>
             </div>
           </template>
           <template v-slot:center>
             <div :class="[$style.fullY, $style.bgFff]">
-              <router-view :key="$route.fullPath"></router-view>
+              <base-route-view
+                :keep-alive="false"
+                :key="$route.fullPath"
+              ></base-route-view>
             </div>
           </template>
         </base-border-layout>

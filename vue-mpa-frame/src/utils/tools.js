@@ -957,3 +957,17 @@ export const removeInvalidChar = val => {
 export const getRandomID = () => {
   return `r${parseInt(Math.random() * 1000000000000)}`;
 };
+
+// 小数点转百位 2->100 3->1000
+export const dataDecimalsHandle = (decimals = 2) => {
+  let t = 1;
+  for (let i = 0; i < decimals; i++) {
+    t = t * 10;
+  }
+  return t;
+};
+
+// null 值转换为空字符串
+export const null2Empty = val => {
+  return val === null ? '' : val;
+};
