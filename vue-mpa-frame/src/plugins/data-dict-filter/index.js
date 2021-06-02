@@ -5,7 +5,6 @@
  * 例如在 methods 中请使用Vue根实例过滤转换器 plugins/root-filters.js
  */
 import Vue from 'vue';
-import dictionary from './data-dict.js';
 import _omit from 'lodash/omit';
 import _forEach from 'lodash/forEach';
 import _get from 'lodash/get';
@@ -13,6 +12,7 @@ import _isArray from 'lodash/isArray';
 import _map from 'lodash/map';
 import _keys from 'lodash/keys';
 import _find from 'lodash/find';
+import dictionary from './data-dict.js';
 
 class DataDictFilter {
   constructor({ label = 'name', code = 'id' } = {}) {

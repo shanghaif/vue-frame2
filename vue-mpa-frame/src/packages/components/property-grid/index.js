@@ -1,7 +1,6 @@
 /**
  * @desc 属性 grid
  */
-import { apply } from '../helper/util.js';
 import _isString from 'lodash/isString';
 import _isEmpty from 'lodash/isEmpty';
 import _has from 'lodash/has';
@@ -11,6 +10,8 @@ import _omit from 'lodash/omit';
 import _assign from 'lodash/assign';
 import _set from 'lodash/set';
 import _isNil from 'lodash/isNil';
+import { apply } from '../helper/util.js';
+
 const propertyGrid = {
   name: 'BasePropertyGrid',
   inheritAttrs: false,
@@ -353,6 +354,9 @@ const propertyGrid = {
                           .asyncLoad(props)
                           .then(v => {
                             this.$set(this.bbb, props.row.name, v);
+                          })
+                          .catch(error => {
+                            throw new Error(error);
                           });
                         return this.bbb[props.row.name];
                       }

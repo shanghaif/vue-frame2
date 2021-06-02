@@ -283,6 +283,9 @@ const BaseTree = {
               this.curDefaultExpandedKeys.push(_get(data[0], this.nodeKey));
             }
           })
+          .catch(error => {
+            throw new Error(error);
+          })
           .finally(() => {});
       } else {
         // 懒加载
@@ -429,26 +432,30 @@ const BaseTree = {
      * @desc 刷新整棵树，不管节点
      */
     refreshAll() {
-      this.loadStore().then(data => {
-        if (!_isEmpty(data)) {
-          if (this.isRenderRoot) {
-            this.root.children = data;
-            this.curData = [this.root];
-          } else {
-            this.curData = data;
+      this.loadStore()
+        .then(data => {
+          if (!_isEmpty(data)) {
+            if (this.isRenderRoot) {
+              this.root.children = data;
+              this.curData = [this.root];
+            } else {
+              this.curData = data;
+            }
+            // 自动展开第一行
+            if (
+              this.isExpandFirstPath &&
+              !_has(this.$attrs, 'default-expanded-keys') &&
+              (data.length === 1 || this.isRenderRoot)
+            ) {
+              this.curDefaultExpandedKeys.push(_get(data[0], this.nodeKey));
+            }
           }
-          // 自动展开第一行
-          if (
-            this.isExpandFirstPath &&
-            !_has(this.$attrs, 'default-expanded-keys') &&
-            (data.length === 1 || this.isRenderRoot)
-          ) {
-            this.curDefaultExpandedKeys.push(_get(data[0], this.nodeKey));
-          }
-        }
-        // 数据读取完成触发事件
-        this.$emit(this.events.afterLoadStore, data);
-      });
+          // 数据读取完成触发事件
+          this.$emit(this.events.afterLoadStore, data);
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @desc 刷新某个节点

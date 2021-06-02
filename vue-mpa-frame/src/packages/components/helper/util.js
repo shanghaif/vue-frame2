@@ -2,20 +2,20 @@
  * @desc 工具类
  */
 // 开发环境可以输出日志信息
-export const devConsole = function(message) {
+const devConsole = function(message) {
   if (process.env.NODE_ENV === 'development') {
     console.info(message);
   }
 };
 // 来源对象覆盖目标源对象
-export const apply = (scope, config) => {
+const apply = (scope, config) => {
   for (var i in config) {
     scope[i] = config[i];
   }
   return scope;
 };
 // 来源对象覆盖目标源没有的属性
-export const applyIf = (scope, config) => {
+const applyIf = (scope, config) => {
   for (var i in config) {
     // if (!scope[i])
     if (!Object.prototype.hasOwnProperty.call(scope, i)) {
@@ -25,7 +25,7 @@ export const applyIf = (scope, config) => {
   return scope;
 };
 // 根据传入的日期格式进行转换
-export const dateformat = (date, fmt) => {
+const dateformat = (date, fmt) => {
   var o = {
     'M+': date.getMonth() + 1, // 月份
     'd+': date.getDate(), // 日
@@ -55,10 +55,12 @@ export const dateformat = (date, fmt) => {
   return fmt;
 };
 // 判断参数是否为空
-export const isNotEmpty = str => {
+const isNotEmpty = str => {
   if (str !== '' && str != null && typeof str !== 'undefined') {
     return true;
   }
   // console.warn('argument format is wrong');
   return false;
 };
+
+export { devConsole, apply, applyIf, dateformat, isNotEmpty };

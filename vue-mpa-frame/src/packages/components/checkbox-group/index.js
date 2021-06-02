@@ -108,15 +108,19 @@ const BaseCheckboxGroup = {
         return;
       }
       const params = _assign({}, this.queryParams, this.curQueryParams);
-      this.$api[this.api]({ params }).then(response => {
-        this.tableData = _isNil(this.loadFilter)
-          ? response
-          : this.loadFilter(response);
-        this.curOptions = _get(
-          response,
-          _get(this['$base-global-options'], 'checkboxGroup.data', 'data')
-        );
-      });
+      this.$api[this.api]({ params })
+        .then(response => {
+          this.tableData = _isNil(this.loadFilter)
+            ? response
+            : this.loadFilter(response);
+          this.curOptions = _get(
+            response,
+            _get(this['$base-global-options'], 'checkboxGroup.data', 'data')
+          );
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @desc 设置查询参数

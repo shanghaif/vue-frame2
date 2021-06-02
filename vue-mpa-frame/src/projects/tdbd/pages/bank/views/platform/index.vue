@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import { DEFAULT_SETTINGS } from '../../config/index.js';
 import { BasicLayout } from '@packages/views/index.js';
+import { DEFAULT_SETTINGS } from '../../config/index.js';
 
 export default {
   components: { BasicLayout },

@@ -58,7 +58,6 @@
 <script>
 // import aplusMixin from '@plugins/aplus/mixin.js'; // 阿里巴巴 aplus.js 埋点
 import { ROUTER_OPEN_TYPE, ROOT_PAGE_NAME } from '@config/index.js';
-import TopView from './components/top-view.vue';
 import svgIcons from '@/plugins/icons.js';
 import _last from 'lodash/last';
 import _split from 'lodash/split';
@@ -72,6 +71,7 @@ import _isArray from 'lodash/isArray';
 import _concat from 'lodash/concat';
 import _has from 'lodash/has';
 import _cloneDeep from 'lodash/cloneDeep';
+import TopView from './components/top-view.vue';
 
 export default {
   name: 'BasicLayout',

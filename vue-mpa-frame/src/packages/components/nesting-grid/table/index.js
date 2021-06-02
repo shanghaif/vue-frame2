@@ -1,13 +1,13 @@
 /**
  * Table 表格组件
  */
-import BaseGridTable from '../../grid/table/index.js';
 import _isNil from 'lodash/isNil';
 import _filter from 'lodash/filter';
 import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
 import _get from 'lodash/get';
 import _map from 'lodash/map';
+import BaseGridTable from '../../grid/table/index.js';
 
 const BaseNestingGridTable = {
   name: 'BaseNestingGridTable',

@@ -71,7 +71,7 @@
           shadowConfig: {    // 阴影设置
             border: {      // 边框阴影
               color: 'rgba(93,158,254,.4)',   // 边框颜色
-              width: 5,     // 边框宽度 
+              width: 5,     // 边框宽度
               shadowColor: '#6FFDFF',  // 阴影颜色
               shadowWidth: 10   // 阴影长度
             },
@@ -90,6 +90,7 @@
   }
  */
 import echarts from 'echarts';
+
 const gdMapPos = {
   广州市: [113.507649675, 23.5200491021],
   东莞市: [113.863433991, 23.1930238154],
@@ -239,54 +240,59 @@ export default {
       }
       const zoom = this.zoom;
       const scale = this.scale;
-      this.$axios.get(this.mapUrl).then(res => {
-        const geoJson = res.data;
-        echarts.registerMap(this.mapName, geoJson);
-        const option = {
-          legend: {
-            show: false
-          },
-          geo: this.setMapGeo(),
-          series: [
-            {
-              name: this.mapName + '地图',
-              type: 'map',
-              map: this.mapName,
-              aspectScale: scale,
-              zoom: zoom,
-              showLegendSymbol: false,
-              label: {
-                normal: {
-                  show: false
+      this.$axios
+        .get(this.mapUrl)
+        .then(res => {
+          const geoJson = res.data;
+          echarts.registerMap(this.mapName, geoJson);
+          const option = {
+            legend: {
+              show: false
+            },
+            geo: this.setMapGeo(),
+            series: [
+              {
+                name: this.mapName + '地图',
+                type: 'map',
+                map: this.mapName,
+                aspectScale: scale,
+                zoom: zoom,
+                showLegendSymbol: false,
+                label: {
+                  normal: {
+                    show: false
+                  },
+                  emphasis: {
+                    show: false
+                  }
                 },
-                emphasis: {
-                  show: false
-                }
-              },
-              itemStyle: {
-                normal: {
-                  areaColor: areaConfig,
-                  borderColor: '#0bf2f4',
-                  borderWidth: 1
+                itemStyle: {
+                  normal: {
+                    areaColor: areaConfig,
+                    borderColor: '#0bf2f4',
+                    borderWidth: 1
+                  },
+                  emphasis: {
+                    areaColor: areaConfig
+                  }
                 },
-                emphasis: {
-                  areaColor: areaConfig
-                }
-              },
-              layoutCenter: ['50%', '50%'],
-              layoutSize: '180%',
-              markPoint: {
-                symbol: 'none'
-              },
-              data: []
-            }
-          ]
-        };
-        myChart.setOption(option);
-        setTimeout(() => {
-          this.renderEachCity(myChart, geoJson);
-        }, 0);
-      });
+                layoutCenter: ['50%', '50%'],
+                layoutSize: '180%',
+                markPoint: {
+                  symbol: 'none'
+                },
+                data: []
+              }
+            ]
+          };
+          myChart.setOption(option);
+          setTimeout(() => {
+            this.renderEachCity(myChart, geoJson);
+          }, 0);
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @description 柱状图统计

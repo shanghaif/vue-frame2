@@ -274,6 +274,9 @@ export default {
                           // this.$router.push({ name: LOGIN_PAGE_NAME });
                           window.location.href = HOME_ROUTER_NAME;
                         })
+                        .catch(error => {
+                          throw new Error(error);
+                        })
                         .finally(() => {});
                     }
                   }

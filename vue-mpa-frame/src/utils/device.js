@@ -1,28 +1,28 @@
-export const ua = navigator.userAgent.toLowerCase();
+const ua = navigator.userAgent.toLowerCase();
 
 // 是否是移动端
-export const isDeviceMobile = () => {
+const isDeviceMobile = () => {
   return /android|webos|iphone|ipod|balckberry/i.test(ua);
 };
 
 // 是否是QQ浏览器
-export const isQQBrowser = () => {
+const isQQBrowser = () => {
   return !!ua.match(/mqqbrowser|qzone|qqbrowser|qbwebviewtype/i);
 };
 
 // 是否是爬虫
-export const isSpider = () => {
+const isSpider = () => {
   return /adsbot|googlebot|bingbot|msnbot|yandexbot|baidubot|robot|careerbot|seznambot|bot|baiduspider|jikespider|symantecspider|scannerlwebcrawler|crawler|360spider|sosospider|sogou web sprider|sogou orion spider/.test(
     ua
   );
 };
 
 // 是否是微信浏览器
-export const isWeiXin = () => {
+const isWeiXin = () => {
   return ua.match(/microMessenger/i) === 'micromessenger';
 };
 // 是否ios
-export const isIos = () => {
+const isIos = () => {
   var u = navigator.userAgent;
   if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
     // 安卓手机
@@ -42,7 +42,7 @@ export const isIos = () => {
 };
 
 // 是否为PC端
-export const isPC = () => {
+const isPC = () => {
   var userAgentInfo = navigator.userAgent;
   var Agents = [
     'Android',
@@ -63,7 +63,7 @@ export const isPC = () => {
 };
 
 // 加入收藏夹
-export const addFavorite = (sURL, sTitle) => {
+const addFavorite = (sURL, sTitle) => {
   try {
     window.external.addFavorite(sURL, sTitle);
   } catch (e) {
@@ -76,19 +76,31 @@ export const addFavorite = (sURL, sTitle) => {
 };
 
 // 判断是否安卓移动设备访问
-export const isAndroidMobileDevice = () => {
+const isAndroidMobileDevice = () => {
   return /android/i.test(navigator.userAgent.toLowerCase());
 };
 
 // 判断是否苹果移动设备访问
-export const isAppleMobileDevice = () => {
+const isAppleMobileDevice = () => {
   return /iphone|ipod|ipad|Macintosh/i.test(navigator.userAgent.toLowerCase());
 };
-
 // 判断 isIE 浏览器
-export function isIE() {
+const isIE = function() {
   const bw = window.navigator.userAgent;
   const compare = s => bw.indexOf(s) >= 0;
   const ie11 = (() => 'ActiveXObject' in window)();
   return compare('MSIE') || ie11;
-}
+};
+
+export {
+  isIE,
+  isAppleMobileDevice,
+  isAndroidMobileDevice,
+  addFavorite,
+  isPC,
+  isIos,
+  isWeiXin,
+  isSpider,
+  isQQBrowser,
+  isDeviceMobile
+};

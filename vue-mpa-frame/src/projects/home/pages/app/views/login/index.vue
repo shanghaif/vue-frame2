@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import { ROOT_PAGE_NAME } from '../../config/index.js';
 import { mapActions } from 'vuex';
 import md5 from 'js-md5';
+import { ROOT_PAGE_NAME } from '../../config/index.js';
 
 export default {
   data() {

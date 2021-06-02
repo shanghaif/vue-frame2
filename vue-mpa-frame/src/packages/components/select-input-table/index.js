@@ -2,7 +2,6 @@
  * @desc 下拉搜索 table 不分页组件
  * https://juejin.cn/post/6844903710972182536
  */
-import baseSelect from '../select/index.js';
 import _isEqual from 'lodash/isEqual';
 import _map from 'lodash/map';
 import _get from 'lodash/get';
@@ -15,6 +14,7 @@ import _has from 'lodash/has';
 import _set from 'lodash/set';
 import _omit from 'lodash/omit';
 import _debounce from 'lodash/debounce';
+import baseSelect from '../select/index.js';
 
 const BaseSelectInputTable = {
   name: 'BaseSelectInputTable',

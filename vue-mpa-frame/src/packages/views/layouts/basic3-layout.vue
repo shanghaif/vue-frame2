@@ -45,8 +45,8 @@
 </template>
 
 <script>
-import TopView3 from './components/top-view3.vue';
 import _cloneDeep from 'lodash/cloneDeep';
+import TopView3 from './components/top-view3.vue';
 
 export default {
   name: 'Basic3Layout',

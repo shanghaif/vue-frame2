@@ -6,6 +6,7 @@ import _assign from 'lodash/assign';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _isEmpty from 'lodash/isEmpty';
+
 const BaseTabs = {
   name: 'BaseTabs',
   inheritAttrs: false,

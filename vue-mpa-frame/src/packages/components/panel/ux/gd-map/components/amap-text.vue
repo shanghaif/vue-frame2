@@ -1,5 +1,6 @@
 <script>
 import registerMixin from '../mixins/register-component';
+
 const TAG = 'BaseAmapText';
 export default {
   name: 'BaseAmapText', // 纯文本标记，继承自Marker，具有Marker的大部分属性、方法和事件

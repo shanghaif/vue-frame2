@@ -35,8 +35,19 @@
           labelSize: 12   // 关系文本字体大小
  * }
  */
-import * as d3 from 'd3';
-import { event } from 'd3';
+import {
+  select,
+  zoom,
+  event,
+  drag,
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceX,
+  forceY
+} from 'd3';
+
 export default {
   props: {
     nodeInfo: {
@@ -82,7 +93,7 @@ export default {
      * @description 初始化
      */
     initForceTp() {
-      this.svg = d3.select('#' + this.svgId);
+      this.svg = select('#' + this.svgId);
       this.linkInfo.map(d => Object.create(d));
       this.nodeInfo.map(d => Object.create(d));
       const links = this.linkInfo;
@@ -101,19 +112,18 @@ export default {
       });
       // 缩放事件
       this.svg.call(
-        d3
-          .zoom()
+        zoom()
           .scaleExtent([0.8, 20])
           .on('zoom', () => {
             domGraph.attr(
               'transform',
               'translate(' +
-                d3.event.transform.x +
+                event.transform.x +
                 ',' +
-                d3.event.transform.y +
+                event.transform.y +
                 ')' +
                 ' scale(' +
-                d3.event.transform.k +
+                event.transform.k +
                 ')'
             );
           })
@@ -136,8 +146,7 @@ export default {
         d.fx = event.x;
         d.fy = event.y;
       }
-      return d3
-        .drag()
+      return drag()
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended);
@@ -162,23 +171,21 @@ export default {
       const width = this.$refs.svg.clientWidth;
       const height = this.$refs.svg.clientHeight;
 
-      const simulation = d3
-        .forceSimulation(nodes)
+      const simulation = forceSimulation(nodes)
         .force(
           'link',
-          d3
-            .forceLink(links)
+          forceLink(links)
             .id(d => d.id)
             .distance(180)
         )
-        .force('charge', d3.forceManyBody().strength(rejectForce))
-        .force('center', d3.forceCenter())
-        .force('x', d3.forceX())
-        .force('y', d3.forceY());
+        .force('charge', forceManyBody().strength(rejectForce))
+        .force('center', forceCenter())
+        .force('x', forceX())
+        .force('y', forceY());
 
       simulation
-        .force('charge_force', d3.forceManyBody())
-        .force('center_force', d3.forceCenter(width / 2, height / 2));
+        .force('charge_force', forceManyBody())
+        .force('center_force', forceCenter(width / 2, height / 2));
       return simulation;
     },
     /**

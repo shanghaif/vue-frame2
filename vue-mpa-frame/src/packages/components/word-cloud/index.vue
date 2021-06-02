@@ -22,8 +22,9 @@
  * ]
  * @callback cloudClick 词点击事件
  */
-import * as d3 from 'd3';
+import { select, scaleOrdinal, schemePaired } from 'd3';
 import cloud from 'd3-cloud';
+
 export default {
   name: 'tree-atlas-style',
   props: {
@@ -43,7 +44,7 @@ export default {
   },
   watch: {},
   mounted() {
-    this.svg = d3.select('#' + this.id);
+    this.svg = select('#' + this.id);
     const width = this.$refs.svg.clientWidth;
     const height = this.$refs.svg.clientHeight;
     this.layout = cloud()
@@ -68,7 +69,7 @@ export default {
      * @description 词的绘画
      */
     draw(words) {
-      const color = d3.scaleOrdinal(d3.schemePaired);
+      const color = scaleOrdinal(schemePaired);
       this.svg
         .append('g')
         .attr(

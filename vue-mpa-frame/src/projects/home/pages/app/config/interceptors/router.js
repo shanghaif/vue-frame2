@@ -2,16 +2,16 @@
  * @desc 路由拦截器
  */
 import NProgress from 'nprogress';
+import _has from 'lodash/has';
+import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
+import store, { sStorageKey } from '../../store/index.js';
 import {
   WINDOW_TITLE_UPDATE,
   ROUTER_WHITE_LIST,
   LOGIN_PAGE_NAME,
   ROOT_PAGE_NAME
 } from '../index.js';
-import store, { sStorageKey } from '../../store/index.js';
-import _has from 'lodash/has';
-import _get from 'lodash/get';
-import _isEmpty from 'lodash/isEmpty';
 /**
  * @desc 全局前置守卫
  * @param {*} to
@@ -58,6 +58,9 @@ const routerBeforeEachFunc = function(to, from, next) {
     ])
       .then(() => {
         next();
+      })
+      .catch(error => {
+        throw new Error(error);
       })
       .finally(() => {
         NProgress.done();

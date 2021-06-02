@@ -1,5 +1,6 @@
 <script>
 import registerMixin from '../mixins/register-component';
+
 const TAG = 'BaseAmapCircleMarker';
 
 export default {

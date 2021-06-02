@@ -1,16 +1,16 @@
 /**
  * @desc grid 列表组件
  */
-import BaseGridPagination from './pagination/index.js';
-import BaseGridTable from './table/index.js';
-import BaseGridSearch from './search/index.js';
-import BaseTBar from './t-bar/index.js';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _omit from 'lodash/omit';
 import _set from 'lodash/set';
 import _assign from 'lodash/assign';
 import _isNil from 'lodash/isNil';
+import BaseTBar from './t-bar/index.js';
+import BaseGridSearch from './search/index.js';
+import BaseGridTable from './table/index.js';
+import BaseGridPagination from './pagination/index.js';
 
 const BaseGrid = {
   name: 'BaseGrid',

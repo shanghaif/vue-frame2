@@ -6,6 +6,7 @@
  * 动态载入各个api领域模型
  */
 import camelCase from 'lodash/camelCase';
+
 const requireModule = require.context('./module', true, /\.js$/);
 const modules = {};
 requireModule.keys().forEach(fileName => {

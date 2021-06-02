@@ -60,10 +60,14 @@ const actions = {
   // 销毁缓存和重置变量
   handlerDestroy({ commit }) {
     return new Promise((resolve, reject) => {
-      this.dispatch('platform/handle_exit').then(() => {
-        commit('HANDLER_DESTROY');
-        resolve();
-      });
+      this.dispatch('platform/handle_exit')
+        .then(() => {
+          commit('HANDLER_DESTROY');
+          resolve();
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     });
   }
 };

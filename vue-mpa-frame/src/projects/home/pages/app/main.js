@@ -1,15 +1,10 @@
 /**
  * @desc 入口项目
  */
-import App from './App.vue';
-import router from './router/index.js';
-import store from './store/index.js';
-import inject from './plugins/inject.js';
 import vueLink from '@plugins/link.js';
 // 初始化 element 组件库
 import './plugins/element.js';
 // 初始化项目全局组件
-import itemComponents from './plugins/components.js';
 // Vue 中非父子组件通讯插件
 import unicom from '@plugins/unicom.js';
 // .vue模板文件中的常量插件
@@ -27,6 +22,12 @@ import VEmoji from '@directives/v-emoji.js';
 import VDebounce from '@directives/v-debounce.js';
 import VLazyLoad from '@directives/v-LazyLoad.js';
 import VfRef from '@directives/v-f-ref.js';
+import itemComponents from './plugins/components.js';
+import inject from './plugins/inject.js';
+import store from './store/index.js';
+
+import App from './App.vue';
+import router from './router/index.js';
 
 // 全局通知 巴士事件
 window.GvBus = {};

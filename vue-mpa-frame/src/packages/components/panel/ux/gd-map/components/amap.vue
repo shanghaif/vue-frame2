@@ -5,15 +5,15 @@
   </div>
 </template>
 <script>
+import _isString from 'lodash/isString';
+import _isArray from 'lodash/isArray';
+import _map from 'lodash/map';
+import _filter from 'lodash/filter';
 import CONST from '../utils/constant.js';
 import guid from '../utils/guid.js';
 import { lngLatTo, isObj, toPixel, toLngLat } from '../utils/convert-helper.js';
 import { lazyAMapApiLoaderInstance } from '../index.js';
 import registerMixin from '../mixins/register-component.js';
-import _isString from 'lodash/isString';
-import _isArray from 'lodash/isArray';
-import _map from 'lodash/map';
-import _filter from 'lodash/filter';
 
 export default {
   name: 'BaseAmap',
@@ -255,31 +255,35 @@ export default {
      * @desc 创建地图
      */
     createMap() {
-      this._loadPromise.then(() => {
-        const mapElement = this.$el.querySelector('.base-vue-amap');
-        const elementID = this.vid || guid();
-        mapElement.id = elementID;
-        this.$amap = this.$amapComponent = new AMap.Map(
-          elementID,
-          this.convertProps()
-        );
-        if (this.amapManager) {
-          this.amapManager.setMap(this.$amap);
-        }
-        this.$emit(CONST.AMAP_READY_EVENT, this.$amap); // 地图初始化完成
-        this.$children.forEach(component => {
-          component.$emit(CONST.AMAP_READY_EVENT, this.$amap);
-        }); // 通知子组件`地图初始化完成`
-        this.$amap.on(CONST.AMAP_COMPLETE, () => {
-          this.$emit(CONST.AMAP_COMPLETE, this.$amap);
-          if (!_isNil(this.panBy)) {
-            this.$amap.panBy(this.panBy[0], this.panBy[1]); // 地图偏移
+      this._loadPromise
+        .then(() => {
+          const mapElement = this.$el.querySelector('.base-vue-amap');
+          const elementID = this.vid || guid();
+          mapElement.id = elementID;
+          this.$amap = this.$amapComponent = new AMap.Map(
+            elementID,
+            this.convertProps()
+          );
+          if (this.amapManager) {
+            this.amapManager.setMap(this.$amap);
           }
-        }); // 地图加载完成
-        if (this.plugins && this.plugins.length) {
-          this.addPlugins();
-        }
-      });
+          this.$emit(CONST.AMAP_READY_EVENT, this.$amap); // 地图初始化完成
+          this.$children.forEach(component => {
+            component.$emit(CONST.AMAP_READY_EVENT, this.$amap);
+          }); // 通知子组件`地图初始化完成`
+          this.$amap.on(CONST.AMAP_COMPLETE, () => {
+            this.$emit(CONST.AMAP_COMPLETE, this.$amap);
+            if (!_isNil(this.panBy)) {
+              this.$amap.panBy(this.panBy[0], this.panBy[1]); // 地图偏移
+            }
+          }); // 地图加载完成
+          if (this.plugins && this.plugins.length) {
+            this.addPlugins();
+          }
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @desc 添加插件

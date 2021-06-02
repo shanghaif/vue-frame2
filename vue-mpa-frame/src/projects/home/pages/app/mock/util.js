@@ -10,7 +10,7 @@ const responseBody = {
 };
 
 // 构建返回结果
-export const builder = (
+const builder = (
   data,
   message = '',
   status = 200,
@@ -42,7 +42,7 @@ export const builder = (
  * @desc get参数获取
  * @param {String} options - url 参数
  */
-export const getQueryParameters = options => {
+const getQueryParameters = options => {
   const url = options.url;
   const search = url.split('?')[1];
   if (!search) {
@@ -62,10 +62,12 @@ export const getQueryParameters = options => {
  * @desc post 参数获取
  * @param {Object} options - 指向本次请求的 Ajax 选项集，含有 url、type 和 body 三个属性
  */
-export const getBody = options => {
+const getBody = options => {
   if (_isString(options.body)) {
     // post 设置 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' 需要使用 qs.parse 将 'userName=admin&password=1b3231655cebb7a1f783eddf27d254ca' 转换到 json 对象
     return options.body && qs.parse(options.body);
   }
   return options.body && JSON.parse(options.body);
 };
+
+export { builder, getQueryParameters, getBody };

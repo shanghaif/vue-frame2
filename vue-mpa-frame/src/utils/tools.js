@@ -1,8 +1,7 @@
 /**
  * @desc 前端常用工具方法
  */
-
-export function timeFix() {
+const timeFix = function() {
   const time = new Date();
   const hour = time.getHours();
   return hour < 9
@@ -14,17 +13,17 @@ export function timeFix() {
     : hour < 20
     ? '下午好'
     : '晚上好';
-}
+};
 
 // 来源对象覆盖目标源对象
-export const apply = (scope, config) => {
+const apply = (scope, config) => {
   for (var i in config) {
     scope[i] = config[i];
   }
   return scope;
 };
 // 来源对象覆盖目标源没有的属性
-export const applyIf = (scope, config) => {
+const applyIf = (scope, config) => {
   for (var i in config) {
     // if (!scope[i])
     if (!Object.prototype.hasOwnProperty.call(scope, i)) {
@@ -34,7 +33,7 @@ export const applyIf = (scope, config) => {
   return scope;
 };
 // 来源对象覆盖目标源有的属性
-export const applyIn = (scope, config) => {
+const applyIn = (scope, config) => {
   for (var i in config) {
     if (Object.prototype.hasOwnProperty.call(scope, i)) {
       scope[i] = config[i];
@@ -43,7 +42,7 @@ export const applyIn = (scope, config) => {
   return scope;
 };
 // 给数组中的每个对象添加属性
-export const deepApplyIf = (array, config) => {
+const deepApplyIf = (array, config) => {
   array.forEach(element => {
     applyIf(element, config);
   });
@@ -64,7 +63,7 @@ export const deepApplyIf = (array, config) => {
  *  return value;
  * }
  */
-export const jsonFilter = (json = {}, replacer) => {
+const jsonFilter = (json = {}, replacer) => {
   var jsonString = JSON.stringify(json, replacer);
   return JSON.parse(jsonString);
 };
@@ -75,30 +74,21 @@ export const jsonFilter = (json = {}, replacer) => {
  * JSON.stringify(user, ['name'])
  * {name: 'zollero'}
  */
-export const jsonArrayFilter = (user = {}, filterArray = []) => {
+const jsonArrayFilter = (user = {}, filterArray = []) => {
   return JSON.parse(JSON.stringify(user, filterArray));
 };
 
 // 字符数字转int数字
-export const strNumToInt = val => {
+const strNumToInt = val => {
   return +val;
 };
 // int数字转字符数字
-export const intNumToStr = val => {
+const intNumToStr = val => {
   return val.toString();
 };
 
-// 自定义错误 继承Error对象
-// throw new userError(`abc`)
-export const userError = function(message) {
-  this.message = message || '默认信息';
-  this.name = 'userError';
-};
-userError.prototype = new Error();
-userError.prototype.constructor = userError;
-
 // 字符时间转Date类型
-export const formatToDate = dateStr => {
+const formatToDate = dateStr => {
   if (isNotEmpty(dateStr)) {
     return new Date(Date.parse(dateStr.replace(/-/g, '/')));
   }
@@ -106,7 +96,7 @@ export const formatToDate = dateStr => {
 };
 
 // 判断参数是否为空
-export const isNotEmpty = str => {
+const isNotEmpty = str => {
   if (str !== '' && str !== null && typeof str !== 'undefined') {
     return true;
   }
@@ -115,15 +105,15 @@ export const isNotEmpty = str => {
 };
 
 // 判断对象是否为空对象
-export const isEmptyObject = obj => {
+const isEmptyObject = obj => {
   for (var key in obj) {
     return false;
   }
   return true;
 };
 
-// 正则匹配 判断字符串中是否包含某个字符串 strHavestr('abc','bc')
-export const strHavestr = (str, regStr) => {
+// 正则匹配 判断字符串中是否包含某个字符串 strHaveStr('abc','bc')
+const strHaveStr = (str, regStr) => {
   // var str ="abc";
   var reg = new RegExp('^.*' + regStr + '.*$');
   if (str.match(reg)) {
@@ -133,104 +123,104 @@ export const strHavestr = (str, regStr) => {
 };
 
 // 邮箱
-export const isEmail = s => {
+const isEmail = s => {
   return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(
     s
   );
 };
 
 // 手机号码
-export const isMobilePhone = s => {
+const isMobilePhone = s => {
   return /^1[0-9]{10}$/.test(s);
 };
 
 // 电话号码
-export const isPhone = s => {
+const isPhone = s => {
   return /^([0-9]{3,4}-)?[0-9]{7,8}$/.test(s);
 };
 
 // 是否url地址
-export const isURL = s => {
+const isURL = s => {
   return /^http[s]?:\/\/.*/.test(s);
 };
 
 // 是否字符串
-export const isString = o => {
+const isString = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'String';
 };
 
 // 是否数字
-export const isNumber = o => {
+const isNumber = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Number';
 };
 
 // 是否boolean
-export const isBoolean = o => {
+const isBoolean = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Boolean';
 };
 
 // 是否函数
-export const isFunction = o => {
+const isFunction = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Function';
 };
 
 // 是否为null
-export const isNull = o => {
+const isNull = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Null';
 };
 
 // 是否undefined
-export const isUndefined = o => {
+const isUndefined = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Undefined';
 };
 
 // 是否对象
-export const isObj = o => {
+const isObj = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Object';
 };
 
 // 是否数组
-export const isArray = o => {
+const isArray = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Array';
 };
 
 // 是否时间
-export const isDate = o => {
+const isDate = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Date';
 };
 
 // 是否正则
-export const isRegExp = o => {
+const isRegExp = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'RegExp';
 };
 
 // 是否错误对象
-export const isError = o => {
+const isError = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Error';
 };
 
 // 是否Symbol函数
-export const isSymbol = o => {
+const isSymbol = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Symbol';
 };
 
 // 是否Promise对象
-export const isPromise = o => {
+const isPromise = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Promise';
 };
 
 // 是否Set对象
-export const isSet = o => {
+const isSet = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Set';
 };
 
 // 去除html标签
-export const removeHtmltag = str => {
+const removeHtmlTag = str => {
   return str.replace(/<[^>]+>/g, '');
 };
 
 // 获取url参数
-export const getQueryString = name => {
+const getQueryString = name => {
   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
   const search = window.location.search.split('?')[1] || '';
   const r = search.match(reg) || [];
@@ -238,7 +228,7 @@ export const getQueryString = name => {
 };
 
 // 动态引入js
-export const injectScript = src => {
+const injectScript = src => {
   const s = document.createElement('script');
   s.type = 'text/javascript';
   s.async = true;
@@ -248,13 +238,13 @@ export const injectScript = src => {
 };
 
 // el是否包含某个class
-export const hasClass = (el, className) => {
+const hasClass = (el, className) => {
   const reg = new RegExp('(^|\\s)' + className + '(\\s|$)');
   return reg.test(el.className);
 };
 
 // el添加某个class
-export const addClass = (el, className) => {
+const addClass = (el, className) => {
   if (hasClass(el, className)) {
     return;
   }
@@ -264,7 +254,7 @@ export const addClass = (el, className) => {
 };
 
 // el去除某个class
-export const removeClass = (el, className) => {
+const removeClass = (el, className) => {
   if (!hasClass(el, className)) {
     return;
   }
@@ -273,13 +263,13 @@ export const removeClass = (el, className) => {
 };
 
 // 获取滚动的坐标
-export const getScrollPosition = (el = window) => ({
+const getScrollPosition = (el = window) => ({
   x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
   y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop
 });
 
 // 滚动到顶部
-export const scrollToTop = () => {
+const scrollToTop = () => {
   const c = document.documentElement.scrollTop || document.body.scrollTop;
   if (c > 0) {
     window.requestAnimationFrame(scrollToTop);
@@ -288,7 +278,7 @@ export const scrollToTop = () => {
 };
 
 // 返回顶部的通用方法 backTop("goTop");
-export const backTop = btnId => {
+const backTop = btnId => {
   var btn = document.getElementById(btnId);
   var d = document.documentElement;
   var b = document.body;
@@ -311,7 +301,7 @@ export const backTop = btnId => {
 };
 
 // el是否在视口范围内
-export const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
+const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
   const { top, left, bottom, right } = el.getBoundingClientRect();
   const { innerHeight, innerWidth } = window;
   return partiallyVisible
@@ -322,7 +312,7 @@ export const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 };
 
 // 洗牌算法随机
-export const shuffle = arr => {
+const shuffle = arr => {
   var result = [];
   var random;
   while (arr.length > 0) {
@@ -334,7 +324,7 @@ export const shuffle = arr => {
 };
 
 // 拦截粘贴板
-export const copyTextToClipboard = value => {
+const copyTextToClipboard = value => {
   var textArea = document.createElement('textarea');
   textArea.style.background = 'transparent';
   textArea.value = value;
@@ -350,7 +340,7 @@ export const copyTextToClipboard = value => {
 };
 
 // 判断类型集合
-export const checkStr = (str, type) => {
+const checkStr = (str, type) => {
   switch (type) {
     case 'phone': // 手机号码
       return /^1[3|4|5|6|7|8|9][0-9]{9}$/.test(str);
@@ -400,7 +390,7 @@ export const checkStr = (str, type) => {
 };
 
 // 严格的身份证校验
-export const isCardID = sId => {
+const isCardID = sId => {
   if (!/(^\d{15}$)|(^\d{17}(\d|X|x)$)/.test(sId)) {
     console.log('你输入的身份证长度或格式错误');
     return false;
@@ -482,7 +472,7 @@ export const isCardID = sId => {
 };
 
 // 随机数范围
-export const random = (min, max) => {
+const random = (min, max) => {
   // eslint-disable-next-line no-undef
   if (arguments.length === 2) {
     return Math.floor(min + Math.random() * (max + 1 - min));
@@ -492,7 +482,7 @@ export const random = (min, max) => {
 };
 
 // 将阿拉伯数字翻译成中文的大写数字
-export const numberToChinese = num => {
+const numberToChinese = num => {
   var AA = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十']; // new Array('零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十');
   var BB = ['', '十', '百', '仟', '萬', '億', '点', '']; // new Array('', '十', '百', '仟', '萬', '億', '点', '');
   var a = ('' + num).replace(/(^0*)/g, '').split('.');
@@ -540,7 +530,7 @@ export const numberToChinese = num => {
 };
 
 // 将数字转换为大写金额
-export const changeToChinese = Num => {
+const changeToChinese = Num => {
   // 判断如果传递进来的不是字符的话转换为字符
   if (typeof Num === 'number') {
     // eslint-disable-next-line no-new-wrappers
@@ -695,12 +685,12 @@ export const changeToChinese = Num => {
 };
 
 // 判断一个元素是否在数组中
-export const contains = (arr, val) => {
+const contains = (arr, val) => {
   return arr.indexOf(val) !== -1;
 };
 
 // 数组排序，{type} 1：从小到大 2：从大到小 3：随机
-export const sort = (arr, type = 1) => {
+const sort = (arr, type = 1) => {
   return arr.sort((a, b) => {
     switch (type) {
       case 1:
@@ -715,7 +705,7 @@ export const sort = (arr, type = 1) => {
   });
 };
 // 去重
-export const unique = arr => {
+const unique = arr => {
   // eslint-disable-next-line no-prototype-builtins
   if (Array.hasOwnProperty('from')) {
     return Array.from(new Set(arr));
@@ -733,13 +723,13 @@ export const unique = arr => {
 };
 
 // 求两个集合的并集
-export const union = (a, b) => {
+const union = (a, b) => {
   var newArr = a.concat(b);
   return this.unique(newArr);
 };
 
 // 求两个集合的交集
-export const intersect = (a, b) => {
+const intersect = (a, b) => {
   var _this = this;
   a = this.unique(a);
   return this.map(a, function(o) {
@@ -748,7 +738,7 @@ export const intersect = (a, b) => {
 };
 
 // 删除其中一个元素
-export const remove = (arr, ele) => {
+const remove = (arr, ele) => {
   var index = arr.indexOf(ele);
   if (index > -1) {
     arr.splice(index, 1);
@@ -757,7 +747,7 @@ export const remove = (arr, ele) => {
 };
 
 // 将类数组转换为数组
-export const formArray = ary => {
+const formArray = ary => {
   var arr = [];
   if (Array.isArray(ary)) {
     arr = ary;
@@ -768,29 +758,29 @@ export const formArray = ary => {
 };
 
 // 最大值
-export const max = arr => {
+const max = arr => {
   return Math.max.apply(null, arr);
 };
 
 // 最小值
-export const min = arr => {
+const min = arr => {
   return Math.min.apply(null, arr);
 };
 
 // 求和
-export const sum = arr => {
+const sum = arr => {
   return arr.reduce((pre, cur) => {
     return pre + cur;
   });
 };
 
 // 平均值
-export const average = arr => {
+const average = arr => {
   return this.sum(arr) / arr.length;
 };
 
 // 去除空格,type: 1-所有空格 2-前后空格 3-前空格 4-后空格
-export const trim = (str, type) => {
+const trim = (str, type) => {
   type = type || 1;
   switch (type) {
     case 1:
@@ -807,7 +797,7 @@ export const trim = (str, type) => {
 };
 
 // 字符转换，type: 1:首字母大写 2：首字母小写 3：大小写转换 4：全部大写 5：全部小写
-export const changeCase = (str, type) => {
+const changeCase = (str, type) => {
   type = type || 4;
   switch (type) {
     case 1:
@@ -843,7 +833,7 @@ export const changeCase = (str, type) => {
 };
 
 // 检测密码强度
-export const checkPwd = str => {
+const checkPwd = str => {
   var Lv = 0;
   if (str.length < 6) {
     return Lv;
@@ -864,7 +854,7 @@ export const checkPwd = str => {
 };
 
 // 函数节流器
-export const debouncer = (fn, time, interval = 200) => {
+const debouncer = (fn, time, interval = 200) => {
   if (time - (window.debounceTimestamp || 0) > interval) {
     fn && fn();
     window.debounceTimestamp = time;
@@ -872,13 +862,13 @@ export const debouncer = (fn, time, interval = 200) => {
 };
 
 // 在字符串中插入新字符串
-export const insertStr = (soure, index, newStr) => {
+const insertStr = (soure, index, newStr) => {
   var str = soure.slice(0, index) + newStr + soure.slice(index);
   return str;
 };
 
 // 判断两个对象是否键值相同
-export const isObjectEqual = (a, b) => {
+const isObjectEqual = (a, b) => {
   var aProps = Object.getOwnPropertyNames(a);
   var bProps = Object.getOwnPropertyNames(b);
 
@@ -897,7 +887,7 @@ export const isObjectEqual = (a, b) => {
 };
 
 // 16进制颜色转RGBRGBA字符串
-export const colorToRGB = (val, opa) => {
+const colorToRGB = (val, opa) => {
   var pattern = /^(#?)[a-fA-F0-9]{6}$/; // 16进制颜色值校验规则
   var isOpa = typeof opa === 'number'; // 判断是否有设置不透明度
 
@@ -923,7 +913,7 @@ export const colorToRGB = (val, opa) => {
 };
 
 // 检测sql攻击
-export const checkSQLXss = sQuery => {
+const checkSQLXss = sQuery => {
   const re = /select|update|delete|truncate|join|union|exec|insert|drop|count|script|<|>|'|"|=|;/gi;
   if (re.test(sQuery)) {
     return false;
@@ -932,7 +922,7 @@ export const checkSQLXss = sQuery => {
 };
 
 // 特殊字符检测
-export const checkInvalidChar = val => {
+const checkInvalidChar = val => {
   var reg = new RegExp(
     // eslint-disable-next-line quotes
     "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"
@@ -941,7 +931,7 @@ export const checkInvalidChar = val => {
 };
 
 // 过滤特殊字符
-export const removeInvalidChar = val => {
+const removeInvalidChar = val => {
   var reg = new RegExp(
     // eslint-disable-next-line quotes
     "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"
@@ -954,12 +944,12 @@ export const removeInvalidChar = val => {
 };
 
 // 生成随机id
-export const getRandomID = () => {
+const getRandomID = () => {
   return `r${parseInt(Math.random() * 1000000000000)}`;
 };
 
 // 小数点转百位 2->100 3->1000
-export const dataDecimalsHandle = (decimals = 2) => {
+const dataDecimalsHandle = (decimals = 2) => {
   let t = 1;
   for (let i = 0; i < decimals; i++) {
     t = t * 10;
@@ -968,6 +958,80 @@ export const dataDecimalsHandle = (decimals = 2) => {
 };
 
 // null 值转换为空字符串
-export const null2Empty = val => {
+const null2Empty = val => {
   return val === null ? '' : val;
+};
+export {
+  timeFix,
+  apply,
+  applyIf,
+  applyIn,
+  deepApplyIf,
+  jsonFilter,
+  jsonArrayFilter,
+  strNumToInt,
+  intNumToStr,
+  formatToDate,
+  isNotEmpty,
+  isEmptyObject,
+  strHaveStr,
+  isEmail,
+  isMobilePhone,
+  isPhone,
+  isURL,
+  isString,
+  isNumber,
+  isBoolean,
+  isFunction,
+  isNull,
+  isUndefined,
+  isObj,
+  isArray,
+  isDate,
+  isRegExp,
+  isError,
+  isSymbol,
+  isPromise,
+  isSet,
+  removeHtmlTag,
+  getQueryString,
+  injectScript,
+  hasClass,
+  null2Empty,
+  dataDecimalsHandle,
+  getRandomID,
+  removeInvalidChar,
+  checkInvalidChar,
+  checkSQLXss,
+  colorToRGB,
+  isObjectEqual,
+  insertStr,
+  debouncer,
+  checkPwd,
+  changeCase,
+  trim,
+  average,
+  sum,
+  min,
+  max,
+  formArray,
+  remove,
+  intersect,
+  union,
+  unique,
+  sort,
+  contains,
+  changeToChinese,
+  numberToChinese,
+  random,
+  isCardID,
+  checkStr,
+  copyTextToClipboard,
+  shuffle,
+  elementIsVisibleInViewport,
+  backTop,
+  scrollToTop,
+  getScrollPosition,
+  removeClass,
+  addClass
 };

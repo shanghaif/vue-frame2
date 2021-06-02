@@ -1,5 +1,4 @@
 <script>
-import registerMixin from '../mixins/register-component.js';
 import _isNil from 'lodash/isNil';
 import _isEmpty from 'lodash/isEmpty';
 import _isArray from 'lodash/isArray';
@@ -9,7 +8,9 @@ import _omit from 'lodash/omit';
 import _isBoolean from 'lodash/isBoolean';
 import _has from 'lodash/has';
 import _forEach from 'lodash/forEach';
+import registerMixin from '../mixins/register-component.js';
 import { toPixel, toSize } from '../utils/convert-helper.js';
+
 export default {
   name: 'BaseAmapMarkerClusterer', // 点聚合
   mixins: [registerMixin],

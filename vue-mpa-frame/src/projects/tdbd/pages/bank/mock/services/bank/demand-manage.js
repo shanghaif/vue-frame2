@@ -2,9 +2,9 @@
  * @desc 贷款需求管理列表 mock 类
  */
 import Mock from 'mockjs2';
-import { builder, getQueryParameters } from '../../util';
 import _filter from 'lodash/filter';
 import _includes from 'lodash/includes';
+import { builder, getQueryParameters } from '../../util';
 
 const bankProductsList = options => {
   let totalRecord = 571; // 总数量

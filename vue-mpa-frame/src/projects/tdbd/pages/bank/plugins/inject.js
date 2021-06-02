@@ -1,8 +1,10 @@
 /**
  * @desc 需要挂载(注入)到根实例的都放在这里
  */
-import LoaderApiLibrary from './axios/api.js';
 import axios from '@plugins/axios/axios.js';
+import DataDictFilter from '@plugins/data-dict-filter/index.js';
+import vBus from '@plugins/v-bus.js';
+import log from '@plugins/log.js';
 import ApiConfig from '../service/api/index.js';
 import { USER_API_CONFIG, USER_AXIOS_CONFIG } from '../config/index.js';
 import {
@@ -11,11 +13,9 @@ import {
   apiRequestInterceptErrorHandler,
   requestErrorCallback
 } from '../config/interceptors/api.js';
-import DataDictFilter from '@plugins/data-dict-filter/index.js';
-import vBus from '@plugins/v-bus.js';
 import moduleConst from './constant.js';
 // 彩色 log
-import log from '@plugins/log.js';
+import LoaderApiLibrary from './axios/api.js';
 
 export default {
   install: (Vue, options = {}) => {
