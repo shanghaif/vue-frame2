@@ -1,21 +1,22 @@
 'use strict';
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
-const baseVueConfig = require('./vue.base.conf.js');
 const merge = require('webpack-merge');
-const frameConfig = require('../frame.config.js');
-const processConfig = require('../config/index.js');
-const utils = require('./utils.js');
-const packageConfig = require('../package.json');
-const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
-const buildDate = JSON.stringify(new Date().toLocaleString());
 const _includes = require('lodash/includes');
 const _replace = require('lodash/replace');
 const _isNil = require('lodash/isNil');
+const frameConfig = require('../frame.config.js');
+const processConfig = require('../config/index.js');
+const packageConfig = require('../package.json');
+const utils = require('./utils.js');
+
+const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
+const buildDate = JSON.stringify(new Date().toLocaleString());
+const baseVueConfig = require('./vue.base.conf.js');
 // 需要 splitChunks 分割出的第三方依赖包
 const otherDependencies = utils.arrayRemoveItems(
   Object.keys(packageConfig.dependencies),

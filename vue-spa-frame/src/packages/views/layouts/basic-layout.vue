@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import TopView from './components/top-view.vue';
 // import aplusMixin from '@plugins/aplus/mixin.js'; // 阿里巴巴 aplus.js 埋点
 import {
   ROOT_PAGE_NAME,
@@ -73,6 +72,7 @@ import _isArray from 'lodash/isArray';
 import _concat from 'lodash/concat';
 import _has from 'lodash/has';
 import _cloneDeep from 'lodash/cloneDeep';
+import TopView from './components/top-view.vue';
 
 export default {
   name: 'BasicLayout',
@@ -280,7 +280,7 @@ export default {
         return this.menus;
       }
       this.menus = this.$store.getters.getMenus;
-      return this.$store.getters.getMenus;
+      return this.menus;
     },
     /**
      * @desc 设置默认选中项

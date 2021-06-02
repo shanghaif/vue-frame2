@@ -1,34 +1,34 @@
-export function toPixel(arr) {
+const toPixel = function(arr) {
   return new AMap.Pixel(arr[0], arr[1]);
-}
+};
 
-export function toSize(arr) {
+const toSize = function(arr) {
   return new AMap.Size(arr[0], arr[1]);
-}
+};
 
-export function pixelTo(pixel) {
+const pixelTo = function(pixel) {
   if (Array.isArray(pixel)) return pixel;
   return [pixel.getX(), pixel.getY()];
-}
+};
 
-export function toLngLat(arr) {
+const toLngLat = function(arr) {
   return new AMap.LngLat(arr[0], arr[1]);
-}
+};
 
-export function lngLatTo(lngLat) {
+const lngLatTo = function(lngLat) {
   if (!lngLat) return;
   if (Array.isArray(lngLat)) return lngLat.slice();
   return [lngLat.getLng(), lngLat.getLat()];
-}
+};
 
 /**
  * @param arrs 二重数组 southWest, northEast
  */
-export function toBounds(arrs) {
+const toBounds = function(arrs) {
   return new AMap.Bounds(toLngLat(arrs[0]), toLngLat(arrs[1]));
-}
+};
 
-export const commonConvertMap = {
+const commonConvertMap = {
   position: toLngLat,
   offset: toPixel,
   bounds: toBounds,
@@ -37,6 +37,17 @@ export const commonConvertMap = {
   Size: toSize,
   Bounds: toBounds
 };
-export const isObj = o => {
+const isObj = o => {
   return Object.prototype.toString.call(o).slice(8, -1) === 'Object';
+};
+
+export {
+  toPixel,
+  toSize,
+  pixelTo,
+  toLngLat,
+  lngLatTo,
+  toBounds,
+  commonConvertMap,
+  isObj
 };

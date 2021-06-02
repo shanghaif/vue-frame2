@@ -123,6 +123,7 @@
 
 <script>
 import svgIcons from '@/plugins/icons.js';
+
 export default {
   data() {
     this.svgIcons = svgIcons;

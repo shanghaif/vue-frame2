@@ -8,6 +8,7 @@
 </template>
 <script>
 import wordCloud from '@packages/components/word-cloud/index';
+
 export default {
   components: { wordCloud },
   data() {

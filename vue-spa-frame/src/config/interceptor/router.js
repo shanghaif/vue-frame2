@@ -2,16 +2,16 @@
  * @desc 路由拦截器
  */
 import NProgress from 'nprogress';
+import router from '@router/index.js';
+import store from '@store/index.js';
+import _isEmpty from 'lodash/isEmpty';
+import _has from 'lodash/has';
 import {
   WINDOW_TITLE_UPDATE,
   ROUTER_WHITE_LIST,
   LOGIN_PAGE_NAME,
   ROOT_PAGE_NAME
 } from '../index.js';
-import router from '@router/index.js';
-import store from '@store/index.js';
-import _isEmpty from 'lodash/isEmpty';
-import _has from 'lodash/has';
 /**
  * @desc 全局前置守卫
  * @param {*} to
@@ -67,6 +67,9 @@ const routerBeforeEachFunc = function(to, from, next) {
           router.push({ name: '404' });
         }
       })
+      .catch(error => {
+        throw new Error(error);
+      })
       .finally(() => {
         next();
         NProgress.done();
@@ -86,6 +89,9 @@ const routerBeforeEachFunc = function(to, from, next) {
         if (_has(to, 'meta.isOpen') && !to.meta.isOpen) {
           router.push({ path: '404' });
         }
+      })
+      .catch(error => {
+        throw new Error(error);
       })
       .finally(() => {
         next();

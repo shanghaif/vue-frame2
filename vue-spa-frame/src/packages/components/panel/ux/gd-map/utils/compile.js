@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-export const compile = (tpl, vm) => {
+const compile = (tpl, vm) => {
   const keys = ['methods', 'computed', 'data', 'filters'];
   const props = {};
 
@@ -22,14 +22,15 @@ export const compile = (tpl, vm) => {
   return vNode;
 };
 
-export const mountedVNode = vn => {
+const mountedVNode = vn => {
   const instance = new Vue({ render: h => h('div', vn) });
   instance.$mount();
   return instance;
 };
 
-export const mountedRenderFn = (renderFn, vueInstance) => {
+const mountedRenderFn = (renderFn, vueInstance) => {
   const instance = new Vue({ render: h => renderFn(h, vueInstance) });
   instance.$mount();
   return instance;
 };
+export { compile, mountedVNode, mountedRenderFn };

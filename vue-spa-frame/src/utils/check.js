@@ -3,7 +3,7 @@
  * @param str
  * @returns {boolean}
  */
-export const isStartWithNum = str => {
+const isStartWithNum = str => {
   return /^[1-9]/.test(str);
 };
 
@@ -12,10 +12,11 @@ export const isStartWithNum = str => {
  * @param str
  * @returns {boolean}
  */
-export const hasLetter = str => {
+const hasLetter = str => {
   return /[a-z]/i.test(str + '');
 };
 
-export function isExternal(path) {
+const isExternal = function(path) {
   return /^(https?:|mailto:|tel:)/.test(path);
-}
+};
+export { isExternal, hasLetter, isStartWithNum };

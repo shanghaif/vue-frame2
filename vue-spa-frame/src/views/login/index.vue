@@ -47,11 +47,6 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class=" vvv tw-justify-start">
-      <div>1</div>
-      <div>2</div>
-      <div>3</div>
-    </div>
   </div>
 </template>
 
@@ -127,11 +122,6 @@ export default {
   }
 };
 </script>
-<style>
-.vvv {
-  transition: transform 1s;
-}
-</style>
 <style lang="less" module>
 .container {
   height: 100%;

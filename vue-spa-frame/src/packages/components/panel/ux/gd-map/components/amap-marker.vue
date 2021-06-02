@@ -1,8 +1,8 @@
 <script>
 import _isNil from 'lodash/isNil';
+import Vue from 'vue';
 import registerMixin from '../mixins/register-component.js';
 import { toPixel, lngLatTo, pixelTo } from '../utils/convert-helper.js';
-import Vue from 'vue';
 
 const TAG = 'BaseAmapMarker';
 export default {

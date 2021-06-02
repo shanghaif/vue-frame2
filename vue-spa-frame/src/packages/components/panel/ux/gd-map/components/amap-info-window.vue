@@ -1,7 +1,7 @@
 <script>
+import Vue from 'vue';
 import { toLngLat } from '../utils/convert-helper.js';
 import registerMixin from '../mixins/register-component.js';
-import Vue from 'vue';
 // 注意：用于在地图上弹出一个详细信息展示窗体，地图上只允许同时展示1个信息窗体
 export default {
   name: 'BaseAmapInfoWindow',

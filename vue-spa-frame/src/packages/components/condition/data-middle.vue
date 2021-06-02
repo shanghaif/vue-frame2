@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import condition from './condition.vue';
 import _cloneDeep from 'lodash/cloneDeep';
+import condition from './condition.vue';
 import { LOGICOPERATOR } from './constant.js';
 
 export default {

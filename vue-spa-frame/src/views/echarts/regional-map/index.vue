@@ -88,136 +88,141 @@ export default {
 
       this.myChart = echarts.init(chartDom);
 
-      this.$axios.get(url).then(res => {
-        echarts.registerMap('hbs', res.data);
+      this.$axios
+        .get(url)
+        .then(res => {
+          echarts.registerMap('hbs', res.data);
 
-        const mapFeatures = echarts.getMap('hbs').geoJson.features;
-        this.myChart.hideLoading();
-        mapFeatures.forEach(function(v) {
-          // 地区名称
-          const name = v.properties.name;
-          // 地区经纬度
-          geoCoordMap[name] = v.properties.center;
-        });
+          const mapFeatures = echarts.getMap('hbs').geoJson.features;
+          this.myChart.hideLoading();
+          mapFeatures.forEach(function(v) {
+            // 地区名称
+            const name = v.properties.name;
+            // 地区经纬度
+            geoCoordMap[name] = v.properties.center;
+          });
 
-        const option = {
-          title: {
-            text: '地图',
-            top: '2%',
-            textStyle: {
-              color: '#000',
-              fontSize: 16
-            }
-          },
-          visualMap: [
-            {
-              min: 0,
-              max: 1000,
-              show: false,
-              //   text: ['High', 'Low'],
-              realtime: false,
-              calculable: false,
-              seriesIndex: [0],
-              inRange: {
-                color: [
-                  'rgb(202,249,130)',
-                  'rgb(129,211,248)',
-                  'rgb(255,255,128)',
-                  'rgb(128,255,255)',
-                  'rgb(0,255,255)',
-                  'rgb(128,128,255)',
-                  'rgb(236,128,141)',
-                  'rgb(194,128,255)',
-                  'rgb(245,154,35)',
-                  'rgb(112,182,3)',
-                  'rgb(0,182,128)',
-                  'rgb(99,0,191)'
-                ]
+          const option = {
+            title: {
+              text: '地图',
+              top: '2%',
+              textStyle: {
+                color: '#000',
+                fontSize: 16
               }
             },
-            {
-              min: 0,
-              max: 1000,
-              seriesIndex: 1,
-              show: true,
-              splitNumber: 4,
-              right: '2%',
-              inRange: {
-                color: ['#FF6464', '#FFA85A', '#FFEC6F', '#8BBCFE'].reverse()
+            visualMap: [
+              {
+                min: 0,
+                max: 1000,
+                show: false,
+                //   text: ['High', 'Low'],
+                realtime: false,
+                calculable: false,
+                seriesIndex: [0],
+                inRange: {
+                  color: [
+                    'rgb(202,249,130)',
+                    'rgb(129,211,248)',
+                    'rgb(255,255,128)',
+                    'rgb(128,255,255)',
+                    'rgb(0,255,255)',
+                    'rgb(128,128,255)',
+                    'rgb(236,128,141)',
+                    'rgb(194,128,255)',
+                    'rgb(245,154,35)',
+                    'rgb(112,182,3)',
+                    'rgb(0,182,128)',
+                    'rgb(99,0,191)'
+                  ]
+                }
               },
-              formatter: function(value) {
-                return '';
+              {
+                min: 0,
+                max: 1000,
+                seriesIndex: 1,
+                show: true,
+                splitNumber: 4,
+                right: '2%',
+                inRange: {
+                  color: ['#FF6464', '#FFA85A', '#FFEC6F', '#8BBCFE'].reverse()
+                },
+                formatter: function(value) {
+                  return '';
+                }
               }
-            }
-          ],
-          geo: {
-            map: 'hbs',
-            show: false,
-            roam: true,
-            label: {
-              normal: {
-                show: false
-              },
-              emphasis: {
-                show: false
-              }
-            }
-          },
-          series: [
-            {
-              // 地图块的相关信息
-              type: 'map',
+            ],
+            geo: {
               map: 'hbs',
+              show: false,
+              roam: true,
               label: {
                 normal: {
-                  show: true,
-                  textStyle: {
-                    fontSize: 12,
-                    fontWeight: 400,
-                    color: 'rgb(0,0,0) '
-                  }
+                  show: false
+                },
+                emphasis: {
+                  show: false
                 }
-              },
-              data: dataList
+              }
             },
-            {
-              type: 'scatter',
-              coordinateSystem: 'geo',
-              symbol: 'pin',
-              symbolSize: [40, 40],
-              label: {
-                normal: {
-                  show: true,
-                  textStyle: {
-                    color: '#000',
-                    fontSize: 10,
-                    fontWeight: 600
-                  },
-                  formatter(value) {
-                    return value.data.value[2];
+            series: [
+              {
+                // 地图块的相关信息
+                type: 'map',
+                map: 'hbs',
+                label: {
+                  normal: {
+                    show: true,
+                    textStyle: {
+                      fontSize: 12,
+                      fontWeight: 400,
+                      color: 'rgb(0,0,0) '
+                    }
                   }
-                }
+                },
+                data: dataList
               },
-              hoverAnimation: true,
-              itemStyle: {
-                normal: {
-                  color: 'pink' // 标志颜色
-                }
-              },
-              zlevel: 6,
-              data: convertData(dataList)
-            }
-          ]
-        };
+              {
+                type: 'scatter',
+                coordinateSystem: 'geo',
+                symbol: 'pin',
+                symbolSize: [40, 40],
+                label: {
+                  normal: {
+                    show: true,
+                    textStyle: {
+                      color: '#000',
+                      fontSize: 10,
+                      fontWeight: 600
+                    },
+                    formatter(value) {
+                      return value.data.value[2];
+                    }
+                  }
+                },
+                hoverAnimation: true,
+                itemStyle: {
+                  normal: {
+                    color: 'pink' // 标志颜色
+                  }
+                },
+                zlevel: 6,
+                data: convertData(dataList)
+              }
+            ]
+          };
 
-        this.myChart.setOption(option, true);
+          this.myChart.setOption(option, true);
 
-        // this.myChart.on('click', params => {
-        //   const { name, adcode } = params.data;
-        //   this.cityCode = adcode;
-        //   this.city = name;
-        // });
-      });
+          // this.myChart.on('click', params => {
+          //   const { name, adcode } = params.data;
+          //   this.cityCode = adcode;
+          //   this.city = name;
+          // });
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @description 为图表计算高度

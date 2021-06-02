@@ -7,6 +7,7 @@ import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _set from 'lodash/set';
 import _omit from 'lodash/omit';
+
 const BaseMenuButton = {
   name: 'BaseMenuButton',
   inheritAttrs: false,

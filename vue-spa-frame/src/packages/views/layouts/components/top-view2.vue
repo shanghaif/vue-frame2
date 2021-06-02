@@ -312,8 +312,8 @@ export default {
       if (menu) {
         this.checkedFirstMenu = menu; // 一级菜单
         // 切换菜单栏
-        this.getChildrenMenus({ ...menu, menus: this.getMenus }).then(
-          resData => {
+        this.getChildrenMenus({ ...menu, menus: this.getMenus })
+          .then(resData => {
             this.getBase2Layout.$refs.menu.setGrade1Index(index);
             // this.getBase2Layout.menus = resData; // 触发 watch
             this.getBase2Layout.setMenus(resData);
@@ -377,8 +377,10 @@ export default {
                 }
               }
             }, 0);
-          }
-        );
+          })
+          .catch(error => {
+            throw new Error(error);
+          });
       }
     },
     getPathKeyList() {
@@ -496,6 +498,9 @@ export default {
                           this.logoutLoading = false;
                           this.dialogInstance.close();
                           this.$router.push({ name: LOGIN_PAGE_NAME });
+                        })
+                        .catch(error => {
+                          throw new Error(error);
                         })
                         .finally(() => {});
                     }

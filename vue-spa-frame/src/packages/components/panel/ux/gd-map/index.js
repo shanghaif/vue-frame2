@@ -54,5 +54,4 @@ VueAMap.install = Vue => {
 };
 
 export default VueAMap;
-export { AMapManager, initAMapApiLoader };
-export { lazyAMapApiLoaderInstance };
+export { AMapManager, initAMapApiLoader, lazyAMapApiLoaderInstance };

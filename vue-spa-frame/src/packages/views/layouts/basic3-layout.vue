@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import TopView3 from './components/top-view3.vue';
 import { DEFAULT_SETTINGS } from '@config/index.js';
 import _cloneDeep from 'lodash/cloneDeep';
+import TopView3 from './components/top-view3.vue';
 
 export default {
   name: 'Basic3Layout',

@@ -27,19 +27,24 @@ const apiRequestEndHandler = function(response = {}) {
   // token 过期或无效
   if (code === USER_API_CONFIG.api_server_code.TOKEN_EXPIRE_CODE) {
     // 清空缓存并且替换刷新当前页面到登录页
-    store.dispatch('handlerDestroy').then(() => {
-      Vue.prototype.$message({
-        showClose: false,
-        message: '错误：抱歉，您的登录状态已失效，请重新登录~！',
-        type: 'error',
-        duration: 1500,
-        onClose: () => {
-          // 关闭时的回调函数
-          // window.location.replace(`/${LOGIN_PAGE_NAME}`);
-          router.push({ name: LOGIN_PAGE_NAME });
-        }
+    store
+      .dispatch('handlerDestroy')
+      .then(() => {
+        Vue.prototype.$message({
+          showClose: false,
+          message: '错误：抱歉，您的登录状态已失效，请重新登录！',
+          type: 'error',
+          duration: 1500,
+          onClose: () => {
+            // 关闭时的回调函数
+            // window.location.replace(`/${LOGIN_PAGE_NAME}`);
+            router.push({ name: LOGIN_PAGE_NAME });
+          }
+        });
+      })
+      .catch(error => {
+        throw new Error(error);
       });
-    });
   }
   // 其它异常 code
   if (_includes(USER_API_CONFIG.api_server_code.WRONG_CODE, code)) {
@@ -74,15 +79,6 @@ const apiRequestEndHandler = function(response = {}) {
       });
     }
   }
-  // 登录接口
-  // if (_get(response, 'config.headers.isLogin', false)) {
-  //   if (unTokenExpireWatch !== null) {
-  //     unTokenExpireWatch = null;
-  //   }
-  //   /* if (_has(Vue, 'prototype.tokenExpireTipFn')) {
-  //     delete Vue.prototype.tokenExpireTipFn;
-  //   } */
-  // }
   if (USER_API_CONFIG.isShowNProgress) {
     NProgress.done();
   }
@@ -182,6 +178,7 @@ const requestErrorCallback = function(
           // error.config.params.state = 'yes';
           error.config.baseURL = '';
           error.config.headers.Authorization = accessToken;
+          // eslint-disable-next-line promise/no-nesting
           return error
             .instance(error.config)
             .then(resData => {
@@ -202,19 +199,26 @@ const requestErrorCallback = function(
         })
         .catch(err => {
           // 清空缓存并且替换刷新当前页面到登录页
-          store.dispatch('handlerDestroy').then(() => {
-            Vue.prototype.$message({
-              showClose: false,
-              message: '错误：抱歉，您的登录状态已失效，请重新登录~！',
-              type: 'error',
-              duration: 1500,
-              onClose: () => {
-                // 关闭时的回调函数
-                // window.location.replace(`/${LOGIN_PAGE_NAME}`);
-                router.push({ name: LOGIN_PAGE_NAME });
-              }
+          // eslint-disable-next-line promise/no-nesting
+          store
+            .dispatch('handlerDestroy')
+            .then(() => {
+              Vue.prototype.$message({
+                showClose: false,
+                message: '错误：抱歉，您的登录状态已失效，请重新登录~！',
+                type: 'error',
+                duration: 1500,
+                onClose: () => {
+                  // 关闭时的回调函数
+                  // window.location.replace(`/${LOGIN_PAGE_NAME}`);
+                  router.push({ name: LOGIN_PAGE_NAME });
+                }
+              });
+            })
+            .catch(error => {
+              throw new Error(error);
             });
-          });
+          // eslint-disable-next-line promise/no-return-wrap
           return Promise.reject(err);
         })
         .finally(() => {

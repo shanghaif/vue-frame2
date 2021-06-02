@@ -267,6 +267,9 @@ export default {
                           this.dialogInstance.close();
                           this.$router.push({ name: LOGIN_PAGE_NAME });
                         })
+                        .catch(error => {
+                          throw new Error(error);
+                        })
                         .finally(() => {});
                     }
                   }

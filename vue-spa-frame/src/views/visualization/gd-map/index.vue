@@ -19,6 +19,7 @@
 
 <script>
 import { BaseAmap } from '@packages/components/index.js';
+
 const amapManager = new BaseAmap.AMapManager();
 export default {
   data() {

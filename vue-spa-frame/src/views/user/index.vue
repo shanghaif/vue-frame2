@@ -167,33 +167,53 @@ export default {
           userName: 'jh001-2',
           password: '4dbc7787aa40ce19a8647b4e50e159c1'
         }
-      }).then(response => {
-        // 请求成功
-        if (response.code === '0000' && 'token' in response.data) {
-          // 设置通用请求头参数
-          this.$loaderApiLibrary.setHeaderOptions({
-            token: response.data.token
-          });
-        }
-      });
+      })
+        .then(response => {
+          // 请求成功
+          if (response.code === '0000' && 'token' in response.data) {
+            // 设置通用请求头参数
+            this.$loaderApiLibrary.setHeaderOptions({
+              token: response.data.token
+            });
+          }
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     loadData() {
-      this.$api['dict/getProductClassify']().then(response => {
-        // 请求成功
-        this.tableData = response.data[0].data;
-        console.info(this.tableData);
-      });
-      this.$api['common/getAreaInfo']().then(response => {
-        console.info('区域 ', response);
-      });
-      this.$api['common/loadOrganizationAccount']().then(response => {
-        console.info('用户信息 ', response);
-      });
+      this.$api['dict/getProductClassify']()
+        .then(response => {
+          // 请求成功
+          this.tableData = response.data[0].data;
+          console.info(this.tableData);
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
+      this.$api['common/getAreaInfo']()
+        .then(response => {
+          console.info('区域 ', response);
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
+      this.$api['common/loadOrganizationAccount']()
+        .then(response => {
+          console.info('用户信息 ', response);
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
       setTimeout(() => {
         // 测试 token 过期提示, 延缓请求
-        this.$api['bank/demand-manage/bankProductsList']().then(response => {
-          console.info('获取贷款需求管理列表 ', response);
-        });
+        this.$api['bank/demand-manage/bankProductsList']()
+          .then(response => {
+            console.info('获取贷款需求管理列表 ', response);
+          })
+          .catch(error => {
+            throw new Error(error);
+          });
       }, 0);
     },
     onAdd() {
@@ -225,11 +245,15 @@ export default {
     },
     onDown() {
       const fileName = '机构账号导出3.xlsx';
-      this.$api['common/bbb']().then(response => {
-        if (response.data instanceof Blob) {
-          down(response, fileName);
-        }
-      });
+      this.$api['common/bbb']()
+        .then(response => {
+          if (response.data instanceof Blob) {
+            down(response, fileName);
+          }
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
       // window.open('http://10.1.1.128:8120/api/report/insAccountReport?type=2&userName=&status=&token=eyJhbGciOiJIUzI1NiJ9.eyJMT0dJTl9VU0VSX0tFWSI6IjViNzVjYzUzLWFjZmEtNDhiNC04MjE0LWM0ZThjMDJhN2FlZSJ9.H5lvN3-hOlMlwWHQN2YDE5u1Ls1wzOXgPM2wW1V7xW4')
       /* axios.request({
         url: '/api1/api/report/insAccountReport',

@@ -1,9 +1,9 @@
+import _has from 'lodash/hasIn';
 import { upperCamelCase } from '../utils/upper-camel-case.js';
 import VueAMap, { lazyAMapApiLoaderInstance } from '../index.js';
 import CONSTANTS from '../utils/constant.js';
 import { commonConvertMap } from '../utils/convert-helper.js';
 import eventHelper from '../utils/event-helper.js';
-import _has from 'lodash/hasIn';
 
 export default {
   data() {
@@ -13,12 +13,17 @@ export default {
   },
   mounted() {
     if (lazyAMapApiLoaderInstance) {
-      lazyAMapApiLoaderInstance.load().then(() => {
-        if (this.__contextReady) {
-          // eslint-disable-next-line no-useless-call
-          this.__contextReady.call(this, this.convertProps());
-        }
-      });
+      lazyAMapApiLoaderInstance
+        .load()
+        .then(() => {
+          if (this.__contextReady) {
+            // eslint-disable-next-line no-useless-call
+            this.__contextReady.call(this, this.convertProps());
+          }
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     }
     this.$amap = this.$amap || this.$parent.$amap;
     if (this.$amap) {
@@ -102,7 +107,11 @@ export default {
       const res =
         this.__initComponent && this.__initComponent(this.convertProps());
       if (res && res.then) {
-        res.then(instance => this.registerRest(instance)); // promise
+        res
+          .then(instance => this.registerRest(instance))
+          .catch(error => {
+            throw new Error(error);
+          }); // promise
       } else {
         this.registerRest(res);
       }

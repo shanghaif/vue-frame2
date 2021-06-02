@@ -4,6 +4,7 @@ import _isNil from 'lodash/isNil';
 import _assign from 'lodash/assign';
 import _isEqual from 'lodash/isEqual';
 import registerMixin from '../mixins/register-component.js';
+
 export default {
   name: 'BaseAmapDistrictExplorer',
   mixins: [registerMixin],

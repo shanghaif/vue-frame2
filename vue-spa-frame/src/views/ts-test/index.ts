@@ -1,7 +1,7 @@
 /**
  * @desc ts 测试示例
  */
-import * as _ from 'lodash'; // https://www.typescriptlang.org/dt/search?search=lodash
+import { join } from 'lodash'; // https://www.typescriptlang.org/dt/search?search=lodash
 
 class Greeter {
   greeting: string;
@@ -10,7 +10,7 @@ class Greeter {
   }
 
   greet() {
-    return _.join(['hello', this.greeting], '-');
+    return join(['hello', this.greeting], '-');
   }
 }
 

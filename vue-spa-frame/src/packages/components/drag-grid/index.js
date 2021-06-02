@@ -1,16 +1,16 @@
 /**
  * @desc 拖拽grid
  */
-import BaseGrid from '../grid/index.js';
-import BaseDragGridTable from './table.js';
-import BaseGridPagination from '../grid/pagination/index.js';
-import BaseGridSearch from '../grid/search/index.js';
-import BaseTBar from '../grid/t-bar/index.js';
 import Sortable from 'sortablejs'; // 表格排序组件
 import _get from 'lodash/get';
 import _map from 'lodash/map';
 import _isEmpty from 'lodash/isEmpty';
 import _isNil from 'lodash/isNil';
+import BaseTBar from '../grid/t-bar/index.js';
+import BaseGridSearch from '../grid/search/index.js';
+import BaseGridPagination from '../grid/pagination/index.js';
+import BaseGrid from '../grid/index.js';
+import BaseDragGridTable from './table.js';
 
 const BaseDragGrid = {
   name: 'BaseDragGrid',

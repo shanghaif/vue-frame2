@@ -3,6 +3,7 @@
  * 在使用时要设置外层容器高度。并且要设置el-scrollbar 的高度为100%
  */
 import _set from 'lodash/set';
+
 const scrollbar = {
   name: 'BaseScrollbar',
   inheritAttrs: false,

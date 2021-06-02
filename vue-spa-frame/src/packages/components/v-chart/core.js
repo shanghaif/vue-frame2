@@ -1,7 +1,7 @@
 import echarts from 'echarts';
 import _mergeWith from 'lodash/mergeWith';
-import { defaultColorTheme } from './constant.js';
 import _isArray from 'lodash/isArray';
+import { defaultColorTheme } from './constant.js';
 
 export default function() {
   const coreChart = {

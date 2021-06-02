@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 const fs = require('fs');
 const path = require('path');
+
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
 }

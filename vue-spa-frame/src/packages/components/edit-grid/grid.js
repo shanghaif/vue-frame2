@@ -1,11 +1,6 @@
 /**
  * @desc 行编辑 grid
  */
-import BaseGrid from '../grid/index.js';
-import BaseGridTable from './table.js';
-import BaseGridPagination from '../grid/pagination/index.js';
-import BaseGridSearch from '../grid/search/index.js';
-import BaseTBar from '../grid/t-bar/index.js';
 import _keys from 'lodash/keys';
 import _get from 'lodash/get';
 import _omit from 'lodash/omit';
@@ -17,6 +12,11 @@ import _forEach from 'lodash/forEach';
 import _find from 'lodash/find';
 import _join from 'lodash/join';
 import _isEmpty from 'lodash/isEmpty';
+import BaseTBar from '../grid/t-bar/index.js';
+import BaseGridSearch from '../grid/search/index.js';
+import BaseGridPagination from '../grid/pagination/index.js';
+import BaseGrid from '../grid/index.js';
+import BaseGridTable from './table.js';
 
 const BaseEditGrid = {
   name: 'BaseEditGrid',

@@ -9,6 +9,7 @@ import {
   Basic3Layout
 } from '@packages/views/index.js';
 import { mapGetters } from 'vuex';
+
 export default {
   components: { BasicLayout, Basic2Layout, Basic3Layout },
   computed: {

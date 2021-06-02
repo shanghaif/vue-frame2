@@ -1,10 +1,10 @@
 /**
  * @desc Table 表格组件
  */
-import BaseGridTable from '../grid/table/index.js';
 import _includes from 'lodash/includes';
 import _isNil from 'lodash/isNil';
 import _isEmpty from 'lodash/isEmpty';
+import BaseGridTable from '../grid/table/index.js';
 
 const BaseDragGridTable = {
   name: 'BaseDragGridTable',

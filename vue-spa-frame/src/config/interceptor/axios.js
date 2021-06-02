@@ -1,5 +1,4 @@
 // 拦截器
-import validate from './validate.js';
 import qs from 'querystring';
 
 import _has from 'lodash/has';
@@ -12,12 +11,13 @@ import _keys from 'lodash/keys';
 import _isFunction from 'lodash/isFunction';
 import _spread from 'lodash/spread';
 import _isPlainObject from 'lodash/isPlainObject';
+import validate from './validate.js';
 /**
  * @desc request前置拦截器
  * @param {{}} requestConfig 请求配置参数
  * @returns {{}} {}
  */
-export function requestSuccessFunc(requestConfig = {}) {
+const requestSuccessFunc = function(requestConfig = {}) {
   _get(requestConfig, 'console_request_enable', false) &&
     console.info(
       'requestInterceptorFunc',
@@ -95,14 +95,14 @@ export function requestSuccessFunc(requestConfig = {}) {
     return Promise.reject(new Error(_uniq(validateFailMsg[0]).join()));
   }
   return requestConfig;
-}
+};
 
 /**
  * @desc response后置拦截器
  * @param {{}} response
  * @returns {{}}
  */
-export function responseSuccessFunc(response) {
+const responseSuccessFunc = function(response) {
   _get(response, 'config.console_response_enable', false) &&
     console.info('responseInterceptorFunc：', response);
   if (_isFunction(_get(window, 'apiRequestEndHandler', null))) {
@@ -132,14 +132,14 @@ export function responseSuccessFunc(response) {
     callBack(['返回 response 的 status 值不是 200']);
     return Promise.reject(new Error('返回 response 的 status 值不是 200'));
   }
-}
+};
 
 /**
  * @desc response后置异常拦截器
  * @param {{}} responseError
  * @returns {Promise}
  */
-export function responseErrorFunc(responseError, instance) {
+const responseErrorFunc = function(responseError, instance) {
   if (_isFunction(_get(window, 'apiRequestEndHandler', null))) {
     // 通知函数定义处-请求结束
     _spread(_get(window, 'apiRequestEndHandler'))([responseError]);
@@ -185,4 +185,5 @@ export function responseErrorFunc(responseError, instance) {
     callBack([_get(responseError, 'message', '')]);
   }
   return Promise.reject(responseError);
-}
+};
+export { requestSuccessFunc, responseSuccessFunc, responseErrorFunc };

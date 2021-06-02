@@ -1,11 +1,7 @@
 'use strict';
-const processConfig = require('../config/index.js');
-const frameConfig = require('../frame.config.js');
 const path = require('path');
 const webpack = require('webpack');
-const utils = require('./utils.js');
 const merge = require('webpack-merge');
-const createCssLoaderConfig = require('./css-loader.conf.js');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const _get = require('lodash/get');
 const _set = require('lodash/set');
@@ -14,6 +10,11 @@ const _assign = require('lodash/assign');
 const _concat = require('lodash/concat');
 const _keys = require('lodash/keys');
 const _isEmpty = require('lodash/isEmpty');
+const frameConfig = require('../frame.config.js');
+const processConfig = require('../config/index.js');
+const createCssLoaderConfig = require('./css-loader.conf.js');
+const utils = require('./utils.js');
+
 const isDev = process.env.NODE_ENV === 'development'; // 开发环境
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
@@ -219,7 +220,8 @@ const baseConfig = {
       .rule('js')
       .include.add([
         resolve('src'),
-        resolve('test')
+        resolve('test'),
+        resolve('static/plugins/babel-modules')
       ]); */
     config.module
       .rule('js')
@@ -232,9 +234,7 @@ const baseConfig = {
     loaderOptions: {
       less: {
         lessOptions: {
-          modifyVars: {
-            blue: '#4989F4'
-          } // 可以在这里定义全局变量，文件中可以直接使用
+          modifyVars: { blue: '#4989F4' } // 可以在这里定义全局变量，文件中可以直接使用
           // javascriptEnabled: true // 6.0.0 之前的 less-loader 版本中需要开启 javascriptEnabled
         },
         prependData: '@import "@assets/less/index.less";'

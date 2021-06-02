@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import TopView2 from './components/top-view2.vue';
 import svgIcons from '@/plugins/icons.js';
 import { DEFAULT_SETTINGS } from '@config/index.js';
 import _last from 'lodash/last';
@@ -63,6 +62,7 @@ import _concat from 'lodash/concat';
 import _get from 'lodash/get';
 import _map from 'lodash/map';
 import _cloneDeep from 'lodash/cloneDeep';
+import TopView2 from './components/top-view2.vue';
 
 export default {
   name: 'Basic2Layout',

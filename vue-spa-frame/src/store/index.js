@@ -9,6 +9,7 @@ import createPersistedState, {
   isClearCache
 } from './persisted-state.js';
 import { state, getters, actions, mutations } from './root.js';
+
 Vue.use(Vuex);
 
 export { sStorageKey, isClearCache };

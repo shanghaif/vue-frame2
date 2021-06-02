@@ -6,9 +6,9 @@
  * @desc
  * api接口插件全局应该提供的统一参数
  * @type {object}
- * @property {string } mockBasePath mock-url请求地址(可以是相对 URL), 应该外部传入
+ * @property {string} mockBasePath mock-url请求地址(可以是相对 URL), 应该外部传入
  * @property {boolean} mock=false mock全局控制开关
- * @property {ob ject} gParams={} URL全局自定义参数
+ * @property {object} gParams={} URL全局自定义参数
  * @property {boolean} cache=false 缓存控制开关在URL路径后面添加一个时间戳参数 _=1571825001570
  * @property {number} reconnectMaxNum=0 请求失败允许的最大重连次数 - 未做开发
  * @property {string} seq=/ api接口命名空间分隔符
@@ -18,7 +18,7 @@
  * @property {boolean} console_response_enable=false 开启响应参数打印
  * @property {function} request_error_callback=null 请求错误回调函数
  */
-export const apiDefaultConfig = {
+const apiDefaultConfig = {
   // mock-url请求地址(可以是相对 URL), 应该外部传入
   mockBasePath: '',
   // mock全局控制开关
@@ -86,7 +86,7 @@ export const apiDefaultConfig = {
  * @property {string} responseType='json' 服务器响应的数据类型
  * @property {object} proxy 定义代理服务器的主机名称和端口
  */
-export const axiosDefaultConfig = {
+const axiosDefaultConfig = {
   // 超时时间（毫秒）
   timeout: 15000,
   // 访问url目录(可以是相对 URL), 应该外部传入
@@ -110,3 +110,4 @@ export const axiosDefaultConfig = {
   // 定义代理服务器的主机名称和端口
   proxy: {}
 };
+export { apiDefaultConfig, axiosDefaultConfig };

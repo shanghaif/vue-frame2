@@ -1,10 +1,9 @@
 <script>
-/* eslint-disable no-unused-vars */
-import CONST from '../utils/constant.js';
 import _isNil from 'lodash/isNil';
 import _isEmpty from 'lodash/isEmpty';
 import _assign from 'lodash/assign';
 import registerMixin from '../mixins/register-component.js';
+
 export default {
   name: 'BaseAmapDistrict',
   mixins: [registerMixin],

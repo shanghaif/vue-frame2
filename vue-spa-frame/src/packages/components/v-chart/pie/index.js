@@ -1,6 +1,6 @@
-import pie from './main.js';
-import Core from '../core.js';
 import _mergeWith from 'lodash/mergeWith';
+import Core from '../core.js';
+import pie from './main.js';
 
 const cors = Core();
 

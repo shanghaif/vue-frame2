@@ -29,6 +29,7 @@
  * @description 大屏-省视图
  */
 import Map from '@packages/components/map-bar';
+
 export default {
   components: { Map },
   data() {

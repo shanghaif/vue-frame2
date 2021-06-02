@@ -15,6 +15,7 @@
 
 <script>
 import AbsoluteDetail from './detail/absolute-detail.vue';
+
 export default {
   components: { AbsoluteDetail },
   data() {

@@ -8,12 +8,7 @@ import { isStartWithNum, hasLetter } from './check.js';
  * @param fn 成功回调
  * @param error
  */
-export const setLocalStorage = (
-  key,
-  value,
-  fn = () => {},
-  error = () => {}
-) => {
+const setLocalStorage = (key, value, fn = () => {}, error = () => {}) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
   if (isStartWithNum(key))
     return error(new Error('LocalStorage param key must contains letter'));
@@ -39,7 +34,7 @@ export const setLocalStorage = (
  * @param error
  * @returns {*}
  */
-export const removeLocalStorage = (
+const removeLocalStorage = (
   key,
   error = () => {
     return '';
@@ -61,7 +56,7 @@ export const removeLocalStorage = (
  * @param error
  * @returns {*}
  */
-export const getLocalStorage = (
+const getLocalStorage = (
   key,
   error = () => {
     return '';
@@ -77,7 +72,7 @@ export const getLocalStorage = (
   }
 };
 
-export const setSession = (key, value, fn = () => {}, error = () => {}) => {
+const setSession = (key, value, fn = () => {}, error = () => {}) => {
   if (!key) return error(new Error('LocalStorage must has a param key'));
   if (isStartWithNum(key))
     return error(new Error('SessionStorage param key must contains letter'));
@@ -97,7 +92,7 @@ export const setSession = (key, value, fn = () => {}, error = () => {}) => {
   }
 };
 
-export const removeSession = (
+const removeSession = (
   key,
   error = () => {
     return '';
@@ -113,7 +108,7 @@ export const removeSession = (
   }
 };
 
-export const getSession = (
+const getSession = (
   key,
   error = () => {
     return '';
@@ -130,18 +125,18 @@ export const getSession = (
 };
 
 // 使用插件 good-storage -主要是操作和 Storage 相关的逻辑
-export function saveStorageData(key, val) {
+const saveStorageData = function(key, val) {
   // 存储到storage
   storage.set(key, val);
   // 返回
   return val;
-}
+};
 // 读取本地存储
-export function loadStorageData(key) {
+const loadStorageData = function(key) {
   return storage.get(key);
-}
+};
 // 清空Key记录
-export function clearStorageData(key) {
+const clearStorageData = function(key) {
   // 指定key
   if (key) {
     storage.remove(key);
@@ -149,4 +144,16 @@ export function clearStorageData(key) {
     localStorage.clear();
   }
   return [];
-}
+};
+
+export {
+  clearStorageData,
+  loadStorageData,
+  saveStorageData,
+  getLocalStorage,
+  getSession,
+  removeSession,
+  setSession,
+  removeLocalStorage,
+  setLocalStorage
+};

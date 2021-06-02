@@ -1,8 +1,9 @@
 <script>
-import registerMixin from '../mixins/register-component.js';
-import { toPixel, toSize } from '../utils/convert-helper.js';
 import _isArray from 'lodash/isArray';
 import _has from 'lodash/has';
+import registerMixin from '../mixins/register-component.js';
+import { toPixel, toSize } from '../utils/convert-helper.js';
+
 export default {
   name: 'BaseAmapMassMarks', // 海量点标记
   mixins: [registerMixin],

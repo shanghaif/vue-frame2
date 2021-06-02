@@ -4,7 +4,7 @@
  */
 
 // 注册dom事件
-export const on = (function() {
+const on = (function() {
   if (document.addEventListener) {
     return function(element, event, handler) {
       if (element && event && handler) {
@@ -20,7 +20,7 @@ export const on = (function() {
   }
 })();
 // 解除dom事件
-export const off = (function() {
+const off = (function() {
   if (document.removeEventListener) {
     return function(element, event, handler) {
       if (element && event) {
@@ -36,7 +36,7 @@ export const off = (function() {
   }
 })();
 // 绑定后触发一次,自动解除绑定
-export const once = function(el, event, fn) {
+const once = function(el, event, fn) {
   var listener = function() {
     if (fn) {
       fn.apply(this, arguments);
@@ -45,3 +45,4 @@ export const once = function(el, event, fn) {
   };
   on(el, event, listener);
 };
+export { on, off, once };

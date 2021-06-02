@@ -39,6 +39,7 @@
 
 <script>
 import { getRandomID } from '@utils/index.js';
+
 export default {
   name: 'index',
   data() {

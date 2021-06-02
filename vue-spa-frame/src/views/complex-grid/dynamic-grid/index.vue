@@ -42,25 +42,29 @@ export default {
      * @desc 获取渲染表格头部
      */
     getTabelData() {
-      this.$api['bank/demand-manage/resultsList']().then(res => {
-        if (res.code === this.$constant.apiServeCode.SUCCESS_CODE) {
-          if (this.columns.length) {
-            this.columns = [];
-          }
-          this.$nextTick(() => {
-            const result = [];
-            res.data.tableHeaders.forEach((item, i) => {
-              const column = { prop: `header${i}`, label: item };
-              result.push(column);
+      this.$api['bank/demand-manage/resultsList']()
+        .then(res => {
+          if (res.code === this.$constant.apiServeCode.SUCCESS_CODE) {
+            if (this.columns.length) {
+              this.columns = [];
+            }
+            this.$nextTick(() => {
+              const result = [];
+              res.data.tableHeaders.forEach((item, i) => {
+                const column = { prop: `header${i}`, label: item };
+                result.push(column);
+              });
+              this.columns = result;
+              this.reloadGrid();
+              setTimeout(() => {
+                this.$refs['base-grid'].getElTable().doLayout();
+              }, 0);
             });
-            this.columns = result;
-            this.reloadGrid();
-            setTimeout(() => {
-              this.$refs['base-grid'].getElTable().doLayout();
-            }, 0);
-          });
-        }
-      });
+          }
+        })
+        .catch(error => {
+          throw new Error(error);
+        });
     },
     /**
      * @desc 获取渲染表格内容

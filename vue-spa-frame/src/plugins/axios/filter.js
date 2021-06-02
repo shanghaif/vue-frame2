@@ -38,13 +38,13 @@ const Expand = class Filter {
         }
       })
         .then(resData => {
-          /* if (
+          if (
             resData.code !== Vue.prototype.$constant.apiServeCode.SUCCESS_CODE
           ) {
             console.warn('刷新token的返回结果-catch：', resData);
             reject(new Error(JSON.stringify(resData)));
-            return; // 这个判断在真实项目内是要解释的
-          } */
+            return;
+          }
           resolve(resData);
         })
         .catch(error => {

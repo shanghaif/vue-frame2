@@ -1,11 +1,6 @@
 /**
  * @desc nesting-grid 嵌套列表组件
  */
-import BaseGrid from '../grid/index.js';
-import BaseGridPagination from '../grid/pagination/index.js';
-import BaseGridTable from './table/index.js';
-import BaseGridSearch from '../grid/search/index.js';
-import BaseTBar from '../grid/t-bar/index.js';
 import _get from 'lodash/get';
 import _has from 'lodash/has';
 import _omit from 'lodash/omit';
@@ -15,6 +10,11 @@ import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _findIndex from 'lodash/findIndex';
 import _isEmpty from 'lodash/isEmpty';
+import BaseTBar from '../grid/t-bar/index.js';
+import BaseGridSearch from '../grid/search/index.js';
+import BaseGridPagination from '../grid/pagination/index.js';
+import BaseGrid from '../grid/index.js';
+import BaseGridTable from './table/index.js';
 
 const BaseNestingGrid = {
   name: 'BaseNestingGrid',

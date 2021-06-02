@@ -2,7 +2,6 @@
  * @desc 折线
  */
 import echarts from 'echarts';
-import baseOptions from './options.js';
 import _mergeWith from 'lodash/mergeWith';
 import _isArray from 'lodash/isArray';
 import _has from 'lodash/has';
@@ -10,6 +9,7 @@ import _assign from 'lodash/assign';
 import _map from 'lodash/map';
 import _omit from 'lodash/omit';
 import _set from 'lodash/set';
+import baseOptions from './options.js';
 // import _isNil from 'lodash/isNil';
 
 const Line = class Line {

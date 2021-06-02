@@ -1,4 +1,5 @@
 import { BlankLayout } from '@packages/views/index.js';
+
 export default [
   {
     name: 'visualization',

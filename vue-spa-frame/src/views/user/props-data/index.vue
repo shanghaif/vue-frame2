@@ -6,6 +6,7 @@
 
 <script>
 import childView from './child.vue';
+
 export default {
   components: { childView },
   data() {

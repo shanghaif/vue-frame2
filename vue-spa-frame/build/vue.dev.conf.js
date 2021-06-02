@@ -1,10 +1,11 @@
 'use strict';
-const webpack = require('webpack');
-const processConfig = require('../config/index.js');
-const merge = require('webpack-merge');
-const baseVueConfig = require('./vue.base.conf.js');
 const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
 const _isNil = require('lodash/isNil');
+const processConfig = require('../config/index.js');
+const baseVueConfig = require('./vue.base.conf.js');
+
 const buildDate = JSON.stringify(new Date().toLocaleString());
 // 在 scripts 指令指定
 // cross-env NODE_ENV=development PORT=9099 webpack-dev-server --progress --config ./build/webpack.dev.js

@@ -1,15 +1,16 @@
-import App from './App.vue';
-import router from './router/index.js';
-import store from './store/index.js';
-import inject from './plugins/inject.js';
 import vueLink from '@plugins/link.js';
-import '@plugins/element.js';
-// 初始化项目全局组件
-import itemComponents from './plugins/components.js';
 // Vue 中非父子组件通讯插件
 import unicom from '@plugins/unicom.js';
 // .vue模板文件中的常量插件
 import VueTemplateConst from '@plugins/vue-template-constant.js';
+import App from './App.vue';
+import router from './router/index.js';
+import store from './store/index.js';
+import inject from './plugins/inject.js';
+import '@plugins/element.js';
+// 初始化项目全局组件
+import itemComponents from './plugins/components.js';
+
 // 自定义过滤器工具插件
 import './filters/index.js';
 // mock

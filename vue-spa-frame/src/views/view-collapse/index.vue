@@ -65,9 +65,9 @@
 
 <script>
 import { ROUTER_OPEN_TYPE } from '@config/index.js';
+import _isEqual from 'lodash/isEqual';
 import collapseView1 from './collapse-1.vue';
 import collapseView2 from './collapse-2.vue';
-import _isEqual from 'lodash/isEqual';
 
 export default {
   inject: ['getBaseLayout'],

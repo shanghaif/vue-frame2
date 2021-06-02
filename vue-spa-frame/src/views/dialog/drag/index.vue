@@ -8,6 +8,7 @@
 
 <script>
 import Detail from './detail.vue';
+
 export default {
   data() {
     this.dialogInstance = null;

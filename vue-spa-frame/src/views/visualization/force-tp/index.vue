@@ -15,6 +15,7 @@
 
 <script>
 import forceTp from '@packages/components/force-tp/index';
+
 export default {
   name: 'force-tp',
   components: {

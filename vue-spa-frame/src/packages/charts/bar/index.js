@@ -2,8 +2,8 @@
  * @desc 柱状图
  */
 import echarts from 'echarts';
-import baseOptions from './options.js';
 import _mergeWith from 'lodash/mergeWith';
+import baseOptions from './options.js';
 
 const Bar = class Bar {
   constructor(

@@ -4,4 +4,5 @@
  * @date 2021/02/23
  */
 import Map from './map.vue';
+
 export default Map;
