@@ -2,6 +2,7 @@
  * @desc 埋点混入
  */
 import _last from 'lodash/last';
+
 const aplusMixin = {
   watch: {
     // 监听路由改变

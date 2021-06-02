@@ -18,7 +18,7 @@
  * @property {boolean} console_response_enable=false 开启响应参数打印
  * @property {function} request_error_callback=null 请求错误回调函数
  */
-export const apiDefaultConfig = {
+const apiDefaultConfig = {
   // mock-url请求地址(可以是相对 URL), 应该外部传入
   mockBasePath: '',
   // mock全局控制开关
@@ -86,7 +86,7 @@ export const apiDefaultConfig = {
  * @property {string} responseType='json' 服务器响应的数据类型
  * @property {object} proxy 定义代理服务器的主机名称和端口
  */
-export const axiosDefaultConfig = {
+const axiosDefaultConfig = {
   // 超时时间（毫秒）
   timeout: 15000,
   // 访问url目录(可以是相对 URL), 应该外部传入
@@ -110,3 +110,5 @@ export const axiosDefaultConfig = {
   // 定义代理服务器的主机名称和端口
   proxy: {}
 };
+
+export { apiDefaultConfig, axiosDefaultConfig };

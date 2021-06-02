@@ -2,14 +2,14 @@
  * @desc 路由拦截器
  */
 import NProgress from 'nprogress';
+import store from '@/store';
+import _isEmpty from 'lodash/isEmpty';
 import {
   WINDOW_TITLE_UPDATE,
   ROUTER_WHITE_LIST,
   LOGIN_PAGE_NAME,
   ROOT_PAGE_NAME
 } from '../index.js';
-import store from '@/store';
-import _isEmpty from 'lodash/isEmpty';
 /**
  * @desc 全局前置守卫
  * @param {*} to
@@ -56,6 +56,9 @@ const routerBeforeEachFunc = function(to, from, next) {
     });
     Promise.all([store.dispatch('platform/getDict')])
       .then(() => {})
+      .catch(error => {
+        throw new Error(error);
+      })
       .finally(() => {
         next();
         NProgress.done();
@@ -67,6 +70,9 @@ const routerBeforeEachFunc = function(to, from, next) {
     store
       .dispatch('platform/getDict')
       .then(() => {})
+      .catch(error => {
+        throw new Error(error);
+      })
       .finally(() => {
         next();
         NProgress.done();

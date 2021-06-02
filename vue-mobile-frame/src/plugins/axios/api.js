@@ -1,7 +1,4 @@
-import { apiDefaultConfig, axiosDefaultConfig } from './options.js';
-
 import qs from 'querystring';
-import axios from './axios';
 
 import _assign from 'lodash/assign';
 import _pick from 'lodash/pick';
@@ -24,6 +21,8 @@ import _isFunction from 'lodash/isFunction';
 // import _toUpper from 'lodash/toUpper'
 import _isArray from 'lodash/isArray';
 import _isNil from 'lodash/isNil';
+import axios from './axios';
+import { apiDefaultConfig, axiosDefaultConfig } from './options.js';
 // window.Promise = Promise 如果是在 html 页面中直接测试（ie不支持Promise，Chrome则不用解释），请解释这句话
 /**
  * @class Loader

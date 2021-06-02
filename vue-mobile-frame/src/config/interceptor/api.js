@@ -24,17 +24,22 @@ const apiRequestEndHandler = function(response = {}) {
   const code = _get(response, 'data.code', '-100');
   // token 过期或无效
   if (code === Vue.prototype.$constant.apiServeCode.TOKEN_EXPIRE_CODE) {
-    store.dispatch('handlerDestroy').then(() => {
-      this.$notify({
-        message: '错误：抱歉，登录状态已失效，请重新登录！',
-        type: 'danger',
-        duration: 2000,
-        onClose: function() {
-          // 销毁缓存和临时变量
-          router.push({ name: LOGIN_PAGE_NAME });
-        }
+    store
+      .dispatch('handlerDestroy')
+      .then(() => {
+        this.$notify({
+          message: '错误：抱歉，登录状态已失效，请重新登录！',
+          type: 'danger',
+          duration: 2000,
+          onClose: function() {
+            // 销毁缓存和临时变量
+            router.push({ name: LOGIN_PAGE_NAME });
+          }
+        });
+      })
+      .catch(error => {
+        throw new Error(error);
       });
-    });
   }
   if (_includes(Vue.prototype.$constant.apiServeCode.WRONG_CODE, code)) {
     const result = _get(
@@ -160,6 +165,7 @@ const requestErrorCallback = function(
           // error.config.params.state = 'yes';
           error.config.baseURL = '';
           error.config.headers.Authorization = accessToken;
+          // eslint-disable-next-line promise/no-nesting
           return error
             .instance(error.config)
             .then(resData => {
@@ -180,17 +186,24 @@ const requestErrorCallback = function(
         })
         .catch(err => {
           // 清空缓存并且替换刷新当前页面到登录页
-          store.dispatch('handlerDestroy').then(() => {
-            this.$notify({
-              message: '错误：抱歉，登录状态已失效，请重新登录！',
-              type: 'danger',
-              duration: 2000,
-              onClose: function() {
-                // 销毁缓存和临时变量
-                router.push({ name: LOGIN_PAGE_NAME });
-              }
+          // eslint-disable-next-line promise/no-nesting
+          store
+            .dispatch('handlerDestroy')
+            .then(() => {
+              this.$notify({
+                message: '错误：抱歉，登录状态已失效，请重新登录！',
+                type: 'danger',
+                duration: 2000,
+                onClose: function() {
+                  // 销毁缓存和临时变量
+                  router.push({ name: LOGIN_PAGE_NAME });
+                }
+              });
+            })
+            .catch(error => {
+              throw new Error(error);
             });
-          });
+          // eslint-disable-next-line promise/no-return-wrap
           return Promise.reject(err);
         })
         .finally(() => {
