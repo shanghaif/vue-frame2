@@ -20,6 +20,7 @@ const configObj = {
   },
   // 定义文件继承的子规范-扩展
   extends: [
+    'plugin:json/recommended',
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
     // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
     'plugin:vue/essential',
@@ -33,7 +34,8 @@ const configObj = {
   rules: {
     'prettier/prettier': 'error', // 被prettier标记的地方抛出错误信息，vue CLI 默认是 warn
     // allow async-await
-    'no-console': 'off',
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     semi: ['error', 'always'],
     /* 'space-before-function-paren': [
       'error',
@@ -100,7 +102,9 @@ const configObj = {
     ], */
     'import/first': 2,
     // eslint-plugin-standard
-    'standard/no-callback-literal': [2, ['cb', 'callback']]
+    'standard/no-callback-literal': [2, ['cb', 'callback']],
+    // eslint-plugin-vue
+    'vue/no-unused-vars': 'error'
   },
   globals: {
     $: true,

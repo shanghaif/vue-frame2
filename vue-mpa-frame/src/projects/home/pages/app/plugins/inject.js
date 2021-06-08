@@ -4,7 +4,7 @@
 import axios from '@plugins/axios/axios.js';
 import DataDictFilter from '@plugins/data-dict-filter/index.js';
 import vBus from '@plugins/v-bus.js';
-import log from '@plugins/log.js';
+import log from '@plugins/log.js'; // 彩色 log
 import ApiConfig from '../service/api/index.js';
 import { USER_API_CONFIG, USER_AXIOS_CONFIG } from '../config/index.js';
 import {
@@ -14,7 +14,6 @@ import {
 } from '../config/interceptors/api.js';
 import moduleConst from './constant.js';
 import ApiFilterExpand from './axios/filter.js';
-// 彩色 log
 import LoaderApiLibrary from './axios/api.js';
 
 export default {
