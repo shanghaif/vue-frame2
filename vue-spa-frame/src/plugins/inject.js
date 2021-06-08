@@ -5,7 +5,7 @@ import LoaderApiLibrary from '@plugins/axios/api.js';
 import axios from 'axios';
 import DataDictFilter from '@plugins/data-dict-filter/index.js';
 import vBus from '@plugins/v-bus.js';
-import log from '@/plugins/log.js';
+import log from '@/plugins/log.js'; // 彩色 log
 import ApiConfig from '../service/api/index.js';
 import { USER_API_CONFIG, USER_AXIOS_CONFIG } from '../config/index.js';
 import {
@@ -15,7 +15,6 @@ import {
 } from '../config/interceptor/api.js';
 import moduleConst from './constant.js';
 import ApiFilterExpand from './axios/filter.js';
-// 彩色 log
 
 export default {
   install: (Vue, options = {}) => {
