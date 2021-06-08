@@ -1,6 +1,7 @@
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const px2rem = require('postcss-pxtorem');
+
 const isProd = process.env.NODE_ENV === 'production';
 // 注意：元素标签上的 style 标签内的 px 不会自动转换 <p style="margin-top: 120px;"></p>
 const px2remConfig = {
