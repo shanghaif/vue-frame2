@@ -2,11 +2,12 @@ const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const postcssCustomMedia = require('postcss-custom-media');
 const minmax = require('postcss-media-minmax');
-const frameConfig = require('./frame.config.js');
 const pr2rem = require('postcss-plugin-pr2rem');
-const pr2remPlugin = [];
 const _get = require('lodash/get');
 const _findIndex = require('lodash/findIndex');
+const frameConfig = require('./frame.config.js');
+
+const pr2remPlugin = [];
 const isHavePr2rem = _findIndex(_get(frameConfig, 'mobile.pages', []), page => {
   return _get(page, 'plan') === 'pr2rem';
 });

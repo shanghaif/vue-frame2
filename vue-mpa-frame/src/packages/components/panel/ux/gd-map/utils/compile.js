@@ -33,5 +33,4 @@ const mountedRenderFn = (renderFn, vueInstance) => {
   instance.$mount();
   return instance;
 };
-
 export { compile, mountedVNode, mountedRenderFn };

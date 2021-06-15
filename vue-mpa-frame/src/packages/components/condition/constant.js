@@ -73,7 +73,6 @@ const fieldLableMap = {
   [FIELD_SETTING_TYPE.Date]: '日期类型'
   // [FIELD_SETTING_TYPE.Boolean]: '布尔型',
 };
-
 export {
   LOGICOPERATOR,
   logicMap,

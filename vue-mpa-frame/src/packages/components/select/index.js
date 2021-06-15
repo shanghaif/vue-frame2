@@ -83,12 +83,31 @@ const BaseSelect = {
     listeners: {
       type: Object,
       default: () => {}
+    },
+    // 前缀的单位
+    preUnit: {
+      type: String,
+      default: ''
+    },
+    // 后缀的单位
+    sufUnit: {
+      type: String,
+      default: ''
+    },
+    // 是否选中第一个，单选时起效
+    isSelectedFirstRow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     this.vQueryParams = _isEmpty(this.api) ? {} : _assign({}, this.queryParams);
-    this.vValue = this.$attrs.multiple ? _assign([], this.value) : this.value;
+    this.events = {
+      onLoadSuccess: 'onLoadSuccess'
+    };
+    // this.vValue = this.$attrs.multiple ? _assign([], this.value) : this.value;
     return {
+      vValue: this.$attrs.multiple ? _assign([], this.value) : this.value,
       vOptions: []
     };
   },
@@ -107,7 +126,7 @@ const BaseSelect = {
           this.$createElement('el-option', {
             props: {
               key: option[this.valueField],
-              label: option[this.displayField],
+              label: this.preUnit + option[this.displayField] + this.sufUnit,
               value: option[this.valueField],
               disabled: option.disabled
             }
@@ -150,8 +169,8 @@ const BaseSelect = {
     value(value, oldValue) {
       if (!_isEqual(value, oldValue) && !_isEqual(this.vValue, value)) {
         this.vValue = value;
-        this._changeEvent(this.vValue);
-        this._selectChangeEvent(this.vValue);
+        // this._changeEvent(this.vValue);
+        // this._selectChangeEvent(this.vValue);
       }
     },
     api: {
@@ -159,6 +178,19 @@ const BaseSelect = {
         this.isReloadGrid && this._fetchList();
       },
       immediate: true
+    },
+    options(val, oldVal) {
+      if (!_isEmpty(this.options) && this.api.length === 0) {
+        if (
+          this.isSelectedFirstRow &&
+          (!_has(this.$attrs, 'multiple') || this.$attrs.multiple === false)
+        ) {
+          this.vValue = _get(this.options, '[0].' + this.valueField);
+          setTimeout(() => {
+            this._selectChangeEvent(this.vValue);
+          }, 0);
+        }
+      }
     }
   },
   created() {},
@@ -176,6 +208,19 @@ const BaseSelect = {
           if (!_isNil(this.loadFilter)) {
             resData = this.loadFilter(resData.data);
           }
+          if (
+            this.isSelectedFirstRow &&
+            !_isEmpty(resData.data) &&
+            (!_has(this.$attrs, 'multiple') || this.$attrs.multiple === false)
+          ) {
+            this.vValue = _get(resData, 'data[0].' + this.valueField);
+            setTimeout(() => {
+              this._selectChangeEvent(this.vValue);
+            }, 0);
+          }
+          setTimeout(() => {
+            this.$emit(this.events.onLoadSuccess, resData.data);
+          }, 0);
           this.vOptions = resData.data;
         })
         .catch(error => {

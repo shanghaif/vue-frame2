@@ -62,5 +62,4 @@ const isNotEmpty = str => {
   // console.warn('argument format is wrong');
   return false;
 };
-
 export { devConsole, apply, applyIf, dateformat, isNotEmpty };
