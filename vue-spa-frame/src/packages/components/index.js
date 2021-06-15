@@ -61,6 +61,7 @@ import BaseMenuButton from './menu-button/index.js';
 import BaseRenderSelf from './render-self/index.js';
 import BaseTimeAxiosHistory from './time-axios-history/index.vue';
 import BaseHorizontalMenu from './horizontal-menu/index.js';
+import BaseSelectCollapseCheckbox from './select-collapse-checkbox/index.js';
 
 // 弹出框
 if (!_has(window, '$baseDialog')) {
@@ -134,5 +135,6 @@ export default {
   BaseRenderSelf,
   BaseTimeAxiosHistory,
   BaseHorizontalMenu,
-  BaseMixtureChart
+  BaseMixtureChart,
+  BaseSelectCollapseCheckbox
 };

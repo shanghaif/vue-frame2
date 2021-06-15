@@ -1,13 +1,14 @@
 const path = require('path');
 const _isEmpty = require('lodash/isEmpty');
 const _findIndex = require('lodash/findIndex');
-const frameConfig = require('./frame.config.js');
 const autoprefixer = require('autoprefixer');
 const tailwindcss = require('tailwindcss');
 const cssnano = require('cssnano');
 const px2rem = require('postcss-pxtorem');
 const postcssCustomMedia = require('postcss-custom-media');
 const minmax = require('postcss-media-minmax');
+const frameConfig = require('./frame.config.js');
+
 const isProd = process.env.NODE_ENV === 'production';
 function resolve(dir) {
   return path.join(__dirname, '.', dir);

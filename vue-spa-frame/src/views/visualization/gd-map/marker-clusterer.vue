@@ -80,27 +80,32 @@ export default {
         {
           url: 'https://a.amap.com/jsapi_demos/static/images/blue.png',
           size: [32, 32],
-          offset: [-16, -16]
+          offset: [-16, -16],
+          textColor: 'rgba(255,255,255)'
         },
         {
           url: 'https://a.amap.com/jsapi_demos/static/images/green.png',
           size: [32, 32],
-          offset: [-16, -16]
+          offset: [-16, -16],
+          textColor: 'rgba(255,255,255)'
         },
         {
           url: 'https://a.amap.com/jsapi_demos/static/images/orange.png',
           size: [36, 36],
-          offset: [-18, -18]
+          offset: [-18, -18],
+          textColor: 'rgba(255,255,255)'
         },
         {
           url: 'https://a.amap.com/jsapi_demos/static/images/red.png',
           size: [48, 48],
-          offset: [-24, -24]
+          offset: [-24, -24],
+          textColor: 'rgba(255,255,255)'
         },
         {
           url: 'https://a.amap.com/jsapi_demos/static/images/darkRed.png',
           size: [48, 48],
-          offset: [-24, -24]
+          offset: [-24, -24],
+          textColor: 'rgba(255,255,255)'
         }
       ],
       events: {
@@ -132,7 +137,7 @@ export default {
           this.markers.push(marker); */
           // 添加点的方式 2
           this.markers.push({
-            lnglat: window.chinaPoints[i].lnglat,
+            lnglat: window.chinaPoints[i].lnglat, // lnglat: ["113.864691", "22.942327"]
             event: {
               click: function(p) {
                 that.$message({

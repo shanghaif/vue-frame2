@@ -55,6 +55,11 @@ export default {
     // 事件
     events: {
       type: Object
+    },
+    // 展示出marker点的时候点的尺寸
+    contentSize: {
+      type: Number,
+      default: 14
     }
   },
   data() {
@@ -166,7 +171,11 @@ export default {
           const marker = new AMap.Marker({
             position: markers[i].lnglat,
             content:
-              '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+              '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: ' +
+              this.contentSize +
+              'px; width: ' +
+              this.contentSize +
+              'px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
             offset: toPixel([-15, -15])
           });
           if (_has(markers[i], 'event')) {

@@ -135,12 +135,14 @@ export default function() {
        * @description 图表相关事件
        * @returns
        */
-      chartEvent() {
-        if (this['chart' + this._uid]) return false;
+      onChartEvent() {
+        if (!this.chartEvent) return false;
+
+        if (!this['chart' + this._uid]) return false;
 
         // 为图表监听常用的鼠标事件
         this.EVENT_LIST.map(item => {
-          this['chart' + this._uid].on(item, function(params) {
+          this['chart' + this._uid].on(item, params => {
             this.$emit(item, params);
           });
         });
@@ -276,10 +278,27 @@ export default function() {
           return false;
         }
 
-        window.addEventListener('resize', () => {
-          this.initChart();
-        });
+        window.addEventListener('resize', this.resizeChart);
+      },
+      /**
+       * @description 手动设置echarts变量
+       */
+      setOptions(options) {
+        const container = document.getElementById(this._uid);
+
+        this['chart' + this._uid] = echarts.init(container);
+        this['chart' + this._uid].setOption(options);
+      },
+      /**
+       * @description 获取昂前的图表的options
+       * @returns { Object } options
+       */
+      getChartOptions() {
+        return this.options;
       }
+    },
+    destroyed() {
+      window.removeEventListener('resize', this.resizeChart);
     },
     render(h) {
       return h(

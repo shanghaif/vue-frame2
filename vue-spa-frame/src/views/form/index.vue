@@ -22,6 +22,20 @@
         </base-select>
         {{ value }}
       </div>
+      <div>
+        <p>select 选择器-preUnit、sufUnit和isSelectedFirstRow</p>
+        <base-select
+          v-model="valueP"
+          api="dict/getProductClassify"
+          :multiple="false"
+          preUnit="1-"
+          sufUnit="-2"
+          :isSelectedFirstRow="true"
+          :loadFilter="loadFilter"
+        >
+        </base-select>
+        {{ valueP }}
+      </div>
       <p>select 选择器-远端数据-多选</p>
       <base-select
         v-model="value1"
@@ -225,6 +239,7 @@ export default {
     return {
       // tableData: [],
       value: 1,
+      valueP: '',
       value1: [],
       value2: [],
       value3: '',
@@ -323,6 +338,7 @@ export default {
   methods: {
     // 过滤数据
     loadFilter(data) {
+      console.log('aaaaaaaaaaaaa', data);
       return data[0];
       // return [];
     },
