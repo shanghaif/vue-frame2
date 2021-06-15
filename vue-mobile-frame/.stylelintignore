@@ -10,6 +10,7 @@
 # 测试和打包目录
 /test/
 /dist/
+/static/
 /node_modules/
 
 # 通过反取忽略目录
